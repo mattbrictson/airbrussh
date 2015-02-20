@@ -42,8 +42,6 @@ Airbrussh.configure do |config|
   # Capistrano's default, un-airbrusshed output is saved to a file to
   # facilitate debugging. To disable this entirely:
   # config.log_file = nil
-  # You can also provide an IO object:
-  # config.log_file = $stderr
   # Default:
   config.log_file = "log/capistrano.log"
 
