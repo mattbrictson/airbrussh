@@ -1,4 +1,5 @@
 require "airbrussh/configuration"
+require "airbrussh/formatter"
 require "airbrussh/version"
 
 module Airbrussh
