@@ -17,7 +17,7 @@ module Airbrussh
           class ::Rake::Task
             alias_method :_original_execute_cap55, :execute
             def execute(args=nil)
-              SSHKit::Formatter::Abbreviated.current_rake_task = name
+              #{name}.current_rake_task = name
               _original_execute_cap55(args)
             end
           end
@@ -39,7 +39,7 @@ module Airbrussh
         ::Logger.new(@log_file, 1, 20971520)
       )
 
-      @console = Capistrano::Fiftyfive::Console.new(original_output)
+      @console = Airbrussh::Console.new(original_output)
       write_log_file_delimiter
       write_banner
     end
@@ -77,7 +77,7 @@ module Airbrussh
     alias :<< :write
 
     def on_deploy_failure
-      err = Capistrano::Fiftyfive::Console.new($stderr)
+      err = Airbrussh::Console.new($stderr)
       err.print_line
       err.print_line(red("** DEPLOY FAILED"))
       err.print_line(yellow(
