@@ -62,7 +62,7 @@ Airbrussh.configure do |config|
 
   # Output is automatically truncated to the width of the terminal window, if
   # possible. If the width of the terminal can't be determined, no truncation
-  # is performed. To truncate to a fixed with:
+  # is performed. To truncate to a fixed width:
   # config.truncate = 80
   # Or to disable truncation entirely:
   # config.truncate = false
@@ -94,6 +94,13 @@ end
 ## History
 
 Airbrussh started life as custom logging code within the [capistrano-fiftyfive][] collection of opinionated Capistrano recipes. In February 2015, the logging code was refactored into a standalone gem with its own configuration and documentation, and renamed `airbrussh`. Now anyone can using SSHKit or Capistrano can safely plug it into their projects!
+
+## Roadmap
+
+Airbrussh needs work! The first priority is to add tests. Once good test coverage is in place, some clean up and refactoring is needed to make the core formatting code easier to understand.
+
+If you have ideas for other improvements, please contribute!
+
 
 ## Contributing
 
