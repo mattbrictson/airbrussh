@@ -3,8 +3,6 @@ require "colorize"
 require "ostruct"
 require "sshkit"
 
-# TODO: honor Airbrussh.configuration!
-
 module Airbrussh
   class Formatter < SSHKit::Formatter::Abstract
     class << self
