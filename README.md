@@ -4,7 +4,7 @@
 
 And don't worry: airbrussh saves Capistrano's default verbose output to a separate log file just in case you still need it for troubleshooting.
 
-*TODO: animated GIF of airbrusshed output goes here!*
+![Sample output](https://raw.github.com/mattbrictson/airbrussh/master/demo.gif)
 
 ## Installation
 
