@@ -77,7 +77,7 @@ If you are using SSHKit directly, you can use Airbrussh without the Capistrano m
 
 ```ruby
 require "airbrussh"
-SSHKit.config.output = Airbrussh::Formatter.new
+SSHKit.config.output = Airbrussh::Formatter.new($stdout)
 ```
 
 When Capistrano is not present, Airbrussh uses a slightly different default configuration:
@@ -104,7 +104,7 @@ If you have ideas for other improvements, please contribute!
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/airbrussh/fork )
+1. Fork it ( https://github.com/mattbrictson/airbrussh/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
