@@ -11,14 +11,15 @@ module Airbrussh
       attr_accessor :current_rake_task
 
       def monkey_patch_rake_task!
+        return unless Airbrussh.configuration.monkey_patch_rake
         return if @rake_patched
 
         eval(<<-EVAL)
           class ::Rake::Task
-            alias_method :_original_execute_cap55, :execute
+            alias_method :_original_execute_airbrussh, :execute
             def execute(args=nil)
               #{name}.current_rake_task = name
-              _original_execute_cap55(args)
+              _original_execute_airbrussh(args)
             end
           end
         EVAL
@@ -34,14 +35,19 @@ module Airbrussh
 
       @tasks = {}
 
-      @log_file = fetch(:fiftyfive_log_file) || "capistrano.log"
-      @log_file_formatter = SSHKit::Formatter::Pretty.new(
-        ::Logger.new(@log_file, 1, 20971520)
-      )
+      @log_file = Airbrussh.configuration.log_file
+      @log_file_formatter = create_log_file_formatter
 
       @console = Airbrussh::Console.new(original_output)
       write_log_file_delimiter
       write_banner
+    end
+
+    def create_log_file_formatter
+      return SSHKit::Formatter::BlackHole.new(nil) if @log_file.nil?
+      SSHKit::Formatter::Pretty.new(
+        ::Logger.new(@log_file, 1, 20971520)
+      )
     end
 
     def print_line(string)
@@ -49,8 +55,9 @@ module Airbrussh
     end
 
     def write_banner
-      print_line "Using abbreviated format."
-      print_line "Full cap output is being written to #{blue(@log_file)}."
+      return if @log_file.nil?
+      print_line "Using airbrussh format."
+      print_line "Verbose output is being written to #{blue(@log_file)}."
     end
 
     def write_log_file_delimiter
@@ -77,6 +84,7 @@ module Airbrussh
     alias :<< :write
 
     def on_deploy_failure
+      return if @log_file.nil?
       err = Airbrussh::Console.new($stderr)
       err.print_line
       err.print_line(red("** DEPLOY FAILED"))
@@ -117,7 +125,7 @@ module Airbrussh
     def print_task_if_changed
       status = current_task_status
 
-      if status.changed
+      if status.changed && !status.task.empty?
         print_line "#{clock} #{blue(status.task)}"
       end
     end

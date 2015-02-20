@@ -22,7 +22,7 @@ module Airbrussh
       if console_width
         string = truncate_to_console_width(string)
       end
-      unless ENV["SSHKIT_COLOR"] || @output.tty?
+      unless color_enabled?
         string = strip_ascii_color(string)
       end
 
@@ -56,7 +56,25 @@ module Airbrussh
     end
 
     def console_width
-      IO.console.winsize.last if @output.tty?
+      case (truncate = Airbrussh.configuration.truncate)
+      when :auto
+        IO.console.winsize.last if @output.tty?
+      when Fixnum
+        truncate
+      end
+    end
+
+    private
+
+    def color_enabled?
+      case Airbrussh.configuration.color
+      when true
+        true
+      when :auto
+        ENV["SSHKIT_COLOR"] || @output.tty?
+      else
+        false
+      end
     end
   end
 end
