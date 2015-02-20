@@ -24,6 +24,13 @@ Finally, add this line to your application's Capfile:
 require "airbrussh/capistrano"
 ```
 
+**Important:** explicitly setting Capistrano's `:format` option in your deploy.rb will override airbrussh. Remove this line if you have it:
+
+```ruby
+# Remove this
+set :format, :pretty
+```
+
 ## Usage
 
 Airbrussh automatically replaces the default Capistrano log formatter, so there is nothing more you have to do. Just run `cap` as normal and enjoy the prettier output!
