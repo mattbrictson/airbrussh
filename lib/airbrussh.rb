@@ -1,5 +1,16 @@
+require "airbrussh/configuration"
 require "airbrussh/version"
 
 module Airbrussh
-  # Your code goes here...
+  def self.configuration
+    @configuration ||= Configuration.new
+  end
+
+  def self.reset
+    @configuration = Configuration.new
+  end
+
+  def self.configure
+    yield(configuration)
+  end
 end
