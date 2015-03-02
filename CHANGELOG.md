@@ -1,3 +1,7 @@
+## 0.2.1 (2015-03-02)
+
+* Un-pin SSHKit dependency now that SSHKit 1.7.1 has been released.
+
 ## 0.2.0 (2015-03-02)
 
 * Pin SSHKit dependency at `~> 1.6.1` to avoid a [bug in 1.7.0](https://github.com/capistrano/sshkit/issues/226) that causes command exit statuses to be omitted from the log.
