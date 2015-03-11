@@ -1,3 +1,7 @@
+## Next release
+
+* Your contribution here.
+
 ## 0.2.1 (2015-03-02)
 
 * Un-pin SSHKit dependency now that SSHKit 1.7.1 has been released.
