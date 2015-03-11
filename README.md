@@ -9,6 +9,14 @@ And don't worry: airbrussh saves Capistrano's default verbose output to a separa
 
 ![Sample output](https://raw.github.com/mattbrictson/airbrussh/master/demo.gif)
 
+## Requirements
+
+**To use Airbrussh with Capistrano, you will need Capistrano 3.** Capistrano 2.x is not supported.
+
+Airbrussh has been tested with MRI 2.2, Capistrano 3.4.0, and SSHKit 1.7.1. Other recent version combinations will probably work; [open an issue on GitHub](https://github.com/mattbrictson/airbrussh/issues/new) if you run into trouble.
+
+Airbrussh's only dependency is SSHKit >= 1.6.1.
+
 ## Installation
 
 Add this line to your application's Gemfile:
