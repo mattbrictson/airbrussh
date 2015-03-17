@@ -9,6 +9,8 @@ And don't worry: airbrussh saves Capistrano's default verbose output to a separa
 
 ![Sample output](https://raw.github.com/mattbrictson/airbrussh/master/demo.gif)
 
+For more details on how exactly Airbrussh changes Capistrano's output and the reasoning behind it, check out the blog post: [Introducing Airbrussh](https://mattbrictson.com/airbrussh).
+
 ## Requirements
 
 **To use Airbrussh with Capistrano, you will need Capistrano 3.** Capistrano 2.x is not supported.
