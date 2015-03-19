@@ -120,7 +120,7 @@ module Airbrussh
           print_line "    #{status}"
         end
       elsif Airbrussh.configuration.log_level == :debug
-        command.full_stdout.split("\n").each do |line|
+        command.stdout.split("\n").each do |line|
           print_line "      #{number} #{line}"
         end
       end
