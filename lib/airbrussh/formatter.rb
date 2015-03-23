@@ -109,14 +109,20 @@ module Airbrussh
       ctx = context_for_command(command)
       number = '%02d' % ctx.number
 
-      if ctx.first_execution?
-        description = yellow(ctx.shell_string)
-        print_line "      #{number} #{description}"
-      end
+      if ctx.first_execution? || command.finished?
+        if ctx.first_execution?
+          description = yellow(ctx.shell_string)
+          print_line "      #{number} #{description}"
+        end
 
-      if command.finished?
-        status = format_command_completion_status(command, number)
-        print_line "    #{status}"
+        if command.finished?
+          status = format_command_completion_status(command, number)
+          print_line "    #{status}"
+        end
+      elsif Airbrussh.configuration.log_level == :debug
+        command.full_stdout.split("\n").each do |line|
+          print_line "      #{number} #{line}"
+        end
       end
     end
 

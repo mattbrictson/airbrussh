@@ -78,6 +78,12 @@ Airbrussh.configure do |config|
   # config.truncate = false
   # Default:
   config.truncate = :auto
+
+  # By default Airbrussh mutes stdout and stderr (sending it to config.logfile)
+  # If you need (also temporary) enable stdout you can set log_level to :debug
+  # This can also be done live calling
+  # Airbrussh.configuration.log_level = :debug
+  config.log_level = :info
 end
 ```
 
