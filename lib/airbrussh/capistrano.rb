@@ -6,8 +6,6 @@ require "sshkit/formatter/airbrussh"
 Airbrussh.configure do |config|
   config.log_file = "log/capistrano.log"
   config.monkey_patch_rake = true
-  config.color = :auto
-  config.truncate = :auto
 end
 
 # Sanity check!
