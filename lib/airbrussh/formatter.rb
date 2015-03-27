@@ -53,9 +53,14 @@ module Airbrussh
     end
 
     def write_banner
-      return if @log_file.nil?
-      print_line "Using airbrussh format."
-      print_line "Verbose output is being written to #{blue(@log_file)}."
+      return unless Airbrussh.configuration.banner
+      if Airbrussh.configuration.banner == :auto
+        return if @log_file.nil?
+        print_line "Using airbrussh format."
+        print_line "Verbose output is being written to #{blue(@log_file)}."
+      else
+        print_line Airbrussh.configuration.banner
+      end
     end
 
     def write_log_file_delimiter

@@ -1,6 +1,7 @@
 ## Next release
 
 * Your contribution here.
+* New `config.banner` option allows startup message to be disabled or changed (suggestion from [@justindowning](https://github.com/justindowning))
 
 ## 0.2.1 (2015-03-02)
 

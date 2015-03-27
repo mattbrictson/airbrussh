@@ -78,6 +78,14 @@ Airbrussh.configure do |config|
   # config.truncate = false
   # Default:
   config.truncate = :auto
+
+  # If a log_file is configured, airbrussh will output a message at startup
+  # displaying the log_file location. To always disable this message:
+  # config.banner = false
+  # To display an alternative message:
+  # config.banner = "Hello, world!"
+  # Default:
+  config.banner = :auto
 end
 ```
 
@@ -98,6 +106,7 @@ Airbrussh.configure do |config|
   config.monkey_patch_rake = false
   config.color = :auto
   config.truncate = :auto
+  config.banner = :auto
 end
 ```
 
