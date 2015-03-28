@@ -2,6 +2,7 @@
 
 * Your contribution here.
 * New `config.banner` option allows startup message to be disabled or changed (suggestion from [@justindowning](https://github.com/justindowning))
+* New `config.command_output` option gives full control of whether airbrussh shows or hides the stderr and stdout data received from remote commands; see the usage section of the README for further explanation (suggestion from [@carlesso](https://github.com/carlesso))
 
 ## 0.2.1 (2015-03-02)
 

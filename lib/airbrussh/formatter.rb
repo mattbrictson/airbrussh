@@ -33,7 +33,7 @@ module Airbrussh
 
       @tasks = {}
 
-      @log_file = Airbrussh.configuration.log_file
+      @log_file = config.log_file
       @log_file_formatter = create_log_file_formatter
 
       @console = Airbrussh::Console.new(original_output)
@@ -53,13 +53,13 @@ module Airbrussh
     end
 
     def write_banner
-      return unless Airbrussh.configuration.banner
-      if Airbrussh.configuration.banner == :auto
+      return unless config.banner
+      if config.banner == :auto
         return if @log_file.nil?
         print_line "Using airbrussh format."
         print_line "Verbose output is being written to #{blue(@log_file)}."
       else
-        print_line Airbrussh.configuration.banner
+        print_line config.banner
       end
     end
 
@@ -77,7 +77,9 @@ module Airbrussh
     end
 
     def write(obj)
-      @log_file_formatter << obj
+      # SSHKit's :pretty formatter mutates the stdout and stderr data in the
+      # command obj. So we need to dup it to ensure our copy is unscathed.
+      @log_file_formatter << obj.dup
 
       case obj
       when SSHKit::Command    then write_command(obj)
@@ -119,9 +121,34 @@ module Airbrussh
         print_line "      #{number} #{description}"
       end
 
+      write_command_output(command, number)
+
       if command.finished?
         status = format_command_completion_status(command, number)
         print_line "    #{status}"
+      end
+    end
+
+    # Prints the data from the stdout and stderr streams of the given command,
+    # but only if enabled (see Airbrussh::Configuration#command_output).
+    def write_command_output(command, number)
+      # Use a bit of meta-programming here, since stderr and stdout logic
+      # are identical except for different method names.
+      %w(stderr stdout).each do |stream|
+
+        next unless config.public_send("command_output_#{stream}?")
+        output = command.public_send(stream)
+        next if output.empty?
+
+        output.lines.each do |line|
+          print_line "      #{number} #{line.chomp}"
+        end
+
+        # The stderr/stdout data provided by the command object is the current
+        # "chunk" as received over the wire. Since there may be more chunks
+        # appended and we don't want to print duplicates, clear the current
+        # data.
+        command.public_send("#{stream}=", "")
       end
     end
 
@@ -201,6 +228,10 @@ module Airbrussh
       define_method(color) do |string|
         string.to_s.colorize(color.to_sym)
       end
+    end
+
+    def config
+      Airbrussh.configuration
     end
   end
 end
