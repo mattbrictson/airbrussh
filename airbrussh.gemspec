@@ -9,10 +9,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Matt Brictson"]
   spec.email         = ["airbrussh@mattbrictson.com"]
   spec.summary       = "Airbrussh pretties up your SSHKit and Capistrano output"
-  spec.description   = "Airbrussh is a replacement log formatter for SSHKit "\
-                       "that makes your Capistrano output much easier on the "\
-                       "eyes. Just add it to your Capfile and enjoy concise, "\
-                       "useful log output that is easy to read."
+  spec.description   = "A replacement log formatter for SSHKit that makes "\
+                       "Capistrano output much easier on the eyes. Just add "\
+                       "Airbrussh to your Capfile and enjoy concise, useful "\
+                       "log output that is easy to read."
   spec.homepage      = "https://github.com/mattbrictson/airbrussh"
   spec.license       = "MIT"
 
