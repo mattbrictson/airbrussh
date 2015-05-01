@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require "airbrussh/console"
 require "colorize"
 require "ostruct"

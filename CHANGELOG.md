@@ -1,6 +1,7 @@
 ## Next release
 
 * Your contribution here!
+* Explicitly specify UTF-8 encoding for source files, for Ruby 1.9.3 compatibility.
 
 ## 0.3.0 (2015-03-28)
 
