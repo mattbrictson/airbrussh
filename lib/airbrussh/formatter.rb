@@ -1,4 +1,5 @@
 # encoding: UTF-8
+require "airbrussh/command_output"
 require "airbrussh/console"
 require "colorize"
 require "ostruct"
@@ -79,8 +80,8 @@ module Airbrussh
 
     def write(obj)
       # SSHKit's :pretty formatter mutates the stdout and stderr data in the
-      # command obj. So we need to dup it to ensure our copy is unscathed.
-      @log_file_formatter << obj.dup
+      # command obj. So we need to clone it to ensure our copy is unscathed.
+      @log_file_formatter << deep_copy(obj)
 
       case obj
       when SSHKit::Command    then write_command(obj)
@@ -136,20 +137,10 @@ module Airbrussh
       # Use a bit of meta-programming here, since stderr and stdout logic
       # are identical except for different method names.
       %w(stderr stdout).each do |stream|
-
         next unless config.public_send("command_output_#{stream}?")
-        output = command.public_send(stream)
-        next if output.empty?
-
-        output.lines.each do |line|
+        CommandOutput.for(command).each_line(stream) do |line|
           print_line "      #{number} #{line.chomp}"
         end
-
-        # The stderr/stdout data provided by the command object is the current
-        # "chunk" as received over the wire. Since there may be more chunks
-        # appended and we don't want to print duplicates, clear the current
-        # data.
-        command.public_send("#{stream}=", "")
       end
     end
 
@@ -233,6 +224,10 @@ module Airbrussh
 
     def config
       Airbrussh.configuration
+    end
+
+    def deep_copy(obj)
+      Marshal.load(Marshal.dump(obj))
     end
   end
 end
