@@ -1,8 +1,11 @@
 ## Next release
 
 * Your contribution here!
-* Changes to ensure compatibility with the upcoming version of SSHKit.
-* Explicitly specify UTF-8 encoding for source files, for Ruby 1.9.3 compatibility.
+
+## 0.4.0 (2015-05-03)
+
+* Changes to ensure compatibility with the upcoming version of SSHKit ([ec3122b](https://github.com/mattbrictson/airbrussh/commit/ec3122b101de53f2304723da842d5c8b6f70f4f3)).
+* Explicitly specify UTF-8 encoding for source files, for Ruby 1.9.3 compatibility ([#9](https://github.com/mattbrictson/airbrussh/issues/9)).
 
 ## 0.3.0 (2015-03-28)
 
