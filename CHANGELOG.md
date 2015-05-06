@@ -1,6 +1,7 @@
 ## Next release
 
 * Your contribution here!
+* Fix `Marshal.dump` warnings by removing `deep_copy` workaround that it is no longer needed for the latest SSHKit ([#10](https://github.com/mattbrictson/airbrussh/issues/10)).
 
 ## 0.4.0 (2015-05-03)
 

@@ -80,8 +80,8 @@ module Airbrussh
 
     def write(obj)
       # SSHKit's :pretty formatter mutates the stdout and stderr data in the
-      # command obj. So we need to clone it to ensure our copy is unscathed.
-      @log_file_formatter << deep_copy(obj)
+      # command obj. So we need to dup it to ensure our copy is unscathed.
+      @log_file_formatter << obj.dup
 
       case obj
       when SSHKit::Command    then write_command(obj)
@@ -224,10 +224,6 @@ module Airbrussh
 
     def config
       Airbrussh.configuration
-    end
-
-    def deep_copy(obj)
-      Marshal.load(Marshal.dump(obj))
     end
   end
 end
