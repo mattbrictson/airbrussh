@@ -20,12 +20,8 @@ module Airbrussh
     def print_line(obj="")
       string = obj.to_s
 
-      if console_width
-        string = truncate_to_console_width(string)
-      end
-      unless color_enabled?
-        string = strip_ascii_color(string)
-      end
+      string = truncate_to_console_width(string) if console_width
+      string = strip_ascii_color(string) unless color_enabled?
 
       write(string + "\n")
       @output.flush
@@ -43,9 +39,7 @@ module Airbrussh
       width = console_width
 
       if strip_ascii_color(string).length > width
-        while strip_ascii_color(string).length >= width
-          string.chop!
-        end
+        string.chop! while strip_ascii_color(string).length >= width
         string << "…\e[0m"
       else
         string

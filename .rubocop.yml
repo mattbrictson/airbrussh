@@ -1,3 +1,9 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  Exclude:
+    - "*.gemspec"
+
 Style/ClassAndModuleChildren:
   Enabled: false
 

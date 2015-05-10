@@ -46,7 +46,7 @@ module Airbrussh
     def create_log_file_formatter
       return SSHKit::Formatter::BlackHole.new(nil) if @log_file.nil?
       SSHKit::Formatter::Pretty.new(
-        ::Logger.new(@log_file, 1, 20971520)
+        ::Logger.new(@log_file, 1, 20_971_520)
       )
     end
 
@@ -74,7 +74,7 @@ module Airbrussh
         @log_file_formatter << SSHKit::LogMessage.new(
           SSHKit::Logger::INFO,
           line
-          )
+        )
       end
     end
 
@@ -88,16 +88,15 @@ module Airbrussh
       when SSHKit::LogMessage then write_log_message(obj)
       end
     end
-    alias :<< :write
+    alias_method :<<, :write
 
     def on_deploy_failure
       return if @log_file.nil?
       err = Airbrussh::Console.new($stderr)
       err.print_line
       err.print_line(red("** DEPLOY FAILED"))
-      err.print_line(yellow(
-        "** Refer to #{@log_file} for details. Here are the last 20 lines:"
-        ))
+      err.print_line(yellow("** Refer to #{@log_file} for details. "\
+                            "Here are the last 20 lines:"))
       err.print_line
       system("tail -n 20 #{@log_file.shellescape} 1>&2")
     end
@@ -116,7 +115,7 @@ module Airbrussh
       print_task_if_changed
 
       ctx = context_for_command(command)
-      number = '%02d' % ctx.number
+      number = format("%02d", ctx.number)
 
       if ctx.first_execution?
         description = yellow(ctx.shell_string)
@@ -146,10 +145,9 @@ module Airbrussh
 
     def print_task_if_changed
       status = current_task_status
+      return if !status.changed || status.task.empty?
 
-      if status.changed && !status.task.empty?
-        print_line "#{clock} #{blue(status.task)}"
-      end
+      print_line "#{clock} #{blue(status.task)}"
     end
 
     def current_task_status
@@ -172,7 +170,7 @@ module Airbrussh
       status = current_task_status
       task_commands = status.commands
 
-      shell_string = command.to_s.sub(%r(^/usr/bin/env ), "")
+      shell_string = command.to_s.sub(%r{^/usr/bin/env }, "")
 
       if task_commands.include?(shell_string)
         first_execution = false
@@ -183,11 +181,11 @@ module Airbrussh
 
       number = task_commands.index(shell_string) + 1
 
-      OpenStruct.new({
+      OpenStruct.new(
         :first_execution? => first_execution,
         :number => number,
         :shell_string => shell_string
-      })
+      )
     end
 
     def format_command_completion_status(command, number)
@@ -195,13 +193,14 @@ module Airbrussh
       host = command.host.to_s
       user_at_host = [user, host].join("@")
 
-      status = if command.failure?
-        red("✘ #{number} #{user_at_host} (see #{@log_file} for details)")
-      else
-        green("✔ #{number} #{user_at_host}")
-      end
+      status = \
+        if command.failure?
+          red("✘ #{number} #{user_at_host} (see #{@log_file} for details)")
+        else
+          green("✔ #{number} #{user_at_host}")
+        end
 
-      runtime = light_black("%5.3fs" % command.runtime)
+      runtime = light_black(format("%5.3fs", command.runtime))
 
       status + " " + runtime
     end
@@ -213,7 +212,7 @@ module Airbrussh
       minutes = (duration / 60).to_i
       seconds = (duration - minutes * 60).to_i
 
-      "%02d:%02d" % [minutes, seconds]
+      format("%02d:%02d", minutes, seconds)
     end
 
     %w(light_black red blue green yellow).each do |color|
