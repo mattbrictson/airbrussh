@@ -6,7 +6,7 @@ gemspec
 if (sshkit_version = ENV["sshkit"])
   requirement = begin
     Gem::Dependency.new("sshkit", sshkit_version).requirement
-  rescue Gem::Requirement::BadRequirementError
+  rescue ArgumentError
     { :github => "capistrano/sshkit", :branch => sshkit_version }
   end
   gem "sshkit", requirement
