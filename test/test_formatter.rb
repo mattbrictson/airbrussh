@@ -18,7 +18,6 @@ class TestFormatter < Minitest::Test
   end
 
   def teardown
-    Airbrussh::Formatter.current_rake_task = nil
     Airbrussh.reset
     SSHKit.reset_configuration!
   end
@@ -27,7 +26,7 @@ class TestFormatter < Minitest::Test
     SSHKit.config.output_verbosity = Logger::DEBUG
     Airbrussh.configuration.color = true
 
-    on_local do
+    execute_local_task do
       execute(:echo, "foo")
     end
 
@@ -46,7 +45,7 @@ class TestFormatter < Minitest::Test
   end
 
   def test_formats_execute_without_color
-    on_local do
+    execute_local_task do
       execute(:echo, "foo")
     end
 
@@ -65,7 +64,7 @@ class TestFormatter < Minitest::Test
     SSHKit.config.output_verbosity = Logger::DEBUG
     Airbrussh.configuration.color = true
     error = nil
-    on_local do
+    execute_local_task do
       begin
         execute(:echo, "hi")
         execute(:nogo, "mr")
@@ -113,7 +112,7 @@ class TestFormatter < Minitest::Test
   def test_formats_capture_with_color
     Airbrussh.configuration.color = true
 
-    on_local do
+    execute_local_task do
       capture(:ls, "-1", "airbrussh.gemspec", :verbosity => SSHKit::Logger::INFO)
     end
 
@@ -129,7 +128,7 @@ class TestFormatter < Minitest::Test
   end
 
   def test_formats_capture_without_color
-    on_local do
+    execute_local_task do
       capture(:ls, "-1", "airbrussh.gemspec", :verbosity => SSHKit::Logger::INFO)
     end
 
@@ -146,7 +145,7 @@ class TestFormatter < Minitest::Test
 
   def test_does_not_output_test_commands
     SSHKit.config.output_verbosity = Logger::DEBUG
-    on_local do
+    execute_local_task do
       test("[ -f ~ ]")
     end
 
@@ -160,20 +159,23 @@ class TestFormatter < Minitest::Test
   end
 
   def test_handles_rake_tasks
-    on_local do
-      Airbrussh::Formatter.current_rake_task = "deploy"
-      Airbrussh::Formatter.current_rake_task = "deploy_dep1"
+    Airbrussh.configuration.monkey_patch_rake = true
+    execute_local_task("special_rake_task") do
       execute(:echo, "command 1")
       info("Starting command 2")
       execute(:echo, "command 2")
-      Airbrussh::Formatter.current_rake_task = "deploy_dep2"
+    end
+    execute_local_task("special_rake_task_2") do
+      error("New task starting")
+    end
+    execute_local_task("special_rake_task_3") do
       execute(:echo, "command 3")
       execute(:echo, "command 4")
       warn("All done")
     end
 
     assert_output_lines(
-      "00:00 deploy_dep1\n",
+      "00:00 special_rake_task\n",
       "      01 echo command 1\n",
       "      01 command 1\n",
       /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
@@ -181,7 +183,9 @@ class TestFormatter < Minitest::Test
       "      02 echo command 2\n",
       "      02 command 2\n",
       /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
-      "00:00 deploy_dep2\n",
+      "00:00 special_rake_task_2\n",
+      "      New task starting\n",
+      "00:00 special_rake_task_3\n",
       "      01 echo command 3\n",
       "      01 command 3\n",
       /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
@@ -195,6 +199,7 @@ class TestFormatter < Minitest::Test
       command_running("echo command 1"), command_success,
       /#{blue('INFO')} Starting command 2\n/,
       command_running("echo command 2"), command_success,
+      /#{red('ERROR')} New task starting\n/,
       command_running("echo command 3"), command_success,
       command_running("echo command 4"), command_success,
       /#{yellow('WARN')} All done\n/
@@ -203,7 +208,7 @@ class TestFormatter < Minitest::Test
 
   def test_handles_commands
     SSHKit.config.output_verbosity = Logger::DEBUG
-    on_local do
+    execute_local_task do
       %w(log fatal error warn info debug).each do |level|
         send(level, "Test")
       end
@@ -229,12 +234,19 @@ class TestFormatter < Minitest::Test
 
   private
 
-  def on_local(&block)
-    local_backend = SSHKit::Backend::Local.new(&block)
-    # Note: The Local backend default log changed to include the user name around version 1.7.1
-    # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
-    local_backend.instance_variable_get(:@host).user = @user
-    local_backend.run
+  def execute_local_task(task_name=nil, &block)
+    Rake::Task.define_task(task_name || self.class.unique_task_name) do
+      local_backend = SSHKit::Backend::Local.new(&block)
+      # Note: The Local backend default log changed to include the user name around version 1.7.1
+      # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
+      local_backend.instance_variable_get(:@host).user = @user
+      local_backend.run
+    end.execute
+  end
+
+  def self.unique_task_name
+    @task_index ||= 0
+    "#{name}_#{@task_index += 1}"
   end
 
   def assert_output_lines(*expected_output)

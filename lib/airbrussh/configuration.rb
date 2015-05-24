@@ -1,7 +1,12 @@
 module Airbrussh
   class Configuration
-    attr_accessor :log_file, :monkey_patch_rake, :color, :truncate, :banner,
-                  :command_output
+    class << self
+      extend Forwardable
+      attr_writer :current_formatter
+      delegate :current_rake_task= => :@current_formatter
+    end
+
+    attr_accessor :log_file, :color, :truncate, :banner, :command_output
 
     def initialize
       self.log_file = nil
@@ -18,6 +23,23 @@ module Airbrussh
 
     def command_output_stderr?
       command_output_include?(:stderr)
+    end
+
+    def monkey_patch_rake=(should_patch)
+      ::Rake::Task.class_eval do
+        patched = instance_methods(false).include?(:_original_execute_airbrussh)
+        if should_patch && !patched
+          define_method(:_original_execute_airbrussh, instance_method(:execute))
+          def execute(args=nil)
+            Airbrussh::Configuration.current_rake_task = name
+            _original_execute_airbrussh(args)
+            Airbrussh::Configuration.current_rake_task = nil
+          end
+        elsif !should_patch && patched
+          define_method(:execute, instance_method(:_original_execute_airbrussh))
+          remove_method :_original_execute_airbrussh
+        end
+      end
     end
 
     private
