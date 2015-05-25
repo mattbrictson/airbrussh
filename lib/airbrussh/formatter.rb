@@ -7,31 +7,12 @@ require "sshkit"
 
 module Airbrussh
   class Formatter < SSHKit::Formatter::Abstract
-    class << self
-      attr_accessor :current_rake_task
-
-      def monkey_patch_rake_task!
-        return unless Airbrussh.configuration.monkey_patch_rake
-        return if @rake_patched
-
-        eval(<<-EVAL)
-          class ::Rake::Task
-            alias_method :_original_execute_airbrussh, :execute
-            def execute(args=nil)
-              #{name}.current_rake_task = name
-              _original_execute_airbrussh(args)
-            end
-          end
-        EVAL
-
-        @rake_patched = true
-      end
-    end
+    attr_writer :current_rake_task
 
     def initialize(io)
       super
 
-      self.class.monkey_patch_rake_task!
+      config.class.current_formatter = self
 
       @tasks = {}
 
@@ -151,7 +132,7 @@ module Airbrussh
     end
 
     def current_task_status
-      task = self.class.current_rake_task.to_s
+      task = @current_rake_task.to_s
       if @tasks[task]
         changed = false
       else
