@@ -142,8 +142,7 @@ module Airbrussh
       write_command_output(command)
 
       if command.finished?
-        status = format_command_completion_status(command)
-        print_line "    #{status}"
+        print_line "    #{format_exit_status(command)} #{runtime(command)}"
       end
     end
 
@@ -181,22 +180,21 @@ module Airbrussh
       self.class.current_rake_task.to_s
     end
 
-    def format_command_completion_status(command)
+    def format_exit_status(command)
       user = command.user { command.host.user }
       host = command.host.to_s
       user_at_host = [user, host].join("@")
       number = command_number(command)
 
-      status = \
-        if command.failure?
-          red("✘ #{number} #{user_at_host} (see #{@log_file} for details)")
-        else
-          green("✔ #{number} #{user_at_host}")
-        end
+      if command.failure?
+        red("✘ #{number} #{user_at_host} (see #{@log_file} for details)")
+      else
+        green("✔ #{number} #{user_at_host}")
+      end
+    end
 
-      runtime = light_black(format("%5.3fs", command.runtime))
-
-      status + " " + runtime
+    def runtime(command)
+      light_black(format("%5.3fs", command.runtime))
     end
 
     def shell_string(command)
