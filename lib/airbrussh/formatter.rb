@@ -171,24 +171,21 @@ module Airbrussh
     end
 
     def current_task_status
-      task = self.class.current_rake_task.to_s
-      if @tasks[task]
+      if @tasks[current_rake_task]
         changed = false
       else
         changed = true
-        @tasks[task] = []
+        @tasks[current_rake_task] = []
       end
 
       OpenStruct.new(
-        :task => task,
-        :commands => @tasks[task],
+        :task => current_rake_task,
         :changed => changed
       )
     end
 
     def context_for_command(command)
-      status = current_task_status
-      task_commands = status.commands
+      task_commands = @tasks[current_rake_task]
 
       shell_string = command.to_s.sub(%r{^/usr/bin/env }, "")
 
@@ -206,6 +203,10 @@ module Airbrussh
         :number => number,
         :shell_string => shell_string
       )
+    end
+
+    def current_rake_task
+      self.class.current_rake_task.to_s
     end
 
     def format_command_completion_status(command, number)
