@@ -78,6 +78,21 @@ module Airbrussh
       end
     end
 
+    def log_command_start(command)
+      @log_file_formatter.log_command_start(command)
+      write_command(command)
+    end
+
+    def log_command_data(command, stream_type, line)
+      @log_file_formatter.log_command_data(command, stream_type, line)
+      write_command(command)
+    end
+
+    def log_command_exit(command)
+      @log_file_formatter.log_command_exit(command)
+      write_command(command)
+    end
+
     def write(obj)
       # SSHKit's :pretty formatter mutates the stdout and stderr data in the
       # command obj. So we need to dup it to ensure our copy is unscathed.

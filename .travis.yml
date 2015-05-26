@@ -5,8 +5,9 @@ rvm:
   - 2.1
   - 2.2
 env:
-  - sshkit="= 1.6.1"
-  - sshkit="= 1.7.1"
+  - sshkit="master"
   # This is the old master before https://github.com/capistrano/sshkit/pull/257 was merged
   - sshkit="ea211bcbbb71dab0152a18c2774922b7017e4edc"
+  - sshkit="= 1.7.1"
+  - sshkit="= 1.6.1"
 before_install: gem install bundler --conservative --version '~> 1.8'
