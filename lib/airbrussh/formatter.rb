@@ -134,9 +134,7 @@ module Airbrussh
 
       print_task_if_changed
 
-      task_commands = @tasks[current_rake_task]
-
-      shell_string = command.to_s.sub(%r{^/usr/bin/env }, "")
+      shell_string = shell_string(command)
 
       if task_commands.include?(shell_string)
         first_execution = false
@@ -145,29 +143,27 @@ module Airbrussh
         task_commands << shell_string
       end
 
-      number = format("%02d", task_commands.index(shell_string) + 1)
-
       if first_execution
-        print_line "      #{number} #{yellow(shell_string)}"
+        print_line "      #{command_number(command)} #{yellow(shell_string)}"
       end
 
-      write_command_output(command, number)
+      write_command_output(command)
 
       if command.finished?
-        status = format_command_completion_status(command, number)
+        status = format_command_completion_status(command)
         print_line "    #{status}"
       end
     end
 
     # Prints the data from the stdout and stderr streams of the given command,
     # but only if enabled (see Airbrussh::Configuration#command_output).
-    def write_command_output(command, number)
+    def write_command_output(command)
       # Use a bit of meta-programming here, since stderr and stdout logic
       # are identical except for different method names.
       %w(stderr stdout).each do |stream|
         next unless config.public_send("command_output_#{stream}?")
         CommandOutput.for(command).each_line(stream) do |line|
-          print_line "      #{number} #{line.chomp}"
+          print_line "      #{command_number(command)} #{line.chomp}"
         end
       end
     end
@@ -181,14 +177,19 @@ module Airbrussh
       end
     end
 
+    def task_commands
+      @tasks[current_rake_task]
+    end
+
     def current_rake_task
       self.class.current_rake_task.to_s
     end
 
-    def format_command_completion_status(command, number)
+    def format_command_completion_status(command)
       user = command.user { command.host.user }
       host = command.host.to_s
       user_at_host = [user, host].join("@")
+      number = command_number(command)
 
       status = \
         if command.failure?
@@ -200,6 +201,15 @@ module Airbrussh
       runtime = light_black(format("%5.3fs", command.runtime))
 
       status + " " + runtime
+    end
+
+    def shell_string(command)
+      command.to_s.sub(%r{^/usr/bin/env }, "")
+    end
+
+    def command_number(command)
+      task_index = task_commands.index(shell_string(command))
+      format("%02d", task_index + 1)
     end
 
     def clock
