@@ -164,24 +164,12 @@ module Airbrussh
     end
 
     def print_task_if_changed
-      status = current_task_status
-      return if !status.changed || status.task.empty?
-
-      print_line "#{clock} #{blue(status.task)}"
-    end
-
-    def current_task_status
-      if @tasks[current_rake_task]
-        changed = false
-      else
-        changed = true
+      if @tasks[current_rake_task].nil?
+        unless current_rake_task.empty?
+          print_line "#{clock} #{blue(current_rake_task)}"
+        end
         @tasks[current_rake_task] = []
       end
-
-      OpenStruct.new(
-        :task => current_rake_task,
-        :changed => changed
-      )
     end
 
     def context_for_command(command)
