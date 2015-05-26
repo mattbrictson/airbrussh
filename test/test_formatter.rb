@@ -104,7 +104,7 @@ class TestFormatter < Minitest::Test
 
     if sshkit_after?("1.6.1")
       expected_log_output << command_std_stream(:stderr, error_message)
-      expected_log_output << "\e[0m" unless sshkit_branch?("master")
+      expected_log_output << "\e[0m" unless old_sshkit_master?
     end
 
     assert_log_file_lines(*expected_log_output)
@@ -306,7 +306,7 @@ class TestFormatter < Minitest::Test
   def optional_color(text, color)
     # Note: SSHKit versions up to 1.7.1 added colors to the log file even though it did not have a tty.
     # Versions after this didn't, so we must match output both with, and without colors.
-    if sshkit_after?("1.7.1") || sshkit_branch?("master")
+    if sshkit_after?("1.7.1") || old_sshkit_master?
       text
     else
       "\\e\\[#{color}m#{text}\\e\\[0m"
@@ -315,6 +315,10 @@ class TestFormatter < Minitest::Test
 
   def sshkit_after?(version)
     Gem.loaded_specs["sshkit"].version > Gem::Version.new(version)
+  end
+
+  def old_sshkit_master?
+    sshkit_branch?("ea211bcbbb71dab0152a18c2774922b7017e4edc")
   end
 
   def sshkit_branch?(branch_name)
