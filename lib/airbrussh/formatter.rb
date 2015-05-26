@@ -135,15 +135,7 @@ module Airbrussh
       print_task_if_changed
 
       shell_string = shell_string(command)
-
-      if task_commands.include?(shell_string)
-        first_execution = false
-      else
-        first_execution = true
-        task_commands << shell_string
-      end
-
-      if first_execution
+      if first_execution?(shell_string)
         print_line "      #{command_number(command)} #{yellow(shell_string)}"
       end
 
@@ -153,6 +145,10 @@ module Airbrussh
         status = format_command_completion_status(command)
         print_line "    #{status}"
       end
+    end
+
+    def first_execution?(shell_string)
+      task_commands << shell_string unless task_commands.include?(shell_string)
     end
 
     # Prints the data from the stdout and stderr streams of the given command,
