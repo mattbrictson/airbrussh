@@ -134,12 +134,21 @@ module Airbrussh
 
       print_task_if_changed
 
-      ctx = context_for_command(command)
-      number = format("%02d", ctx.number)
+      task_commands = @tasks[current_rake_task]
 
-      if ctx.first_execution?
-        description = yellow(ctx.shell_string)
-        print_line "      #{number} #{description}"
+      shell_string = command.to_s.sub(%r{^/usr/bin/env }, "")
+
+      if task_commands.include?(shell_string)
+        first_execution = false
+      else
+        first_execution = true
+        task_commands << shell_string
+      end
+
+      number = format("%02d", task_commands.index(shell_string) + 1)
+
+      if first_execution
+        print_line "      #{number} #{yellow(shell_string)}"
       end
 
       write_command_output(command, number)
@@ -170,27 +179,6 @@ module Airbrussh
         end
         @tasks[current_rake_task] = []
       end
-    end
-
-    def context_for_command(command)
-      task_commands = @tasks[current_rake_task]
-
-      shell_string = command.to_s.sub(%r{^/usr/bin/env }, "")
-
-      if task_commands.include?(shell_string)
-        first_execution = false
-      else
-        first_execution = true
-        task_commands << shell_string
-      end
-
-      number = task_commands.index(shell_string) + 1
-
-      OpenStruct.new(
-        :first_execution? => first_execution,
-        :number => number,
-        :shell_string => shell_string
-      )
     end
 
     def current_rake_task
