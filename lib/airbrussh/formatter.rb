@@ -1,9 +1,12 @@
 # encoding: UTF-8
 require "airbrussh/command_output"
+require "airbrussh/command_with_data"
 require "airbrussh/console"
 require "colorize"
 require "ostruct"
 require "sshkit"
+
+# rubocop:disable Metrics/ClassLength
 
 module Airbrussh
   class Formatter < SSHKit::Formatter::Abstract
@@ -80,17 +83,19 @@ module Airbrussh
 
     def log_command_start(command)
       @log_file_formatter.log_command_start(command)
-      write_command(command)
+      write_command(CommandWithData.new(command))
     end
 
     def log_command_data(command, stream_type, line)
       @log_file_formatter.log_command_data(command, stream_type, line)
-      write_command(command)
+      command_with_data = Airbrussh::CommandWithData.new(command)
+      command_with_data.public_send("#{stream_type}=", line)
+      write_command(command_with_data)
     end
 
     def log_command_exit(command)
       @log_file_formatter.log_command_exit(command)
-      write_command(command)
+      write_command(CommandWithData.new(command))
     end
 
     def write(obj)
