@@ -1,9 +1,12 @@
 # encoding: UTF-8
 require "airbrussh/command_output"
+require "airbrussh/command_with_data"
 require "airbrussh/console"
 require "colorize"
 require "ostruct"
 require "sshkit"
+
+# rubocop:disable Metrics/ClassLength
 
 module Airbrussh
   class Formatter < SSHKit::Formatter::Abstract
@@ -78,14 +81,32 @@ module Airbrussh
       end
     end
 
+    def log_command_start(command)
+      @log_file_formatter.log_command_start(command)
+      disabling_log_file { write(Airbrussh::CommandWithData.new(command)) }
+    end
+
+    def log_command_data(command, stream_type, line)
+      @log_file_formatter.log_command_data(command, stream_type, line)
+
+      command_with_data = Airbrussh::CommandWithData.new(command)
+      command_with_data.public_send("#{stream_type}=", line)
+      disabling_log_file { write(command_with_data) }
+    end
+
+    def log_command_exit(command)
+      @log_file_formatter.log_command_exit(command)
+      disabling_log_file { write(Airbrussh::CommandWithData.new(command)) }
+    end
+
     def write(obj)
       # SSHKit's :pretty formatter mutates the stdout and stderr data in the
       # command obj. So we need to dup it to ensure our copy is unscathed.
       @log_file_formatter << obj.dup
 
       case obj
-      when SSHKit::Command    then write_command(obj)
       when SSHKit::LogMessage then write_log_message(obj)
+      else write_command(obj)
       end
     end
     alias_method :<<, :write
@@ -223,6 +244,14 @@ module Airbrussh
 
     def config
       Airbrussh.configuration
+    end
+
+    def disabling_log_file
+      orig_log_file_formatter = @log_file_formatter
+      @log_file_formatter = []
+      yield
+    ensure
+      @log_file_formatter = orig_log_file_formatter
     end
   end
 end
