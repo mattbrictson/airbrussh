@@ -16,7 +16,7 @@ For more details on how exactly Airbrussh changes Capistrano's output and the re
 
 **To use Airbrussh with Capistrano, you will need Capistrano 3.** Capistrano 2.x is not supported.
 
-Airbrussh has been tested with MRI 2.2, Capistrano 3.4.0, and SSHKit 1.7.1. Other recent version combinations will probably work; [open an issue on GitHub](https://github.com/mattbrictson/airbrussh/issues/new) if you run into trouble.
+Airbrussh has been tested with MRI 1.9+, Capistrano 3.4.0, and SSHKit 1.6.1+. Refer to the [Travis configuration](.travis.yml) for our latest test matrix. If you run into trouble using airbrussh in your environment, [open an issue on GitHub](https://github.com/mattbrictson/airbrussh/issues/new).
 
 Airbrussh's only dependency is SSHKit >= 1.6.1.
 
