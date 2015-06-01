@@ -131,18 +131,17 @@ module Airbrussh
 
     def write_command(command)
       return unless command.verbosity > SSHKit::Logger::DEBUG
+      write_command_start(command)
+      write_command_output(command)
+      write_command_exit(command) if command.finished?
+    end
 
+    def write_command_start(command)
       print_task_if_changed
 
       shell_string = shell_string(command)
       if first_execution?(shell_string)
         print_line "      #{command_number(command)} #{yellow(shell_string)}"
-      end
-
-      write_command_output(command)
-
-      if command.finished?
-        print_line "    #{format_exit_status(command)} #{runtime(command)}"
       end
     end
 
@@ -158,9 +157,13 @@ module Airbrussh
       %w(stderr stdout).each do |stream|
         next unless config.public_send("command_output_#{stream}?")
         CommandOutput.for(command).each_line(stream) do |line|
-          print_line "      #{command_number(command)} #{line.chomp}"
+          write_command_output_line(command, line)
         end
       end
+    end
+
+    def write_command_output_line(command, line)
+      print_line "      #{command_number(command)} #{line.chomp}"
     end
 
     def print_task_if_changed
@@ -178,6 +181,10 @@ module Airbrussh
 
     def current_rake_task
       self.class.current_rake_task.to_s
+    end
+
+    def write_command_exit(command)
+      print_line "    #{format_exit_status(command)} #{runtime(command)}"
     end
 
     def format_exit_status(command)
