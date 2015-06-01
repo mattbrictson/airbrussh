@@ -1,6 +1,5 @@
 # encoding: UTF-8
 require "airbrussh/command_output"
-require "airbrussh/command_with_data"
 require "airbrussh/console"
 require "colorize"
 require "ostruct"
