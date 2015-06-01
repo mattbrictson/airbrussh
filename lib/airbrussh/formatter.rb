@@ -124,19 +124,19 @@ module Airbrussh
     private
 
     def write_log_message(log_message)
-      return unless log_message.verbosity >= SSHKit::Logger::INFO
+      return if debug?(log_message)
       print_task_if_changed
       @console.print_line(light_black("      " + log_message.to_s))
     end
 
     def write_command(command)
-      return unless command.verbosity > SSHKit::Logger::DEBUG
       write_command_start(command)
       write_command_output(command)
       write_command_exit(command) if command.finished?
     end
 
     def write_command_start(command)
+      return if debug?(command)
       print_task_if_changed
 
       shell_string = shell_string(command)
@@ -155,14 +155,15 @@ module Airbrussh
       # Use a bit of meta-programming here, since stderr and stdout logic
       # are identical except for different method names.
       %w(stderr stdout).each do |stream|
-        next unless config.public_send("command_output_#{stream}?")
         CommandOutput.for(command).each_line(stream) do |line|
-          write_command_output_line(command, line)
+          write_command_output_line(command, stream, line)
         end
       end
     end
 
-    def write_command_output_line(command, line)
+    def write_command_output_line(command, stream, line)
+      hide_command_output = !config.public_send("command_output_#{stream}?")
+      return if hide_command_output || debug?(command)
       print_line "      #{command_number(command)} #{line.chomp}"
     end
 
@@ -184,6 +185,7 @@ module Airbrussh
     end
 
     def write_command_exit(command)
+      return if debug?(command)
       print_line "    #{format_exit_status(command)} #{runtime(command)}"
     end
 
@@ -227,6 +229,10 @@ module Airbrussh
       define_method(color) do |string|
         string.to_s.colorize(color.to_sym)
       end
+    end
+
+    def debug?(obj)
+      obj.verbosity <= SSHKit::Logger::DEBUG
     end
 
     def config
