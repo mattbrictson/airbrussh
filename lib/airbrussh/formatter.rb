@@ -83,19 +83,17 @@ module Airbrussh
 
     def log_command_start(command)
       @log_file_formatter.log_command_start(command)
-      write_command(CommandWithData.new(command))
+      write_command_start(command)
     end
 
     def log_command_data(command, stream_type, line)
       @log_file_formatter.log_command_data(command, stream_type, line)
-      command_with_data = Airbrussh::CommandWithData.new(command)
-      command_with_data.public_send("#{stream_type}=", line)
-      write_command(command_with_data)
+      write_command_output_line(command, stream_type, line)
     end
 
     def log_command_exit(command)
       @log_file_formatter.log_command_exit(command)
-      write_command(CommandWithData.new(command))
+      write_command_exit(command)
     end
 
     def write(obj)
@@ -104,8 +102,12 @@ module Airbrussh
       @log_file_formatter << obj.dup
 
       case obj
-      when SSHKit::Command    then write_command(obj)
-      when SSHKit::LogMessage then write_log_message(obj)
+      when SSHKit::Command
+        write_command_start(obj)
+        write_command_output(obj)
+        write_command_exit(obj) if obj.finished?
+      when SSHKit::LogMessage
+        write_log_message(obj)
       end
     end
     alias_method :<<, :write
@@ -127,12 +129,6 @@ module Airbrussh
       return if debug?(log_message)
       print_task_if_changed
       @console.print_line(light_black("      " + log_message.to_s))
-    end
-
-    def write_command(command)
-      write_command_start(command)
-      write_command_output(command)
-      write_command_exit(command) if command.finished?
     end
 
     def write_command_start(command)
