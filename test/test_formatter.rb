@@ -61,6 +61,19 @@ class TestFormatter < Minitest::Test
     )
   end
 
+  def test_formats_without_command_output
+    Airbrussh.configuration.command_output = false
+
+    on_local do
+      execute(:ls, "-l")
+    end
+
+    assert_output_lines(
+      "      01 ls -l\n",
+      /    ✔ 01 #{@user}@localhost 0.\d+s\n/
+    )
+  end
+
   def test_formats_failing_execute_with_color
     SSHKit.config.output_verbosity = Logger::DEBUG
     Airbrussh.configuration.color = true
@@ -201,7 +214,7 @@ class TestFormatter < Minitest::Test
     )
   end
 
-  def test_handles_commands
+  def test_log_message_levels
     SSHKit.config.output_verbosity = Logger::DEBUG
     on_local do
       %w(log fatal error warn info debug).each do |level|
