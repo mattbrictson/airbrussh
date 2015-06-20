@@ -28,4 +28,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest-reporters"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rubocop", ">= 0.31.0"
+
+  if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.1.0")
+    spec.add_development_dependency "chandler"
+  end
 end
