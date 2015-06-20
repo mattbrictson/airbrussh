@@ -163,10 +163,6 @@ Airbrussh is designed to work against multiple versions of SSHKit and Ruby. In o
 
 ## Contributing
 
-1. Fork it ( https://github.com/mattbrictson/airbrussh/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+Contributions are welcome! Read [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
 
 [capistrano-fiftyfive]: https://github.com/mattbrictson/capistrano-fiftyfive
