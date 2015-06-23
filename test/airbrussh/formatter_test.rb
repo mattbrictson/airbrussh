@@ -8,21 +8,21 @@ class Airbrussh::FormatterTest < Minitest::Test
     @output = StringIO.new
     @user = "test_user"
     @log_file = StringIO.new
-    Airbrussh.configuration.command_output = true
-    Airbrussh.configuration.log_file = @log_file
+    @config = Airbrussh::Configuration.new
+    @config.command_output = true
+    @config.log_file = @log_file
 
-    SSHKit.config.output = Airbrussh::Formatter.new(@output)
+    SSHKit.config.output = Airbrussh::Formatter.new(@output, @config)
   end
 
   def teardown
     Airbrussh::Formatter.current_rake_task = nil
-    Airbrussh.reset
     SSHKit.reset_configuration!
   end
 
   def test_formats_execute_with_color
     SSHKit.config.output_verbosity = Logger::DEBUG
-    Airbrussh.configuration.color = true
+    @config.color = true
 
     on_local do
       execute(:echo, "foo")
@@ -59,7 +59,7 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_without_command_output
-    Airbrussh.configuration.command_output = false
+    @config.command_output = false
 
     on_local do
       execute(:ls, "-l")
@@ -73,7 +73,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
   def test_formats_failing_execute_with_color
     SSHKit.config.output_verbosity = Logger::DEBUG
-    Airbrussh.configuration.color = true
+    @config.color = true
     error = nil
     on_local do
       begin
@@ -121,7 +121,7 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_capture_with_color
-    Airbrussh.configuration.color = true
+    @config.color = true
 
     on_local do
       capture(:ls, "-1", "airbrussh.gemspec", :verbosity => SSHKit::Logger::INFO)

@@ -9,8 +9,11 @@ module Airbrussh
   # an ANSI color-capable console. When a console is not present (e.g. when
   # running on a CI server) the output will gracefully degrade.
   class Console
-    def initialize(output)
+    attr_reader :output, :config
+
+    def initialize(output, config=Airbrussh.configuration)
       @output = output
+      @config = config
     end
 
     # Writes to the IO after first truncating the output to fit the console
@@ -24,13 +27,13 @@ module Airbrussh
       string = strip_ascii_color(string) unless color_enabled?
 
       write(string + "\n")
-      @output.flush
+      output.flush
     end
 
     # Writes directly through to the IO with no truncation or color logic.
     # No newline is added.
     def write(string)
-      @output.write(string || "")
+      output.write(string || "")
     end
     alias_method :<<, :write
 
@@ -51,7 +54,7 @@ module Airbrussh
     end
 
     def console_width
-      case (truncate = Airbrussh.configuration.truncate)
+      case (truncate = config.truncate)
       when :auto
         IO.console.winsize.last if @output.tty?
       when Fixnum
@@ -62,7 +65,7 @@ module Airbrussh
     private
 
     def color_enabled?
-      case Airbrussh.configuration.color
+      case config.color
       when true
         true
       when :auto

@@ -13,7 +13,6 @@ module Airbrussh
       attr_accessor :current_rake_task
 
       def monkey_patch_rake_task!
-        return unless Airbrussh.configuration.monkey_patch_rake
         return if @rake_patched
 
         ::Rake::Task.class_exec do
@@ -28,17 +27,20 @@ module Airbrussh
       end
     end
 
-    def initialize(io)
-      super
+    attr_reader :config
 
-      self.class.monkey_patch_rake_task!
+    def initialize(io, config=Airbrussh.configuration)
+      super(io)
 
+      self.class.monkey_patch_rake_task! if config.monkey_patch_rake
+
+      @config = config
       @tasks = {}
 
       @log_file = config.log_file
       @log_file_formatter = create_log_file_formatter
 
-      @console = Airbrussh::Console.new(original_output)
+      @console = Airbrussh::Console.new(original_output, config)
       write_log_file_delimiter
       write_banner
     end
@@ -226,10 +228,6 @@ module Airbrussh
 
     def debug?(obj)
       obj.verbosity <= SSHKit::Logger::DEBUG
-    end
-
-    def config
-      Airbrussh.configuration
     end
   end
 end
