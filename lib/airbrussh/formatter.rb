@@ -16,15 +16,13 @@ module Airbrussh
         return unless Airbrussh.configuration.monkey_patch_rake
         return if @rake_patched
 
-        eval(<<-EVAL)
-          class ::Rake::Task
-            alias_method :_original_execute_airbrussh, :execute
-            def execute(args=nil)
-              #{name}.current_rake_task = name
-              _original_execute_airbrussh(args)
-            end
+        ::Rake::Task.class_exec do
+          alias_method :_original_execute_airbrussh, :execute
+          def execute(args=nil) # rubocop:disable Lint/NestedMethodDefinition
+            Airbrussh::Formatter.current_rake_task = name
+            _original_execute_airbrussh(args)
           end
-        EVAL
+        end
 
         @rake_patched = true
       end
@@ -176,7 +174,7 @@ module Airbrussh
     end
 
     def current_rake_task
-      self.class.current_rake_task.to_s
+      Airbrussh::Formatter.current_rake_task.to_s
     end
 
     def write_command_exit(command)

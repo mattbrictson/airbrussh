@@ -6,10 +6,6 @@
 # versions of RuboCop, may require this file to be generated again.
 
 # Offense count: 1
-Lint/Eval:
-  Enabled: false
-
-# Offense count: 1
 # Configuration parameters: CountComments.
 Metrics/ClassLength:
   Max: 168
