@@ -1,4 +1,5 @@
 require "minitest_helper"
+require "airbrussh/configuration"
 
 class TestConfiguration < Minitest::Test
   def setup

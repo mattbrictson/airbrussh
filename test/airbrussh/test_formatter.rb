@@ -1,5 +1,6 @@
 # encoding: utf-8
 require "minitest_helper"
+require "airbrussh/formatter"
 
 # rubocop:disable Metrics/LineLength
 # rubocop:disable Metrics/ClassLength
