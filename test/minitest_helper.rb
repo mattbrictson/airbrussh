@@ -1,11 +1,10 @@
-$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+$LOAD_PATH.unshift(File.expand_path("../../lib", __FILE__))
+
+# Coveralls has to be loaded first
+require_relative("./support/coveralls")
+
+# Load everything else from test/support
+Dir[File.expand_path("../support/**/*.rb", __FILE__)].each { |rb| require(rb) }
+
 require "airbrussh"
-
 require "minitest/autorun"
-require "minitest/reporters"
-
-Minitest::Reporters.use!(
-  Minitest::Reporters::ProgressReporter.new,
-  ENV,
-  Minitest.backtrace_filter
-)

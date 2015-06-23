@@ -20,6 +20,7 @@ After checking out the repo, run `bin/setup` to install dependencies.
 
 * `rake` executes airbrussh's tests and RuboCop checks
 * `bin/test_all.rb` executes the tests against all versions of SSHKit that airbrussh supports
+* `guard` monitors the filesystem and automatically runs tests as you work
 
 [Issues]: https://github.com/mattbrictson/airbrussh/issues
 [RuboCop]: https://github.com/bbatsov/rubocop

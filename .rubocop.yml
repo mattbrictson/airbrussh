@@ -4,6 +4,18 @@ AllCops:
   Exclude:
     - "*.gemspec"
 
+Metrics/AbcSize:
+  Exclude:
+    - "test/**/*"
+
+Metrics/MethodLength:
+  Exclude:
+    - "test/**/*"
+
+Metrics/ClassLength:
+  Exclude:
+    - "test/**/*"
+
 Style/ClassAndModuleChildren:
   Enabled: false
 

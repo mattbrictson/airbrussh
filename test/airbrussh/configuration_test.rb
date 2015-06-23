@@ -1,6 +1,6 @@
 require "minitest_helper"
 
-class TestConfiguration < Minitest::Test
+class Airbrussh::ConfigurationTest < Minitest::Test
   def setup
     # Reset any configuration changes done by the tests
     Airbrussh.reset
