@@ -1,10 +1,9 @@
 # encoding: utf-8
 require "minitest_helper"
-require "airbrussh/formatter"
 
 # rubocop:disable Metrics/LineLength
 
-class TestFormatter < Minitest::Test
+class Airbrussh::FormatterTest < Minitest::Test
   def setup
     @output = StringIO.new
     @user = "test_user"
