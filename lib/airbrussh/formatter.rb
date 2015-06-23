@@ -1,6 +1,5 @@
 # encoding: UTF-8
 require "airbrussh/command_output"
-require "airbrussh/command_with_data"
 require "airbrussh/console"
 require "colorize"
 require "ostruct"
@@ -83,19 +82,17 @@ module Airbrussh
 
     def log_command_start(command)
       @log_file_formatter.log_command_start(command)
-      write_command(CommandWithData.new(command))
+      write_command_start(command)
     end
 
     def log_command_data(command, stream_type, line)
       @log_file_formatter.log_command_data(command, stream_type, line)
-      command_with_data = Airbrussh::CommandWithData.new(command)
-      command_with_data.public_send("#{stream_type}=", line)
-      write_command(command_with_data)
+      write_command_output_line(command, stream_type, line)
     end
 
     def log_command_exit(command)
       @log_file_formatter.log_command_exit(command)
-      write_command(CommandWithData.new(command))
+      write_command_exit(command)
     end
 
     def write(obj)
@@ -104,8 +101,12 @@ module Airbrussh
       @log_file_formatter << obj.dup
 
       case obj
-      when SSHKit::Command    then write_command(obj)
-      when SSHKit::LogMessage then write_log_message(obj)
+      when SSHKit::Command
+        write_command_start(obj)
+        write_command_output(obj)
+        write_command_exit(obj) if obj.finished?
+      when SSHKit::LogMessage
+        write_log_message(obj)
       end
     end
     alias_method :<<, :write
@@ -124,105 +125,89 @@ module Airbrussh
     private
 
     def write_log_message(log_message)
-      return unless log_message.verbosity >= SSHKit::Logger::INFO
+      return if debug?(log_message)
       print_task_if_changed
       @console.print_line(light_black("      " + log_message.to_s))
     end
 
-    def write_command(command)
-      return unless command.verbosity > SSHKit::Logger::DEBUG
-
+    def write_command_start(command)
+      return if debug?(command)
       print_task_if_changed
 
-      ctx = context_for_command(command)
-      number = format("%02d", ctx.number)
-
-      if ctx.first_execution?
-        description = yellow(ctx.shell_string)
-        print_line "      #{number} #{description}"
+      shell_string = shell_string(command)
+      if first_execution?(shell_string)
+        print_line "      #{command_number(command)} #{yellow(shell_string)}"
       end
+    end
 
-      write_command_output(command, number)
-
-      if command.finished?
-        status = format_command_completion_status(command, number)
-        print_line "    #{status}"
-      end
+    def first_execution?(shell_string)
+      task_commands << shell_string unless task_commands.include?(shell_string)
     end
 
     # Prints the data from the stdout and stderr streams of the given command,
     # but only if enabled (see Airbrussh::Configuration#command_output).
-    def write_command_output(command, number)
+    def write_command_output(command)
       # Use a bit of meta-programming here, since stderr and stdout logic
       # are identical except for different method names.
       %w(stderr stdout).each do |stream|
-        next unless config.public_send("command_output_#{stream}?")
         CommandOutput.for(command).each_line(stream) do |line|
-          print_line "      #{number} #{line.chomp}"
+          write_command_output_line(command, stream, line)
         end
       end
+    end
+
+    def write_command_output_line(command, stream, line)
+      hide_command_output = !config.public_send("command_output_#{stream}?")
+      return if hide_command_output || debug?(command)
+      print_line "      #{command_number(command)} #{line.chomp}"
     end
 
     def print_task_if_changed
-      status = current_task_status
-      return if !status.changed || status.task.empty?
-
-      print_line "#{clock} #{blue(status.task)}"
-    end
-
-    def current_task_status
-      task = self.class.current_rake_task.to_s
-      if @tasks[task]
-        changed = false
-      else
-        changed = true
-        @tasks[task] = []
+      if @tasks[current_rake_task].nil?
+        unless current_rake_task.empty?
+          print_line "#{clock} #{blue(current_rake_task)}"
+        end
+        @tasks[current_rake_task] = []
       end
-
-      OpenStruct.new(
-        :task => task,
-        :commands => @tasks[task],
-        :changed => changed
-      )
     end
 
-    def context_for_command(command)
-      status = current_task_status
-      task_commands = status.commands
-
-      shell_string = command.to_s.sub(%r{^/usr/bin/env }, "")
-
-      if task_commands.include?(shell_string)
-        first_execution = false
-      else
-        first_execution = true
-        task_commands << shell_string
-      end
-
-      number = task_commands.index(shell_string) + 1
-
-      OpenStruct.new(
-        :first_execution? => first_execution,
-        :number => number,
-        :shell_string => shell_string
-      )
+    def task_commands
+      @tasks[current_rake_task]
     end
 
-    def format_command_completion_status(command, number)
+    def current_rake_task
+      self.class.current_rake_task.to_s
+    end
+
+    def write_command_exit(command)
+      return if debug?(command)
+      print_line "    #{format_exit_status(command)} #{runtime(command)}"
+    end
+
+    def format_exit_status(command)
       user = command.user { command.host.user }
       host = command.host.to_s
       user_at_host = [user, host].join("@")
+      number = command_number(command)
 
-      status = \
-        if command.failure?
-          red("✘ #{number} #{user_at_host} (see #{@log_file} for details)")
-        else
-          green("✔ #{number} #{user_at_host}")
-        end
+      if command.failure?
+        red("✘ #{number} #{user_at_host} (see #{@log_file} for details)")
+      else
+        green("✔ #{number} #{user_at_host}")
+      end
+    end
 
-      runtime = light_black(format("%5.3fs", command.runtime))
+    def runtime(command)
+      light_black(format("%5.3fs", command.runtime))
+    end
 
-      status + " " + runtime
+    def shell_string(command)
+      command.to_s.sub(%r{^/usr/bin/env }, "")
+    end
+
+    def command_number(command)
+      task_index = task_commands.index(shell_string(command))
+      format("%02d", task_index + 1)
     end
 
     def clock
@@ -239,6 +224,10 @@ module Airbrussh
       define_method(color) do |string|
         string.to_s.colorize(color.to_sym)
       end
+    end
+
+    def debug?(obj)
+      obj.verbosity <= SSHKit::Logger::DEBUG
     end
 
     def config
