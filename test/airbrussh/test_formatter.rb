@@ -3,9 +3,6 @@ require "minitest_helper"
 require "airbrussh/formatter"
 
 # rubocop:disable Metrics/LineLength
-# rubocop:disable Metrics/ClassLength
-# rubocop:disable Metrics/MethodLength
-# rubocop:disable Metrics/AbcSize
 
 class TestFormatter < Minitest::Test
   def setup
