@@ -7,6 +7,13 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 ## [Unreleased]
 
 * Your contribution here!
+
+## [0.5.0][] (2015-06-24)
+
+There are no changes to the actual behavior and feature set of Airbrussh in this release.
+
+There are, however, many behind-the-scenes changes and improvements to overall code quality. This release also adds support for upcoming versions of SSHKit.
+
 * Added Rubocop enforcement to Travis
 * Added Code Climate and Coveralls checks (see badges in the README)
 * Airbrussh now has good test coverage, and is tested by Travis against a matrix of Ruby and SSHKit versions ([@robd](https://github.com/robd))
@@ -41,7 +48,8 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/mattbrictson/airbrussh/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/mattbrictson/airbrussh/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/mattbrictson/airbrussh/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mattbrictson/airbrussh/compare/v0.2.1...v0.3.0
