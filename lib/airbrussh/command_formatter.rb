@@ -1,5 +1,6 @@
 # encoding: UTF-8
 require "airbrussh/colors"
+require "delegate"
 # rubocop:disable Style/AsciiComments
 
 module Airbrussh

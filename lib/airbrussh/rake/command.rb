@@ -1,3 +1,5 @@
+require "delegate"
+
 module Airbrussh
   module Rake
     # Decorates an SSHKit Command to add Rake-specific contextual information:

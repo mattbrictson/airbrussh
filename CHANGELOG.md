@@ -7,6 +7,7 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 ## [Unreleased]
 
 * Your contribution here!
+* Fix `NameError: uninitialized constant Airbrussh::SimpleDelegator`
 
 ## [0.5.0][] (2015-06-24)
 
