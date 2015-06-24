@@ -1,15 +1,17 @@
 # encoding: UTF-8
+require "airbrussh/colors"
+require "airbrussh/command_formatter"
 require "airbrussh/command_output"
 require "airbrussh/console"
 require "airbrussh/rake/command"
 require "airbrussh/rake/context"
-require "colorize"
-require "ostruct"
 require "sshkit"
 
 module Airbrussh
   class Formatter < SSHKit::Formatter::Abstract
+    include Airbrussh::Colors
     extend Forwardable
+
     attr_reader :config, :context
     def_delegator :context, :current_task_name
 
@@ -32,10 +34,6 @@ module Airbrussh
       SSHKit::Formatter::Pretty.new(
         ::Logger.new(@log_file, 1, 20_971_520)
       )
-    end
-
-    def print_line(string)
-      @console.print_line(string)
     end
 
     def write_banner
@@ -115,17 +113,13 @@ module Airbrussh
     def write_log_message(log_message)
       return if debug?(log_message)
       print_task_if_changed
-      @console.print_line(light_black("      " + log_message.to_s))
+      print_indented_line(gray(log_message.to_s))
     end
 
     def write_command_start(command)
       return if debug?(command)
       print_task_if_changed
-
-      if command.first_execution?
-        shell_string = shell_string(command)
-        print_line "      #{command_number(command)} #{yellow(shell_string)}"
-      end
+      print_indented_line(command.start_message) if command.first_execution?
     end
 
     # Prints the data from the stdout and stderr streams of the given command,
@@ -143,7 +137,7 @@ module Airbrussh
     def write_command_output_line(command, stream, line)
       hide_command_output = !config.public_send("command_output_#{stream}?")
       return if hide_command_output || debug?(command)
-      print_line "      #{command_number(command)} #{line.chomp}"
+      print_indented_line(command.format_output(line))
     end
 
     def print_task_if_changed
@@ -156,32 +150,7 @@ module Airbrussh
 
     def write_command_exit(command)
       return if debug?(command)
-      print_line "    #{format_exit_status(command)} #{runtime(command)}"
-    end
-
-    def format_exit_status(command)
-      user = command.user { command.host.user }
-      host = command.host.to_s
-      user_at_host = [user, host].join("@")
-      number = command_number(command)
-
-      if command.failure?
-        red("✘ #{number} #{user_at_host} (see #{@log_file} for details)")
-      else
-        green("✔ #{number} #{user_at_host}")
-      end
-    end
-
-    def runtime(command)
-      light_black(format("%5.3fs", command.runtime))
-    end
-
-    def shell_string(command)
-      command.to_s.sub(%r{^/usr/bin/env }, "")
-    end
-
-    def command_number(command)
-      format("%02d", command.position + 1)
+      print_indented_line(command.exit_message(@log_file), -2)
     end
 
     def clock
@@ -194,18 +163,21 @@ module Airbrussh
       format("%02d:%02d", minutes, seconds)
     end
 
-    %w(light_black red blue green yellow).each do |color|
-      define_method(color) do |string|
-        string.to_s.colorize(color.to_sym)
-      end
-    end
-
     def debug?(obj)
       obj.verbosity <= SSHKit::Logger::DEBUG
     end
 
     def decorate(command)
-      @context.decorate_command(command)
+      Airbrussh::CommandFormatter.new(@context.decorate_command(command))
+    end
+
+    def print_line(string)
+      @console.print_line(string)
+    end
+
+    def print_indented_line(string, offset=0)
+      indent = " " * (6 + offset)
+      print_line([indent, string].join)
     end
   end
 end
