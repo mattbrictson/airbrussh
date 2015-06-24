@@ -122,14 +122,10 @@ module Airbrussh
       return if debug?(command)
       print_task_if_changed
 
-      if first_execution?(command)
+      if command.first_execution?
         shell_string = shell_string(command)
         print_line "      #{command_number(command)} #{yellow(shell_string)}"
       end
-    end
-
-    def first_execution?(command)
-      command.first_execution?
     end
 
     # Prints the data from the stdout and stderr streams of the given command,
