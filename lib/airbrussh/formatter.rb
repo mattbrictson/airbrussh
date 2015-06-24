@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require "airbrussh/colors"
 require "airbrussh/command_formatter"
 require "airbrussh/command_output"

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require "minitest_helper"
 require "ostruct"
 require "airbrussh/command_formatter"
