@@ -8,9 +8,11 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 
 * Your contribution here!
 * Added Rubocop enforcement to Travis
-* Airbrussh now has decent test coverage, and is tested by Travis against a matrix of Ruby and SSHKit versions ([@robd](https://github.com/robd))
+* Added Code Climate and Coveralls checks (see badges in the README)
+* Airbrussh now has good test coverage, and is tested by Travis against a matrix of Ruby and SSHKit versions ([@robd](https://github.com/robd))
 * Changes to support the new SSHKit formatter API, as introduced in [SSHKit #257](https://github.com/capistrano/sshkit/pull/257) ([@robd](https://github.com/robd))
 * `Airbrussh.reset` has been removed
+* Airbrussh now has its own ANSI color code; it no longer relies on a third-party gem (i.e. `colorize`)
 
 ## [0.4.1][] (2015-05-06)
 

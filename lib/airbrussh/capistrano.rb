@@ -1,5 +1,5 @@
 require "airbrussh"
-require "colorize"
+require "airbrussh/colors"
 require "sshkit/formatter/airbrussh"
 
 # airbrush/capistrano uses a different default configuration
@@ -10,12 +10,12 @@ end
 
 # Sanity check!
 unless defined?(Capistrano) && defined?(:namespace)
-  $stderr.puts\
-    "WARNING: airbrussh/capistrano must be loaded by Capistrano in order "\
-    "to work.\n"\
-    "Require this gem within your application's Capfile, as described here:\n"\
-    "https://github.com/mattbrictson/airbrussh#installation"\
-    .colorize(:red)
+  $stderr.puts(
+    Airbrussh::Colors.red(
+      "WARNING: airbrussh/capistrano must be loaded by Capistrano in order "\
+      "to work.\nRequire this gem within your application's Capfile, as "\
+      "described here:\nhttps://github.com/mattbrictson/airbrussh#installation"
+    ))
 end
 
 # Hook into Capistrano's init process to set the formatter
