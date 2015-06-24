@@ -9,6 +9,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     @user = "test_user"
     @log_file = StringIO.new
     @config = Airbrussh::Configuration.new
+    @config.monkey_patch_rake = true
     @config.command_output = true
     @config.log_file = @log_file
 
@@ -16,7 +17,7 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def teardown
-    Airbrussh::Formatter.current_rake_task = nil
+    Airbrussh::Rake::Context.current_task_name = nil
     SSHKit.reset_configuration!
   end
 
@@ -171,12 +172,12 @@ class Airbrussh::FormatterTest < Minitest::Test
 
   def test_handles_rake_tasks
     on_local do
-      Airbrussh::Formatter.current_rake_task = "deploy"
-      Airbrussh::Formatter.current_rake_task = "deploy_dep1"
+      Airbrussh::Rake::Context.current_task_name = "deploy"
+      Airbrussh::Rake::Context.current_task_name = "deploy_dep1"
       execute(:echo, "command 1")
       info("Starting command 2")
       execute(:echo, "command 2")
-      Airbrussh::Formatter.current_rake_task = "deploy_dep2"
+      Airbrussh::Rake::Context.current_task_name = "deploy_dep2"
       execute(:echo, "command 3")
       execute(:echo, "command 4")
       warn("All done")
