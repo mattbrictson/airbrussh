@@ -7,6 +7,9 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 ## [Unreleased]
 
 * Your contribution here!
+
+## [0.5.1][] (2015-06-24)
+
 * Fix `NameError: uninitialized constant Airbrussh::SimpleDelegator`
 
 ## [0.5.0][] (2015-06-24)
@@ -49,7 +52,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/mattbrictson/airbrussh/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/mattbrictson/airbrussh/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/mattbrictson/airbrussh/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/mattbrictson/airbrussh/compare/v0.3.0...v0.4.0
