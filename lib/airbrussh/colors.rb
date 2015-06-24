@@ -10,7 +10,7 @@ module Airbrussh
       :gray   => 90
     }.freeze
 
-    private
+    module_function
 
     # Define red, green, blue, etc. methods that return a copy of the
     # String that is wrapped in the corresponding ANSI color escape
