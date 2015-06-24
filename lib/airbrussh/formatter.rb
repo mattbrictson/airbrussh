@@ -1,41 +1,23 @@
 # encoding: UTF-8
 require "airbrussh/command_output"
 require "airbrussh/console"
+require "airbrussh/rake/command"
+require "airbrussh/rake/context"
 require "colorize"
 require "ostruct"
 require "sshkit"
 
-# rubocop:disable Metrics/ClassLength
-
 module Airbrussh
   class Formatter < SSHKit::Formatter::Abstract
-    class << self
-      attr_accessor :current_rake_task
-
-      def monkey_patch_rake_task!
-        return if @rake_patched
-
-        ::Rake::Task.class_exec do
-          alias_method :_original_execute_airbrussh, :execute
-          def execute(args=nil) # rubocop:disable Lint/NestedMethodDefinition
-            Airbrussh::Formatter.current_rake_task = name
-            _original_execute_airbrussh(args)
-          end
-        end
-
-        @rake_patched = true
-      end
-    end
-
-    attr_reader :config
+    extend Forwardable
+    attr_reader :config, :context
+    def_delegator :context, :current_task_name
 
     def initialize(io, config=Airbrussh.configuration)
       super(io)
 
-      self.class.monkey_patch_rake_task! if config.monkey_patch_rake
-
       @config = config
-      @tasks = {}
+      @context = Airbrussh::Rake::Context.new(config)
 
       @log_file = config.log_file
       @log_file_formatter = create_log_file_formatter
@@ -81,16 +63,19 @@ module Airbrussh
     end
 
     def log_command_start(command)
+      command = decorate(command)
       @log_file_formatter.log_command_start(command)
       write_command_start(command)
     end
 
     def log_command_data(command, stream_type, line)
+      command = decorate(command)
       @log_file_formatter.log_command_data(command, stream_type, line)
       write_command_output_line(command, stream_type, line)
     end
 
     def log_command_exit(command)
+      command = decorate(command)
       @log_file_formatter.log_command_exit(command)
       write_command_exit(command)
     end
@@ -102,9 +87,10 @@ module Airbrussh
 
       case obj
       when SSHKit::Command
-        write_command_start(obj)
-        write_command_output(obj)
-        write_command_exit(obj) if obj.finished?
+        command = decorate(obj)
+        write_command_start(command)
+        write_command_output(command)
+        write_command_exit(command) if command.finished?
       when SSHKit::LogMessage
         write_log_message(obj)
       end
@@ -124,6 +110,8 @@ module Airbrussh
 
     private
 
+    attr_accessor :last_printed_task
+
     def write_log_message(log_message)
       return if debug?(log_message)
       print_task_if_changed
@@ -134,14 +122,14 @@ module Airbrussh
       return if debug?(command)
       print_task_if_changed
 
-      shell_string = shell_string(command)
-      if first_execution?(shell_string)
+      if first_execution?(command)
+        shell_string = shell_string(command)
         print_line "      #{command_number(command)} #{yellow(shell_string)}"
       end
     end
 
-    def first_execution?(shell_string)
-      task_commands << shell_string unless task_commands.include?(shell_string)
+    def first_execution?(command)
+      command.first_execution?
     end
 
     # Prints the data from the stdout and stderr streams of the given command,
@@ -163,20 +151,11 @@ module Airbrussh
     end
 
     def print_task_if_changed
-      if @tasks[current_rake_task].nil?
-        unless current_rake_task.empty?
-          print_line "#{clock} #{blue(current_rake_task)}"
-        end
-        @tasks[current_rake_task] = []
-      end
-    end
+      return if current_task_name.nil?
+      return if current_task_name == last_printed_task
 
-    def task_commands
-      @tasks[current_rake_task]
-    end
-
-    def current_rake_task
-      Airbrussh::Formatter.current_rake_task.to_s
+      self.last_printed_task = current_task_name
+      print_line("#{clock} #{blue(current_task_name)}")
     end
 
     def write_command_exit(command)
@@ -206,8 +185,7 @@ module Airbrussh
     end
 
     def command_number(command)
-      task_index = task_commands.index(shell_string(command))
-      format("%02d", task_index + 1)
+      format("%02d", command.position + 1)
     end
 
     def clock
@@ -228,6 +206,10 @@ module Airbrussh
 
     def debug?(obj)
       obj.verbosity <= SSHKit::Logger::DEBUG
+    end
+
+    def decorate(command)
+      @context.decorate_command(command)
     end
   end
 end
