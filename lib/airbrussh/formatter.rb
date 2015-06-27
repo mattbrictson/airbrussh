@@ -135,7 +135,7 @@ module Airbrussh
     end
 
     def write_command_output_line(command, stream, line)
-      hide_command_output = !config.public_send("command_output_#{stream}?")
+      hide_command_output = !config.show_command_output?(stream)
       return if hide_command_output || debug?(command)
       print_indented_line(command.format_output(line))
     end
