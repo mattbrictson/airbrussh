@@ -201,20 +201,22 @@ class Airbrussh::FormatterTest < Minitest::Test
       airbrussh_config.command_output = true
     end
 
-    on_local do
-      Airbrussh::Rake::Context.current_task_name = "deploy"
-      Airbrussh::Rake::Context.current_task_name = "deploy_dep1"
+    on_local("special_rake_task") do
       execute(:echo, "command 1")
       info("Starting command 2")
       execute(:echo, "command 2")
-      Airbrussh::Rake::Context.current_task_name = "deploy_dep2"
+    end
+    on_local("special_rake_task_2") do
+      error("New task starting")
+    end
+    on_local("special_rake_task_3") do
       execute(:echo, "command 3")
       execute(:echo, "command 4")
       warn("All done")
     end
 
     assert_output_lines(
-      "00:00 deploy_dep1\n",
+      "00:00 special_rake_task\n",
       "      01 echo command 1\n",
       "      01 command 1\n",
       /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
@@ -222,7 +224,9 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      02 echo command 2\n",
       "      02 command 2\n",
       /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
-      "00:00 deploy_dep2\n",
+      "00:00 special_rake_task_2\n",
+      "      New task starting\n",
+      "00:00 special_rake_task_3\n",
       "      01 echo command 3\n",
       "      01 command 3\n",
       /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
@@ -236,6 +240,7 @@ class Airbrussh::FormatterTest < Minitest::Test
       command_running("echo command 1"), command_success,
       /#{blue('INFO')} Starting command 2\n/,
       command_running("echo command 2"), command_success,
+      /#{red('ERROR')} New task starting\n/,
       command_running("echo command 3"), command_success,
       command_running("echo command 4"), command_success,
       /#{yellow('WARN')} All done\n/
@@ -273,12 +278,19 @@ class Airbrussh::FormatterTest < Minitest::Test
 
   private
 
-  def on_local(&block)
-    local_backend = SSHKit::Backend::Local.new(&block)
-    # Note: The Local backend default log changed to include the user name around version 1.7.1
-    # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
-    local_backend.instance_variable_get(:@host).user = @user
-    local_backend.run
+  def on_local(task_name=nil, &block)
+    Rake::Task.define_task(task_name || self.class.unique_task_name) do
+      local_backend = SSHKit::Backend::Local.new(&block)
+      # Note: The Local backend default log changed to include the user name around version 1.7.1
+      # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
+      local_backend.instance_variable_get(:@host).user = @user
+      local_backend.run
+    end.execute
+  end
+
+  def self.unique_task_name
+    @task_index ||= 0
+    "#{name}_#{@task_index += 1}"
   end
 
   def assert_output_lines(*expected_output)
