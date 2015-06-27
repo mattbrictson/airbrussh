@@ -2,8 +2,9 @@ require "minitest_helper"
 require "airbrussh/rake/context"
 
 class Airbrussh::Rake::ContextTest < Minitest::Test
+  include RakeTaskDefinition
+
   def setup
-    @app = Rake::Application.new
     @config = Airbrussh::Configuration.new
   end
 
@@ -14,7 +15,7 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
   def test_current_task_name_is_nil_when_disabled
     @config.monkey_patch_rake = false
     context = Airbrussh::Rake::Context.new(@config)
-    define_and_invoke_rake_task("one") do
+    define_and_execute_rake_task("one") do
       assert_nil(context.current_task_name)
     end
   end
@@ -25,11 +26,11 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
 
     assert_nil(context.current_task_name)
 
-    define_and_invoke_rake_task("one") do
+    define_and_execute_rake_task("one") do
       assert_equal("one", context.current_task_name)
     end
 
-    define_and_invoke_rake_task("two") do
+    define_and_execute_rake_task("two") do
       assert_equal("two", context.current_task_name)
     end
   end
@@ -38,7 +39,7 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
     @config.monkey_patch_rake = true
     context = Airbrussh::Rake::Context.new(@config)
 
-    define_and_invoke_rake_task("one") do
+    define_and_execute_rake_task("one") do
       context.decorate_command(:command_one)
       command_one = context.decorate_command(:command_one)
       context.decorate_command(:command_two)
@@ -50,7 +51,7 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
       refute(command_two.first_execution?)
     end
 
-    define_and_invoke_rake_task("two") do
+    define_and_execute_rake_task("two") do
       command_three = context.decorate_command(:command_three)
       command_four = context.decorate_command(:command_four)
 
@@ -59,13 +60,5 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
       assert(command_three.first_execution?)
       assert(command_four.first_execution?)
     end
-  end
-
-  private
-
-  def define_and_invoke_rake_task(name, &block)
-    task = Rake::Task.new(name, @app)
-    task.enhance(&block)
-    task.invoke
   end
 end

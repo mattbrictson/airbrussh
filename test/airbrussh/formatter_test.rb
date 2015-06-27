@@ -4,6 +4,8 @@ require "minitest_helper"
 # rubocop:disable Metrics/LineLength
 
 class Airbrussh::FormatterTest < Minitest::Test
+  include RakeTaskDefinition
+
   def setup
     @output = StringIO.new
     @log_file = StringIO.new
@@ -279,18 +281,13 @@ class Airbrussh::FormatterTest < Minitest::Test
   private
 
   def on_local(task_name=nil, &block)
-    Rake::Task.define_task(task_name || self.class.unique_task_name) do
+    define_and_execute_rake_task(task_name) do
       local_backend = SSHKit::Backend::Local.new(&block)
       # Note: The Local backend default log changed to include the user name around version 1.7.1
       # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
       local_backend.instance_variable_get(:@host).user = @user
       local_backend.run
-    end.execute
-  end
-
-  def self.unique_task_name
-    @task_index ||= 0
-    "#{name}_#{@task_index += 1}"
+    end
   end
 
   def assert_output_lines(*expected_output)
