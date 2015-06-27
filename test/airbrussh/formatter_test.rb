@@ -6,14 +6,8 @@ require "minitest_helper"
 class Airbrussh::FormatterTest < Minitest::Test
   def setup
     @output = StringIO.new
-    @user = "test_user"
     @log_file = StringIO.new
-    @config = Airbrussh::Configuration.new
-    @config.monkey_patch_rake = true
-    @config.command_output = true
-    @config.log_file = @log_file
-
-    SSHKit.config.output = Airbrussh::Formatter.new(@output, @config)
+    @user = "test_user"
   end
 
   def teardown
@@ -21,9 +15,19 @@ class Airbrussh::FormatterTest < Minitest::Test
     SSHKit.reset_configuration!
   end
 
+  def configure
+    config = Airbrussh::Configuration.new
+    config.log_file = @log_file
+    yield(config, SSHKit.config)
+    SSHKit.config.output = Airbrussh::Formatter.new(@output, config)
+  end
+
   def test_formats_execute_with_color
-    SSHKit.config.output_verbosity = Logger::DEBUG
-    @config.color = true
+    configure do |airbrussh_config, sshkit_config|
+      sshkit_config.output_verbosity = ::Logger::DEBUG
+      airbrussh_config.command_output = true
+      airbrussh_config.color = true
+    end
 
     on_local do
       execute(:echo, "foo")
@@ -44,6 +48,10 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_execute_without_color
+    configure do |airbrussh_config|
+      airbrussh_config.command_output = true
+    end
+
     on_local do
       execute(:echo, "foo")
     end
@@ -60,7 +68,9 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_without_command_output
-    @config.command_output = false
+    configure do |airbrussh_config|
+      airbrussh_config.command_output = false
+    end
 
     on_local do
       execute(:ls, "-l")
@@ -73,8 +83,12 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_failing_execute_with_color
-    SSHKit.config.output_verbosity = Logger::DEBUG
-    @config.color = true
+    configure do |airbrussh_config, sshkit_config|
+      sshkit_config.output_verbosity = ::Logger::DEBUG
+      airbrussh_config.command_output = true
+      airbrussh_config.color = true
+    end
+
     error = nil
     on_local do
       begin
@@ -122,7 +136,10 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_capture_with_color
-    @config.color = true
+    configure do |airbrussh_config|
+      airbrussh_config.command_output = true
+      airbrussh_config.color = true
+    end
 
     on_local do
       capture(:ls, "-1", "airbrussh.gemspec", :verbosity => SSHKit::Logger::INFO)
@@ -140,6 +157,10 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_capture_without_color
+    configure do |airbrussh_config|
+      airbrussh_config.command_output = true
+    end
+
     on_local do
       capture(:ls, "-1", "airbrussh.gemspec", :verbosity => SSHKit::Logger::INFO)
     end
@@ -156,7 +177,11 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_does_not_output_test_commands
-    SSHKit.config.output_verbosity = Logger::DEBUG
+    configure do |airbrussh_config, sshkit_config|
+      airbrussh_config.command_output = true
+      sshkit_config.output_verbosity = Logger::DEBUG
+    end
+
     on_local do
       test("[ -f ~ ]")
     end
@@ -171,6 +196,11 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_handles_rake_tasks
+    configure do |airbrussh_config|
+      airbrussh_config.monkey_patch_rake = true
+      airbrussh_config.command_output = true
+    end
+
     on_local do
       Airbrussh::Rake::Context.current_task_name = "deploy"
       Airbrussh::Rake::Context.current_task_name = "deploy_dep1"
@@ -213,7 +243,10 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_log_message_levels
-    SSHKit.config.output_verbosity = Logger::DEBUG
+    configure do |_airbrussh_config, sshkit_config|
+      sshkit_config.output_verbosity = Logger::DEBUG
+    end
+
     on_local do
       %w(log fatal error warn info debug).each do |level|
         send(level, "Test")
@@ -251,7 +284,7 @@ class Airbrussh::FormatterTest < Minitest::Test
   def assert_output_lines(*expected_output)
     expected_output = [
       "Using airbrussh format.\n",
-      /Verbose output is being written to #<StringIO:.*>.\n/
+      /Verbose output is being written to .*\n/
     ] + expected_output
     assert_string_io_lines(expected_output, @output)
   end
