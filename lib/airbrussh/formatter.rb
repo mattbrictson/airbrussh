@@ -1,6 +1,5 @@
 require "airbrussh/colors"
 require "airbrussh/command_formatter"
-require "airbrussh/command_output"
 require "airbrussh/console"
 require "airbrussh/rake/command"
 require "airbrussh/rake/context"
@@ -127,10 +126,17 @@ module Airbrussh
       # Use a bit of meta-programming here, since stderr and stdout logic
       # are identical except for different method names.
       %w(stderr stdout).each do |stream|
-        CommandOutput.for(command).each_line(stream) do |line|
+        each_line(command, stream) do |line|
           write_command_output_line(command, stream, line)
         end
       end
+    end
+
+    def each_line(command, stream, &block)
+      output = command.public_send(stream)
+      return if output.empty?
+      output.lines.to_a.each(&block)
+      command.public_send("#{stream}=", "")
     end
 
     def write_command_output_line(command, stream, line)
