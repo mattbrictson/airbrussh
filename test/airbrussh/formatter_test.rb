@@ -4,16 +4,12 @@ require "minitest_helper"
 # rubocop:disable Metrics/LineLength
 
 class Airbrussh::FormatterTest < Minitest::Test
+  include RakeTaskDefinition
+
   def setup
     @output = StringIO.new
-    @user = "test_user"
     @log_file = StringIO.new
-    @config = Airbrussh::Configuration.new
-    @config.monkey_patch_rake = true
-    @config.command_output = true
-    @config.log_file = @log_file
-
-    SSHKit.config.output = Airbrussh::Formatter.new(@output, @config)
+    @user = "test_user"
   end
 
   def teardown
@@ -21,9 +17,19 @@ class Airbrussh::FormatterTest < Minitest::Test
     SSHKit.reset_configuration!
   end
 
+  def configure
+    config = Airbrussh::Configuration.new
+    config.log_file = @log_file
+    yield(config, SSHKit.config)
+    SSHKit.config.output = Airbrussh::Formatter.new(@output, config)
+  end
+
   def test_formats_execute_with_color
-    SSHKit.config.output_verbosity = Logger::DEBUG
-    @config.color = true
+    configure do |airbrussh_config, sshkit_config|
+      sshkit_config.output_verbosity = ::Logger::DEBUG
+      airbrussh_config.command_output = true
+      airbrussh_config.color = true
+    end
 
     on_local do
       execute(:echo, "foo")
@@ -44,6 +50,10 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_execute_without_color
+    configure do |airbrussh_config|
+      airbrussh_config.command_output = true
+    end
+
     on_local do
       execute(:echo, "foo")
     end
@@ -60,7 +70,9 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_without_command_output
-    @config.command_output = false
+    configure do |airbrussh_config|
+      airbrussh_config.command_output = false
+    end
 
     on_local do
       execute(:ls, "-l")
@@ -73,8 +85,12 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_failing_execute_with_color
-    SSHKit.config.output_verbosity = Logger::DEBUG
-    @config.color = true
+    configure do |airbrussh_config, sshkit_config|
+      sshkit_config.output_verbosity = ::Logger::DEBUG
+      airbrussh_config.command_output = true
+      airbrussh_config.color = true
+    end
+
     error = nil
     on_local do
       begin
@@ -122,7 +138,10 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_capture_with_color
-    @config.color = true
+    configure do |airbrussh_config|
+      airbrussh_config.command_output = true
+      airbrussh_config.color = true
+    end
 
     on_local do
       capture(:ls, "-1", "airbrussh.gemspec", :verbosity => SSHKit::Logger::INFO)
@@ -140,6 +159,10 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_formats_capture_without_color
+    configure do |airbrussh_config|
+      airbrussh_config.command_output = true
+    end
+
     on_local do
       capture(:ls, "-1", "airbrussh.gemspec", :verbosity => SSHKit::Logger::INFO)
     end
@@ -156,7 +179,11 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_does_not_output_test_commands
-    SSHKit.config.output_verbosity = Logger::DEBUG
+    configure do |airbrussh_config, sshkit_config|
+      airbrussh_config.command_output = true
+      sshkit_config.output_verbosity = Logger::DEBUG
+    end
+
     on_local do
       test("[ -f ~ ]")
     end
@@ -171,20 +198,27 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_handles_rake_tasks
-    on_local do
-      Airbrussh::Rake::Context.current_task_name = "deploy"
-      Airbrussh::Rake::Context.current_task_name = "deploy_dep1"
+    configure do |airbrussh_config|
+      airbrussh_config.monkey_patch_rake = true
+      airbrussh_config.command_output = true
+    end
+
+    on_local("special_rake_task") do
       execute(:echo, "command 1")
       info("Starting command 2")
       execute(:echo, "command 2")
-      Airbrussh::Rake::Context.current_task_name = "deploy_dep2"
+    end
+    on_local("special_rake_task_2") do
+      error("New task starting")
+    end
+    on_local("special_rake_task_3") do
       execute(:echo, "command 3")
       execute(:echo, "command 4")
       warn("All done")
     end
 
     assert_output_lines(
-      "00:00 deploy_dep1\n",
+      "00:00 special_rake_task\n",
       "      01 echo command 1\n",
       "      01 command 1\n",
       /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
@@ -192,7 +226,9 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      02 echo command 2\n",
       "      02 command 2\n",
       /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
-      "00:00 deploy_dep2\n",
+      "00:00 special_rake_task_2\n",
+      "      New task starting\n",
+      "00:00 special_rake_task_3\n",
       "      01 echo command 3\n",
       "      01 command 3\n",
       /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
@@ -206,6 +242,7 @@ class Airbrussh::FormatterTest < Minitest::Test
       command_running("echo command 1"), command_success,
       /#{blue('INFO')} Starting command 2\n/,
       command_running("echo command 2"), command_success,
+      /#{red('ERROR')} New task starting\n/,
       command_running("echo command 3"), command_success,
       command_running("echo command 4"), command_success,
       /#{yellow('WARN')} All done\n/
@@ -213,7 +250,10 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_log_message_levels
-    SSHKit.config.output_verbosity = Logger::DEBUG
+    configure do |_airbrussh_config, sshkit_config|
+      sshkit_config.output_verbosity = Logger::DEBUG
+    end
+
     on_local do
       %w(log fatal error warn info debug).each do |level|
         send(level, "Test")
@@ -240,18 +280,20 @@ class Airbrussh::FormatterTest < Minitest::Test
 
   private
 
-  def on_local(&block)
-    local_backend = SSHKit::Backend::Local.new(&block)
-    # Note: The Local backend default log changed to include the user name around version 1.7.1
-    # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
-    local_backend.instance_variable_get(:@host).user = @user
-    local_backend.run
+  def on_local(task_name=nil, &block)
+    define_and_execute_rake_task(task_name) do
+      local_backend = SSHKit::Backend::Local.new(&block)
+      # Note: The Local backend default log changed to include the user name around version 1.7.1
+      # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
+      local_backend.instance_variable_get(:@host).user = @user
+      local_backend.run
+    end
   end
 
   def assert_output_lines(*expected_output)
     expected_output = [
       "Using airbrussh format.\n",
-      /Verbose output is being written to #<StringIO:.*>.\n/
+      /Verbose output is being written to .*\n/
     ] + expected_output
     assert_string_io_lines(expected_output, @output)
   end
