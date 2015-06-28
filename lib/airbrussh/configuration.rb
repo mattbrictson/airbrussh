@@ -12,17 +12,7 @@ module Airbrussh
       self.command_output = false
     end
 
-    def command_output_stdout?
-      command_output_include?(:stdout)
-    end
-
-    def command_output_stderr?
-      command_output_include?(:stderr)
-    end
-
-    private
-
-    def command_output_include?(sym)
+    def show_command_output?(sym)
       command_output == true || Array(command_output).include?(sym)
     end
   end

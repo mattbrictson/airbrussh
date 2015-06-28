@@ -131,7 +131,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     if sshkit_after?("1.6.1")
       expected_log_output << command_std_stream(:stderr, error_message)
-      expected_log_output << "\e[0m" unless recent_sshkit_branch?
+      expected_log_output << "\e[0m" unless sshkit_master?
     end
 
     assert_log_file_lines(*expected_log_output)
@@ -352,14 +352,15 @@ class Airbrussh::FormatterTest < Minitest::Test
     :bold_yellow => "1;33;49"
   }.each do |color, code|
     define_method(color) do |string|
-      optional_color(string, code)
+      color_if_legacy(string, code)
     end
   end
 
-  def optional_color(text, color)
-    # Note: SSHKit versions up to 1.7.1 added colors to the log file even though it did not have a tty.
-    # Versions after this didn't, so we must match output both with, and without colors.
-    if sshkit_after?("1.7.1") || recent_sshkit_branch?
+  def color_if_legacy(text, color)
+    # SSHKit versions up to 1.7.1 added colors to the log file even though it did not have a tty.
+    # Versions after this don't, so we must match output both with, and without colors
+    # depending on the SSHKit version.
+    if sshkit_after?("1.7.1") || sshkit_master?
       text
     else
       "\\e\\[#{color}m#{text}\\e\\[0m"
@@ -370,13 +371,9 @@ class Airbrussh::FormatterTest < Minitest::Test
     Gem.loaded_specs["sshkit"].version > Gem::Version.new(version)
   end
 
-  def recent_sshkit_branch?
-    sshkit_branch?("master") || sshkit_branch?("ea211bcbbb71dab0152a18c2774922b7017e4edc")
-  end
-
-  def sshkit_branch?(branch_name)
+  def sshkit_master?
     gem_source = Gem.loaded_specs["sshkit"].source
-    gem_source.is_a?(Bundler::Source::Git) && gem_source.branch == branch_name
+    gem_source.is_a?(Bundler::Source::Git) && gem_source.branch == "master"
   end
 
   module Minitest::Assertions

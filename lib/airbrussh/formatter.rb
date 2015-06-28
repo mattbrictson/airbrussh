@@ -1,6 +1,5 @@
 require "airbrussh/colors"
 require "airbrussh/command_formatter"
-require "airbrussh/command_output"
 require "airbrussh/console"
 require "airbrussh/rake/command"
 require "airbrussh/rake/context"
@@ -86,7 +85,8 @@ module Airbrussh
       when SSHKit::Command
         command = decorate(obj)
         write_command_start(command)
-        write_command_output(command)
+        write_command_output(command, :stderr)
+        write_command_output(command, :stdout)
         write_command_exit(command) if command.finished?
       when SSHKit::LogMessage
         write_log_message(obj)
@@ -121,20 +121,21 @@ module Airbrussh
       print_indented_line(command.start_message) if command.first_execution?
     end
 
-    # Prints the data from the stdout and stderr streams of the given command,
-    # but only if enabled (see Airbrussh::Configuration#command_output).
-    def write_command_output(command)
-      # Use a bit of meta-programming here, since stderr and stdout logic
-      # are identical except for different method names.
-      %w(stderr stdout).each do |stream|
-        CommandOutput.for(command).each_line(stream) do |line|
-          write_command_output_line(command, stream, line)
-        end
+    # For SSHKit versions up to and including 1.7.1, the stdout and stderr
+    # output was available as attributes on the Command. Print the data for
+    # the specified command and stream if enabled
+    # (see Airbrussh::Configuration#command_output).
+    def write_command_output(command, stream)
+      output = command.public_send(stream)
+      return if output.empty?
+      output.lines.to_a.each do |line|
+        write_command_output_line(command, stream, line)
       end
+      command.public_send("#{stream}=", "")
     end
 
     def write_command_output_line(command, stream, line)
-      hide_command_output = !config.public_send("command_output_#{stream}?")
+      hide_command_output = !config.show_command_output?(stream)
       return if hide_command_output || debug?(command)
       print_indented_line(command.format_output(line))
     end
