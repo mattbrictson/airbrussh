@@ -1,5 +1,6 @@
 # encoding: utf-8
 require "minitest_helper"
+require "bundler"
 
 # rubocop:disable Metrics/LineLength
 
