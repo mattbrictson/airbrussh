@@ -16,11 +16,17 @@ Have a feature idea, bug fix, or refactoring suggestion? Contributions are welco
 
 ## Getting started
 
-After checking out the repo, run `bin/setup` to install dependencies.
+Note that Bundler 1.10 is required for development. Run `gem update bundler` to get the latest version.
+
+After checking out the airbrussh repo, run `bin/setup` to install dependencies.
 
 * `rake` executes airbrussh's tests and RuboCop checks
 * `bin/test_all.rb` executes the tests against all versions of SSHKit that airbrussh supports
-* `guard` monitors the filesystem and automatically runs tests as you work
+
+A Guardfile is also present, so if you'd like to use Guard to do a TDD workflow, then:
+
+1. Run `bundle install --with development` to get the optional guard dependencies
+2. Run `guard` to monitor the filesystem and automatically run tests as you work
 
 [Issues]: https://github.com/mattbrictson/airbrussh/issues
 [RuboCop]: https://github.com/bbatsov/rubocop

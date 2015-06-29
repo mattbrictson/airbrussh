@@ -8,4 +8,4 @@ env:
   - sshkit="master"
   - sshkit="= 1.7.1"
   - sshkit="= 1.6.1"
-before_install: gem install bundler --conservative --version '~> 1.8'
+before_install: gem install bundler --conservative --version '~> 1.10'
