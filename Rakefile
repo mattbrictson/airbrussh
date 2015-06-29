@@ -10,7 +10,7 @@ end
 require "rubocop/rake_task"
 RuboCop::RakeTask.new
 
-if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.1.0")
+unless ENV["TRAVIS"]
   require "chandler/tasks"
   task "release:rubygem_push" => "chandler:push"
 end
