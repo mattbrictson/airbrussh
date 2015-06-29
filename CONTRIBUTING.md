@@ -25,7 +25,7 @@ After checking out the airbrussh repo, run `bin/setup` to install dependencies.
 
 A Guardfile is also present, so if you'd like to use Guard to do a TDD workflow, then:
 
-1. Run `bundle install --with development` to get the optional guard dependencies
+1. Run `bundle install --with extras` to get the optional guard dependencies
 2. Run `guard` to monitor the filesystem and automatically run tests as you work
 
 [Issues]: https://github.com/mattbrictson/airbrussh/issues

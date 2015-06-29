@@ -7,6 +7,7 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 ## [Unreleased]
 
 * Your contribution here!
+* Bundler 1.10 is now required to build and test airbrussh (this doesn't affect users of airbrussh at all).
 
 ## [0.5.1][] (2015-06-24)
 

@@ -8,7 +8,7 @@ gemspec
 #
 # bundle install --with development
 #
-group :development, :optional => true do
+group :extras, :optional => true do
   gem "chandler"
   gem "guard", ">= 2.2.2"
   gem "guard-minitest"
