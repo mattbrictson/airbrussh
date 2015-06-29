@@ -6,7 +6,7 @@ gemspec
 # Optional development dependencies; requires bundler >= 1.10.
 # Note that these gems assume a Ruby 2.2 environment. Install them using:
 #
-# bundle install --with development
+# bundle install --with extras
 #
 group :extras, :optional => true do
   gem "chandler"
