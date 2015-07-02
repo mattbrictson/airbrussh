@@ -3,6 +3,7 @@ require "airbrussh/command_formatter"
 require "airbrussh/console"
 require "airbrussh/rake/command"
 require "airbrussh/rake/context"
+require "fileutils"
 require "sshkit"
 
 module Airbrussh
@@ -29,9 +30,14 @@ module Airbrussh
 
     def create_log_file_formatter
       return SSHKit::Formatter::BlackHole.new(nil) if @log_file.nil?
+      ensure_log_file_directory if @log_file.is_a?(String)
       SSHKit::Formatter::Pretty.new(
         ::Logger.new(@log_file, 1, 20_971_520)
       )
+    end
+
+    def ensure_log_file_directory
+      FileUtils.mkdir_p(File.dirname(@log_file))
     end
 
     def write_banner

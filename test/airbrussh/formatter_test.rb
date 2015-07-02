@@ -279,6 +279,18 @@ class Airbrussh::FormatterTest < Minitest::Test
     )
   end
 
+  def test_creates_log_directory_and_file
+    Dir.mktmpdir("airbrussh-test-") do |dir|
+      log_file = File.join(dir, "log", "capistrano.log")
+
+      configure do |airbrussh_config, _|
+        airbrussh_config.log_file = log_file
+      end
+
+      assert(File.exist?(log_file))
+    end
+  end
+
   private
 
   def on_local(task_name=nil, &block)
