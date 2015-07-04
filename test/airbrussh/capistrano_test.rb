@@ -27,8 +27,9 @@ class Airbrussh::CapistranoTest < Minitest::Test
   end
 
   def teardown
-    Rake::Task.clear
     $stderr = @stderr_orig
+    Rake::Task.clear
+    Airbrussh::Rake::Context.current_task_name = nil
   end
 
   def test_configures_for_capistrano
