@@ -45,6 +45,7 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
   def test_sets_airbrussh_formatter_on_load_defaults
     @dsl.expects(:set).with(:format, :airbrussh)
     @tasks.load_defaults
+    assert(defined?(SSHKit::Formatter::Airbrussh))
   end
 
   def test_prints_last_20_logfile_lines_on_deploy_failure

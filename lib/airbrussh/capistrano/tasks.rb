@@ -30,6 +30,7 @@ module Airbrussh
 
       # Behavior for the rake load:defaults task.
       def load_defaults
+        require "sshkit/formatter/airbrussh"
         set :format, :airbrussh
       end
 
