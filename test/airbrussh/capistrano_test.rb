@@ -52,7 +52,7 @@ class Airbrussh::CapistranoTest < Minitest::Test
   end
 
   def test_prints_last_20_logfile_lines_on_deploy_failure
-    log_file = Tempfile.create("airbrussh-test-")
+    log_file = Tempfile.new("airbrussh-test-")
     begin
       log_file.write((11..31).map { |i| "line #{i}\n" }.join)
       log_file.close
@@ -64,7 +64,7 @@ class Airbrussh::CapistranoTest < Minitest::Test
       refute_match("line 11", stderr)
       (12..31).each { |i| assert_match("line #{i}", stderr) }
     ensure
-      File.unlink(log_file.path)
+      log_file.unlink
     end
   end
 
