@@ -9,6 +9,8 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
     def set(*)
     end
 
+    private
+
     def namespace(*)
     end
 
