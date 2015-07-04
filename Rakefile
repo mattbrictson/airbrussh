@@ -10,9 +10,11 @@ end
 require "rubocop/rake_task"
 RuboCop::RakeTask.new
 
-unless ENV["TRAVIS"]
+# rubocop:disable Lint/HandleExceptions
+begin
   require "chandler/tasks"
-  task "release:rubygem_push" => "chandler:push"
+rescue LoadError
 end
+task "release:rubygem_push" => "chandler:push" if defined?(Chandler)
 
 task :default => [:test, :rubocop]
