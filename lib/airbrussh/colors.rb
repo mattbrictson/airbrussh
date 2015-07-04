@@ -10,8 +10,6 @@ module Airbrussh
       :gray   => 90
     }.freeze
 
-    module_function
-
     # Define red, green, blue, etc. methods that return a copy of the
     # String that is wrapped in the corresponding ANSI color escape
     # sequence.
@@ -19,6 +17,7 @@ module Airbrussh
       define_method(name) do |string|
         "\e[0;#{code};49m#{string}\e[0m"
       end
+      module_function(name)
     end
   end
 end
