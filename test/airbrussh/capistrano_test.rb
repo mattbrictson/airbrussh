@@ -20,7 +20,6 @@ include Capistrano::MockDSL
 
 class Airbrussh::CapistranoTest < Minitest::Test
   def setup
-    Rake::Task.clear
     load(File.expand_path("../../../lib/airbrussh/capistrano.rb", __FILE__))
     @stderr_orig = $stderr
     @stderr = StringIO.new
@@ -28,6 +27,7 @@ class Airbrussh::CapistranoTest < Minitest::Test
   end
 
   def teardown
+    Rake::Task.clear
     $stderr = @stderr_orig
   end
 
