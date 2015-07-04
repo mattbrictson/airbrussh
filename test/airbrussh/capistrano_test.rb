@@ -1,11 +1,13 @@
 require "minitest_helper"
-require "airbrussh/capistrano"
-
-# Note: because this test requires airbrussh/capistrano outside of a Capistrano
-# environment, a WARNING... message will be printed to stderr. This message can
-# be disregarded.
 
 class Airbrussh::CapistranoTest < Minitest::Test
+  def setup
+    # Mute the warning that is normally printed to $stderr when
+    # airbrussh/capistrano is required outside a capistrano runtime.
+    $stderr.stubs(:write)
+    require "airbrussh/capistrano"
+  end
+
   def teardown
     Airbrussh::Rake::Context.current_task_name = nil
   end
