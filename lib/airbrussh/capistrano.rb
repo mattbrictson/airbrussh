@@ -41,6 +41,6 @@ namespace :deploy do
         "** Refer to #{log_file} for details. Here are the last 20 lines:"
       ))
     err.print_line
-    system("tail -n 20 #{log_file.shellescape} 1>&2")
+    err.write(`tail -n 20 #{log_file.shellescape} 2>&1`)
   end
 end
