@@ -100,17 +100,6 @@ module Airbrussh
     end
     alias_method :<<, :write
 
-    def on_deploy_failure
-      return if @log_file.nil?
-      err = Airbrussh::Console.new($stderr)
-      err.print_line
-      err.print_line(red("** DEPLOY FAILED"))
-      err.print_line(yellow("** Refer to #{@log_file} for details. "\
-                            "Here are the last 20 lines:"))
-      err.print_line
-      system("tail -n 20 #{@log_file.shellescape} 1>&2")
-    end
-
     private
 
     attr_accessor :last_printed_task
