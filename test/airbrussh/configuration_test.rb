@@ -14,6 +14,15 @@ class Airbrussh::ConfigurationTest < Minitest::Test
     refute(@config.command_output)
   end
 
+  def test_formatters
+    io = StringIO.new
+    formatters = @config.formatters(io)
+    assert_equal(1, formatters.length)
+    assert_instance_of(Airbrussh::Formatter, formatters.first)
+    assert_equal(io, formatters.first.original_output)
+    assert_equal(@config, formatters.first.config)
+  end
+
   def test_effects_of_command_output_true
     @config.command_output = true
     assert(@config.show_command_output?(:stdout))
