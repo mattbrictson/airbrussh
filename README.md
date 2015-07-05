@@ -128,8 +128,8 @@ end
 If you are using SSHKit directly, you can use Airbrussh without the Capistrano magic:
 
 ```ruby
-require "airbrussh"
-SSHKit.config.output = Airbrussh::Formatter.new($stdout)
+require "sshkit/formatter/airbrussh"
+SSHKit.config.output = SSHKit::Formatter::Airbrussh.new($stdout)
 ```
 
 When Capistrano is not present, Airbrussh uses a slightly different default configuration:

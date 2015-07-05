@@ -6,6 +6,15 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 
 ## [Unreleased]
 
+If you are using Airbrussh outside of Capistrano, note that the formatter class has changed. Instead of using `Airbrussh::Formatter`, you now should use `SSHKit::Formatter::Airbrussh`. For example:
+
+```ruby
+require "sshkit/formatter/airbrussh"
+SSHKit.config.output = SSHKit::Formatter::Airbrussh.new($stdout)
+```
+
+Capistrano users should still use `require "airbrussh/capistrano"` in the `Capfile` to automatically load and install Airbrussh. This has not changed.
+
 * Your contribution here!
 * Bundler 1.10 is now required to build and test airbrussh (this doesn't affect users of airbrussh at all).
 * If the directory containing the log file doesn't exist, Airbrussh will now attempt to create it using `FileUtils.mkdir_p` ([#30](https://github.com/mattbrictson/airbrussh/issues/30))
