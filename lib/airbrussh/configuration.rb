@@ -1,4 +1,6 @@
+require "airbrussh/colors"
 require "airbrussh/formatter"
+require "airbrussh/log_file_formatter"
 
 module Airbrussh
   class Configuration
@@ -14,15 +16,24 @@ module Airbrussh
       self.command_output = false
     end
 
+    def banner_message
+      return nil unless banner
+      return banner unless banner == :auto
+      msg = "Using airbrussh format."
+      if log_file
+        msg << "\n"
+        msg << "Verbose output is being written to #{Colors.blue(log_file)}."
+      end
+      msg
+    end
+
     # This returns an array of formatters appropriate for the configuration.
-    # Currently this always returns a single Airbrussh::Formatter, but in the
-    # future this may include a second formatter which has the sole purpose
-    # of writing to the log_file, if a log_file is specified. This change will
-    # happen once the file-related IO responsibilities are factored out of
-    # Airbrussh::Formatter into a new class.
-    #
+    # Depending on whether a log file is configured, this could be just the
+    # Airbrussh:Formatter, or that plus the LogFileFormatter.
     def formatters(io)
-      [Airbrussh::Formatter.new(io, self)]
+      fmts = [Airbrussh::Formatter.new(io, self)]
+      fmts.unshift(Airbrussh::LogFileFormatter.new(log_file)) if log_file
+      fmts
     end
 
     def show_command_output?(sym)

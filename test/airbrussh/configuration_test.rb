@@ -1,4 +1,6 @@
 require "minitest_helper"
+require "airbrussh/log_file_formatter"
+require "tempfile"
 
 class Airbrussh::ConfigurationTest < Minitest::Test
   def setup
@@ -14,13 +16,53 @@ class Airbrussh::ConfigurationTest < Minitest::Test
     refute(@config.command_output)
   end
 
-  def test_formatters
+  def test_auto_banner_message_without_log
+    @config.log_file = nil
+    @config.banner = :auto
+    assert_equal("Using airbrussh format.", @config.banner_message)
+  end
+
+  def test_auto_banner_message_with_log
+    @config.log_file = "log/test.log"
+    @config.banner = :auto
+    assert_equal(
+      "Using airbrussh format.\n"\
+      "Verbose output is being written to \e[0;34;49mlog/test.log\e[0m.",
+      @config.banner_message
+    )
+  end
+
+  def test_nil_or_false_banner_message
+    @config.banner = nil
+    assert_nil(@config.banner_message)
+    @config.banner = false
+    assert_nil(@config.banner_message)
+  end
+
+  def test_custom_banner_message
+    @config.banner = "Hello!"
+    assert_equal("Hello!", @config.banner_message)
+  end
+
+  def test_formatters_without_log_file
     io = StringIO.new
     formatters = @config.formatters(io)
     assert_equal(1, formatters.length)
     assert_instance_of(Airbrussh::Formatter, formatters.first)
     assert_equal(io, formatters.first.original_output)
     assert_equal(@config, formatters.first.config)
+  end
+
+  def test_formatters_with_log_file
+    @config.log_file = Tempfile.new("airbrussh-test").path
+    io = StringIO.new
+    formatters = @config.formatters(io)
+    assert_equal(2, formatters.length)
+    assert_instance_of(Airbrussh::LogFileFormatter, formatters.first)
+    assert_instance_of(Airbrussh::Formatter, formatters.last)
+    assert_equal(@config.log_file, formatters.first.path)
+    assert_equal(io, formatters.last.original_output)
+    assert_equal(@config, formatters.last.config)
   end
 
   def test_effects_of_command_output_true

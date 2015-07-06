@@ -41,13 +41,6 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      01 foo\n",
       /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m0.\d+s\e\[0m\n/
     )
-
-    assert_log_file_lines(
-      command_running("echo foo"),
-      command_started_debug("/usr/bin/env echo foo"),
-      command_std_stream(:stdout, "foo"),
-      command_success
-    )
   end
 
   def test_formats_execute_without_color
@@ -63,10 +56,6 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      01 echo foo\n",
       "      01 foo\n",
       /    ✔ 01 #{@user}@localhost 0.\d+s\n/
-    )
-
-    assert_log_file_lines(
-      command_running("echo foo"), command_success
     )
   end
 
@@ -134,8 +123,6 @@ class Airbrussh::FormatterTest < Minitest::Test
       expected_log_output << command_std_stream(:stderr, error_message)
       expected_log_output << "\e[0m" unless sshkit_master?
     end
-
-    assert_log_file_lines(*expected_log_output)
   end
 
   def test_formats_capture_with_color
@@ -153,10 +140,6 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      01 airbrussh.gemspec\n",
       /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m0.\d+s\e\[0m\n/
     )
-
-    assert_log_file_lines(
-      command_running("ls -1 airbrussh.gemspec"), command_success
-    )
   end
 
   def test_formats_capture_without_color
@@ -173,10 +156,6 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      01 airbrussh.gemspec\n",
       /    ✔ 01 #{@user}@localhost 0.\d+s\n/
     )
-
-    assert_log_file_lines(
-      command_running("ls -1 airbrussh.gemspec"), command_success
-    )
   end
 
   def test_does_not_output_test_commands
@@ -190,12 +169,6 @@ class Airbrussh::FormatterTest < Minitest::Test
     end
 
     assert_output_lines
-
-    assert_log_file_lines(
-      command_running("\\[ -f ~ \\]", "DEBUG"),
-      command_started_debug("\\[ -f ~ \\]"),
-      command_failed(256)
-    )
   end
 
   def test_handles_rake_tasks
@@ -238,16 +211,6 @@ class Airbrussh::FormatterTest < Minitest::Test
       /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
       "      All done\n"
     )
-
-    assert_log_file_lines(
-      command_running("echo command 1"), command_success,
-      /#{blue('INFO')} Starting command 2\n/,
-      command_running("echo command 2"), command_success,
-      /#{red('ERROR')} New task starting\n/,
-      command_running("echo command 3"), command_success,
-      command_running("echo command 4"), command_success,
-      /#{yellow('WARN')} All done\n/
-    )
   end
 
   def test_log_message_levels
@@ -268,27 +231,6 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      Test\n",
       "      Test\n"
     )
-
-    assert_log_file_lines(
-      /#{blue('INFO')} Test\n/,
-      /#{red('FATAL')} Test\n/,
-      /#{red('ERROR')} Test\n/,
-      /#{yellow('WARN')} Test\n/,
-      /#{blue('INFO')} Test\n/,
-      /#{black('DEBUG')} Test\n/
-    )
-  end
-
-  def test_creates_log_directory_and_file
-    Dir.mktmpdir("airbrussh-test-") do |dir|
-      log_file = File.join(dir, "log", "capistrano.log")
-
-      configure do |airbrussh_config, _|
-        airbrussh_config.log_file = log_file
-      end
-
-      assert(File.exist?(log_file))
-    end
   end
 
   private
@@ -317,16 +259,6 @@ class Airbrussh::FormatterTest < Minitest::Test
     lines.each.with_index do |line, i|
       assert_case_equal(expected_output[i], line)
     end
-  end
-
-  def assert_log_file_lines(*command_lines)
-    preamble_lines = [
-      /#{blue('INFO')} ---------------------------------------------------------------------------\n/,
-      /#{blue('INFO')} START [\d\-]+ [\d\:]+ [\+\-]\d+ cap\n/,
-      /#{blue('INFO')} ---------------------------------------------------------------------------\n/
-    ]
-
-    assert_string_io_lines(preamble_lines + command_lines, @log_file)
   end
 
   def command_running(command, level="INFO")

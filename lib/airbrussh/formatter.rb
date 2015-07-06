@@ -3,7 +3,6 @@ require "airbrussh/command_formatter"
 require "airbrussh/console"
 require "airbrussh/rake/command"
 require "airbrussh/rake/context"
-require "fileutils"
 require "sshkit"
 
 module Airbrussh
@@ -19,74 +18,31 @@ module Airbrussh
 
       @config = config
       @context = Airbrussh::Rake::Context.new(config)
-
-      @log_file = config.log_file
-      @log_file_formatter = create_log_file_formatter
-
       @console = Airbrussh::Console.new(original_output, config)
-      write_log_file_delimiter
+
       write_banner
     end
 
-    def create_log_file_formatter
-      return SSHKit::Formatter::BlackHole.new(nil) if @log_file.nil?
-      ensure_log_file_directory if @log_file.is_a?(String)
-      SSHKit::Formatter::Pretty.new(
-        ::Logger.new(@log_file, 1, 20_971_520)
-      )
-    end
-
-    def ensure_log_file_directory
-      FileUtils.mkdir_p(File.dirname(@log_file))
-    end
-
     def write_banner
-      return unless config.banner
-      if config.banner == :auto
-        return if @log_file.nil?
-        print_line "Using airbrussh format."
-        print_line "Verbose output is being written to #{blue(@log_file)}."
-      else
-        print_line config.banner
-      end
-    end
-
-    def write_log_file_delimiter
-      delimiter = []
-      delimiter << "-" * 75
-      delimiter << "START #{Time.now} cap #{ARGV.join(' ')}"
-      delimiter << "-" * 75
-      delimiter.each do |line|
-        @log_file_formatter << SSHKit::LogMessage.new(
-          SSHKit::Logger::INFO,
-          line
-        )
-      end
+      print_line(config.banner_message) if config.banner_message
     end
 
     def log_command_start(command)
       command = decorate(command)
-      @log_file_formatter.log_command_start(command)
       write_command_start(command)
     end
 
     def log_command_data(command, stream_type, line)
       command = decorate(command)
-      @log_file_formatter.log_command_data(command, stream_type, line)
       write_command_output_line(command, stream_type, line)
     end
 
     def log_command_exit(command)
       command = decorate(command)
-      @log_file_formatter.log_command_exit(command)
       write_command_exit(command)
     end
 
     def write(obj)
-      # SSHKit's :pretty formatter mutates the stdout and stderr data in the
-      # command obj. So we need to dup it to ensure our copy is unscathed.
-      @log_file_formatter << obj.dup
-
       case obj
       when SSHKit::Command
         command = decorate(obj)
