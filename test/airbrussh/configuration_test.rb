@@ -1,4 +1,5 @@
 require "minitest_helper"
+require "airbrussh/console_formatter"
 require "airbrussh/log_file_formatter"
 require "tempfile"
 
@@ -48,7 +49,7 @@ class Airbrussh::ConfigurationTest < Minitest::Test
     io = StringIO.new
     formatters = @config.formatters(io)
     assert_equal(1, formatters.length)
-    assert_instance_of(Airbrussh::Formatter, formatters.first)
+    assert_instance_of(Airbrussh::ConsoleFormatter, formatters.first)
     assert_equal(io, formatters.first.original_output)
     assert_equal(@config, formatters.first.config)
   end
@@ -59,7 +60,7 @@ class Airbrussh::ConfigurationTest < Minitest::Test
     formatters = @config.formatters(io)
     assert_equal(2, formatters.length)
     assert_instance_of(Airbrussh::LogFileFormatter, formatters.first)
-    assert_instance_of(Airbrussh::Formatter, formatters.last)
+    assert_instance_of(Airbrussh::ConsoleFormatter, formatters.last)
     assert_equal(@config.log_file, formatters.first.path)
     assert_equal(io, formatters.last.original_output)
     assert_equal(@config, formatters.last.config)

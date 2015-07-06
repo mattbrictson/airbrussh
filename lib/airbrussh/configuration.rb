@@ -1,5 +1,5 @@
 require "airbrussh/colors"
-require "airbrussh/formatter"
+require "airbrussh/console_formatter"
 require "airbrussh/log_file_formatter"
 
 module Airbrussh
@@ -29,9 +29,9 @@ module Airbrussh
 
     # This returns an array of formatters appropriate for the configuration.
     # Depending on whether a log file is configured, this could be just the
-    # Airbrussh:Formatter, or that plus the LogFileFormatter.
+    # Airbrussh:ConsoleFormatter, or that plus the LogFileFormatter.
     def formatters(io)
-      fmts = [Airbrussh::Formatter.new(io, self)]
+      fmts = [Airbrussh::ConsoleFormatter.new(io, self)]
       fmts.unshift(Airbrussh::LogFileFormatter.new(log_file)) if log_file
       fmts
     end
