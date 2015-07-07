@@ -22,7 +22,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     config = Airbrussh::Configuration.new
     config.log_file = @log_file
     yield(config, SSHKit.config)
-    SSHKit.config.output = Airbrussh::Formatter.new(@output, config)
+    SSHKit.config.output = formatter_class.new(@output, config)
   end
 
   def test_formats_execute_with_color
@@ -279,18 +279,6 @@ class Airbrussh::FormatterTest < Minitest::Test
     )
   end
 
-  def test_creates_log_directory_and_file
-    Dir.mktmpdir("airbrussh-test-") do |dir|
-      log_file = File.join(dir, "log", "capistrano.log")
-
-      configure do |airbrussh_config, _|
-        airbrussh_config.log_file = log_file
-      end
-
-      assert(File.exist?(log_file))
-    end
-  end
-
   private
 
   def on_local(task_name=nil, &block)
@@ -387,6 +375,10 @@ class Airbrussh::FormatterTest < Minitest::Test
   def sshkit_master?
     gem_source = Gem.loaded_specs["sshkit"].source
     gem_source.is_a?(Bundler::Source::Git) && gem_source.branch == "master"
+  end
+
+  def formatter_class
+    Airbrussh::Formatter
   end
 
   module Minitest::Assertions
