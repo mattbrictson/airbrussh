@@ -28,22 +28,22 @@ module Airbrussh
     end
 
     def log_command_start(command)
-      command = decorate(command)
       return if debug?(command)
+      command = decorate(command)
       print_task_if_changed
       print_indented_line(command.start_message) if command.first_execution?
     end
 
     def log_command_data(command, stream_type, line)
+      return if debug?(command)
+      return unless config.show_command_output?(stream_type)
       command = decorate(command)
-      hide_command_output = !config.show_command_output?(stream_type)
-      return if hide_command_output || debug?(command)
       print_indented_line(command.format_output(line))
     end
 
     def log_command_exit(command)
-      command = decorate(command)
       return if debug?(command)
+      command = decorate(command)
       print_indented_line(command.exit_message(@log_file), -2)
     end
 
