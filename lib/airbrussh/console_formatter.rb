@@ -29,27 +29,31 @@ module Airbrussh
 
     def log_command_start(command)
       command = decorate(command)
-      write_command_start(command)
+      return if debug?(command)
+      print_task_if_changed
+      print_indented_line(command.start_message) if command.first_execution?
     end
 
     def log_command_data(command, stream_type, line)
       command = decorate(command)
-      write_command_output_line(command, stream_type, line)
+      hide_command_output = !config.show_command_output?(stream_type)
+      return if hide_command_output || debug?(command)
+      print_indented_line(command.format_output(line))
     end
 
     def log_command_exit(command)
       command = decorate(command)
-      write_command_exit(command)
+      return if debug?(command)
+      print_indented_line(command.exit_message(@log_file), -2)
     end
 
     def write(obj)
       case obj
       when SSHKit::Command
-        command = decorate(obj)
-        write_command_start(command)
-        write_command_output(command, :stderr)
-        write_command_output(command, :stdout)
-        write_command_exit(command) if command.finished?
+        log_command_start(obj)
+        log_and_clear_command_output(obj, :stderr)
+        log_and_clear_command_output(obj, :stdout)
+        log_command_exit(obj) if obj.finished?
       when SSHKit::LogMessage
         write_log_message(obj)
       end
@@ -66,29 +70,17 @@ module Airbrussh
       print_indented_line(gray(log_message.to_s))
     end
 
-    def write_command_start(command)
-      return if debug?(command)
-      print_task_if_changed
-      print_indented_line(command.start_message) if command.first_execution?
-    end
-
     # For SSHKit versions up to and including 1.7.1, the stdout and stderr
     # output was available as attributes on the Command. Print the data for
-    # the specified command and stream if enabled
+    # the specified command and stream if enabled and clear the stream.
     # (see Airbrussh::Configuration#command_output).
-    def write_command_output(command, stream)
+    def log_and_clear_command_output(command, stream)
       output = command.public_send(stream)
       return if output.empty?
       output.lines.to_a.each do |line|
-        write_command_output_line(command, stream, line)
+        log_command_data(command, stream, line)
       end
       command.public_send("#{stream}=", "")
-    end
-
-    def write_command_output_line(command, stream, line)
-      hide_command_output = !config.show_command_output?(stream)
-      return if hide_command_output || debug?(command)
-      print_indented_line(command.format_output(line))
     end
 
     def print_task_if_changed
@@ -97,11 +89,6 @@ module Airbrussh
 
       self.last_printed_task = current_task_name
       print_line("#{clock} #{blue(current_task_name)}")
-    end
-
-    def write_command_exit(command)
-      return if debug?(command)
-      print_indented_line(command.exit_message(@log_file), -2)
     end
 
     def clock
