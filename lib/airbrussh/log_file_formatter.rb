@@ -14,7 +14,7 @@ module Airbrussh
 
     def initialize(path, formatter_class=SSHKit::Formatter::Pretty)
       @path = path
-      ensure_directory_exists
+      ensure_directory_exists if path.is_a?(String)
       super(formatter_class.new(log_file_io))
       write_delimiter
     end
