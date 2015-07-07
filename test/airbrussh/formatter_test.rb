@@ -279,6 +279,39 @@ class Airbrussh::FormatterTest < Minitest::Test
     )
   end
 
+  def test_interleaved_debug_and_info_commands
+    configure do |airbrussh_config|
+      airbrussh_config.monkey_patch_rake = true
+      airbrussh_config.command_output = true
+    end
+
+    on_local("interleaving_test") do
+      test("[ -f ~ ]")
+      # test methods are logged at debug level by default
+      execute(:echo, "command 1")
+      test("[ -f . ]")
+      debug("Debug line should not be output")
+      info("Info line should be output")
+      execute(:echo, "command 2")
+      execute(:echo, "command 3", :verbosity => :debug)
+      execute(:echo, "command 4")
+    end
+
+    assert_output_lines(
+      "00:00 interleaving_test\n",
+      "      01 echo command 1\n",
+      "      01 command 1\n",
+      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
+      "      Info line should be output\n",
+      "      02 echo command 2\n",
+      "      02 command 2\n",
+      /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
+      "      03 echo command 4\n",
+      "      03 command 4\n",
+      /    ✔ 03 #{@user}@localhost 0.\d+s\n/
+    )
+  end
+
   private
 
   def on_local(task_name=nil, &block)
