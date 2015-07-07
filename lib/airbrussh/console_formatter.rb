@@ -28,28 +28,24 @@ module Airbrussh
     end
 
     def log_command_start(command)
-      command = decorate(command)
       write_command_start(command)
     end
 
     def log_command_data(command, stream_type, line)
-      command = decorate(command)
       write_command_output_line(command, stream_type, line)
     end
 
     def log_command_exit(command)
-      command = decorate(command)
       write_command_exit(command)
     end
 
     def write(obj)
       case obj
       when SSHKit::Command
-        command = decorate(obj)
-        write_command_start(command)
-        write_command_output(command, :stderr)
-        write_command_output(command, :stdout)
-        write_command_exit(command) if command.finished?
+        write_command_start(obj)
+        write_command_output(obj, :stderr)
+        write_command_output(obj, :stdout)
+        write_command_exit(obj) if obj.finished?
       when SSHKit::LogMessage
         write_log_message(obj)
       end
@@ -67,6 +63,7 @@ module Airbrussh
     end
 
     def write_command_start(command)
+      command = decorate(command)
       return if debug?(command)
       print_task_if_changed
       print_indented_line(command.start_message) if command.first_execution?
@@ -86,6 +83,7 @@ module Airbrussh
     end
 
     def write_command_output_line(command, stream, line)
+      command = decorate(command)
       hide_command_output = !config.show_command_output?(stream)
       return if hide_command_output || debug?(command)
       print_indented_line(command.format_output(line))
@@ -100,6 +98,7 @@ module Airbrussh
     end
 
     def write_command_exit(command)
+      command = decorate(command)
       return if debug?(command)
       print_indented_line(command.exit_message(@log_file), -2)
     end
