@@ -42,10 +42,10 @@ module Airbrussh
     def write(obj)
       case obj
       when SSHKit::Command
-        write_command_start(obj)
+        log_command_start(obj)
         write_command_output(obj, :stderr)
         write_command_output(obj, :stdout)
-        write_command_exit(obj) if obj.finished?
+        log_command_exit(obj) if obj.finished?
       when SSHKit::LogMessage
         write_log_message(obj)
       end
@@ -77,7 +77,7 @@ module Airbrussh
       output = command.public_send(stream)
       return if output.empty?
       output.lines.to_a.each do |line|
-        write_command_output_line(command, stream, line)
+        log_command_data(command, stream, line)
       end
       command.public_send("#{stream}=", "")
     end
