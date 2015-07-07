@@ -51,8 +51,8 @@ module Airbrussh
       case obj
       when SSHKit::Command
         log_command_start(obj)
-        write_command_output(obj, :stderr)
-        write_command_output(obj, :stdout)
+        log_and_clear_command_output(obj, :stderr)
+        log_and_clear_command_output(obj, :stdout)
         log_command_exit(obj) if obj.finished?
       when SSHKit::LogMessage
         write_log_message(obj)
@@ -72,9 +72,9 @@ module Airbrussh
 
     # For SSHKit versions up to and including 1.7.1, the stdout and stderr
     # output was available as attributes on the Command. Print the data for
-    # the specified command and stream if enabled
+    # the specified command and stream if enabled and clear the stream.
     # (see Airbrussh::Configuration#command_output).
-    def write_command_output(command, stream)
+    def log_and_clear_command_output(command, stream)
       output = command.public_send(stream)
       return if output.empty?
       output.lines.to_a.each do |line|
