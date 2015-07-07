@@ -28,15 +28,23 @@ module Airbrussh
     end
 
     def log_command_start(command)
-      write_command_start(command)
+      command = decorate(command)
+      return if debug?(command)
+      print_task_if_changed
+      print_indented_line(command.start_message) if command.first_execution?
     end
 
     def log_command_data(command, stream_type, line)
-      write_command_output_line(command, stream_type, line)
+      command = decorate(command)
+      hide_command_output = !config.show_command_output?(stream_type)
+      return if hide_command_output || debug?(command)
+      print_indented_line(command.format_output(line))
     end
 
     def log_command_exit(command)
-      write_command_exit(command)
+      command = decorate(command)
+      return if debug?(command)
+      print_indented_line(command.exit_message(@log_file), -2)
     end
 
     def write(obj)
@@ -62,13 +70,6 @@ module Airbrussh
       print_indented_line(gray(log_message.to_s))
     end
 
-    def write_command_start(command)
-      command = decorate(command)
-      return if debug?(command)
-      print_task_if_changed
-      print_indented_line(command.start_message) if command.first_execution?
-    end
-
     # For SSHKit versions up to and including 1.7.1, the stdout and stderr
     # output was available as attributes on the Command. Print the data for
     # the specified command and stream if enabled
@@ -82,25 +83,12 @@ module Airbrussh
       command.public_send("#{stream}=", "")
     end
 
-    def write_command_output_line(command, stream, line)
-      command = decorate(command)
-      hide_command_output = !config.show_command_output?(stream)
-      return if hide_command_output || debug?(command)
-      print_indented_line(command.format_output(line))
-    end
-
     def print_task_if_changed
       return if current_task_name.nil?
       return if current_task_name == last_printed_task
 
       self.last_printed_task = current_task_name
       print_line("#{clock} #{blue(current_task_name)}")
-    end
-
-    def write_command_exit(command)
-      command = decorate(command)
-      return if debug?(command)
-      print_indented_line(command.exit_message(@log_file), -2)
     end
 
     def clock
