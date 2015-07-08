@@ -9,6 +9,8 @@ YAML.load_file(".travis.yml")["env"].each do |sshkit_version|
   system("#{sshkit_version} bundle exec rake test")
 end
 
+system("bundle exec rake rubocop")
+
 at_exit do
   puts "\e[0;34;49m== Resetting sshkit ==\e[0m"
   system("bundle update")
