@@ -4,9 +4,19 @@ require "delegate"
 # rubocop:disable Style/AsciiComments
 
 module Airbrussh
-  # Decorates an SSHKit::Command to add string output helpers.
+  # Decorates an SSHKit Command to add string output helpers and the
+  # command's position within currently executing rake task:
+  #
+  # * position - zero-based position of this command in the list of
+  #              all commands that have been run in the current rake task
+  #  class CommandFormatter < SimpleDelegator
   class CommandFormatter < SimpleDelegator
     include Airbrussh::Colors
+
+    def initialize(command, position)
+      super(command)
+      @position = position
+    end
 
     # Prefixes the line with the command number and removes the newline.
     #
@@ -62,7 +72,7 @@ module Airbrussh
     end
 
     def number
-      format("%02d", position + 1)
+      format("%02d", @position + 1)
     end
 
     def success_message

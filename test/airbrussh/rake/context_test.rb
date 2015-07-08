@@ -53,28 +53,24 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
     end
   end
 
-  def test_decorate_command
+  def test_position
     @config.monkey_patch_rake = true
     context = Airbrussh::Rake::Context.new(@config)
 
     define_and_execute_rake_task("one") do
       context.register_new_command(:command_one)
-      command_one = context.decorate_command(:command_one)
       context.register_new_command(:command_two)
-      command_two = context.decorate_command(:command_two)
 
-      assert_equal(0, command_one.position)
-      assert_equal(1, command_two.position)
+      assert_equal(0, context.position(:command_one))
+      assert_equal(1, context.position(:command_two))
     end
 
     define_and_execute_rake_task("two") do
       context.register_new_command(:command_three)
-      command_three = context.decorate_command(:command_three)
       context.register_new_command(:command_four)
-      command_four = context.decorate_command(:command_four)
 
-      assert_equal(0, command_three.position)
-      assert_equal(1, command_four.position)
+      assert_equal(0, context.position(:command_three))
+      assert_equal(1, context.position(:command_four))
     end
   end
 end

@@ -1,5 +1,4 @@
 require "rake"
-require "airbrussh/rake/command"
 
 module Airbrussh
   module Rake
@@ -38,10 +37,9 @@ module Airbrussh
         first_execution
       end
 
-      # Decorate an SSHKit Command with Rake::Command to provide additional
-      # context-sensitive information.
-      def decorate_command(command)
-        Airbrussh::Rake::Command.new(command, history.index(command.to_s))
+      # The position of the specified command in the current rake task
+      def position(command)
+        history.index(command.to_s)
       end
 
       class << self

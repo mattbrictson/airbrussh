@@ -9,13 +9,12 @@ class Airbrussh::CommandFormatterTest < Minitest::Test
       :host => "12.34.56.78",
       :user => "deployer",
       :runtime => 1.23456,
-      :position => 0,
       :failure? => false
     )
     def sshkit_command.to_s
       "/usr/bin/env echo hello"
     end
-    @command = Airbrussh::CommandFormatter.new(sshkit_command)
+    @command = Airbrussh::CommandFormatter.new(sshkit_command, 0)
   end
 
   def test_format_output
