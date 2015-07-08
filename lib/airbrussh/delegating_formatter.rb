@@ -26,11 +26,18 @@ module Airbrussh
       end
     end
 
-    # SSHKit's formatters mutate the stdout and stderr data in the
-    # command obj. So we need to dup it to ensure our copy is unscathed.
+    # For versions of SSHKit up to and including 1.7.1, the LogfileFormatter
+    # and ConsoleFormatter (and all of SSHKit's built in formatters) clear
+    # the stdout and stderr data in the command obj. Therefore, ensure only
+    # one of the formatters (the last one) gets the original command. This is
+    # also the formatter whose return value is passed to the caller.
+    #
     DUP_AND_FORWARD_METHODS.each do |method|
-      define_method(method) do |obj|
-        formatters.map { |f| f.public_send(method, obj.dup) }.last
+      define_method(method) do |command_or_log_message|
+        formatters[0...-1].each do |f|
+          f.public_send(method, command_or_log_message.dup)
+        end
+        formatters.last.public_send(method, command_or_log_message)
       end
     end
   end

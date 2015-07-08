@@ -33,13 +33,26 @@ class Airbrussh::DelegatingFormatterTest < Minitest::Test
     assert_nil(result)
   end
 
-  def test_forwards_and_dups_object_sent_to_io_methods
+  def test_forwards_io_methods_to_multiple_formatters
+    # All formatters get duped commands except for the last one. This is
+    # because in SSHKit versions up to and including 1.7.1, the formatters
+    # clear the command output, so each must be given it's own copy.
     command = stub(:dup => "I've been duped!")
     %w(<< write).each do |method|
       @fmt_1.expects(method).with("I've been duped!").returns(16)
-      @fmt_2.expects(method).with("I've been duped!").returns(16)
+      @fmt_2.expects(method).with(command).returns(10)
       result = @delegating.public_send(method, command)
-      assert_equal(16, result)
+      assert_equal(10, result)
+    end
+  end
+
+  def test_forwards_io_methods_to_a_single_formatter
+    command = stub(:dup => "I've been duped!")
+    %w(<< write).each do |method|
+      delegating = Airbrussh::DelegatingFormatter.new([@fmt_1])
+      @fmt_1.expects(method).with(command).returns(10)
+      result = delegating.public_send(method, command)
+      assert_equal(10, result)
     end
   end
 end
