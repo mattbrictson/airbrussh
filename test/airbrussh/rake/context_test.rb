@@ -35,6 +35,24 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
     end
   end
 
+  def test_register_new_command_is_true_for_first_execution_per_rake_task
+    @config.monkey_patch_rake = true
+    context = Airbrussh::Rake::Context.new(@config)
+    define_and_execute_rake_task("one") do
+      assert context.register_new_command(:command_one)
+      refute context.register_new_command(:command_one)
+      assert context.register_new_command(:command_two)
+      refute context.register_new_command(:command_two)
+    end
+
+    define_and_execute_rake_task("two") do
+      assert context.register_new_command(:command_one)
+      refute context.register_new_command(:command_one)
+      assert context.register_new_command(:command_two)
+      refute context.register_new_command(:command_two)
+    end
+  end
+
   def test_decorate_command
     @config.monkey_patch_rake = true
     context = Airbrussh::Rake::Context.new(@config)
