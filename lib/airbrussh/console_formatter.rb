@@ -1,7 +1,6 @@
 require "airbrussh/colors"
 require "airbrussh/command_formatter"
 require "airbrussh/console"
-require "airbrussh/rake/command"
 require "airbrussh/rake/context"
 require "sshkit"
 
@@ -107,7 +106,7 @@ module Airbrussh
     end
 
     def decorate(command)
-      Airbrussh::CommandFormatter.new(@context.decorate_command(command))
+      Airbrussh::CommandFormatter.new(command, @context.position(command))
     end
 
     def print_line(string)
