@@ -78,10 +78,7 @@ module Airbrussh
     # (see Airbrussh::Configuration#command_output).
     def log_and_clear_command_output(command, stream)
       output = command.public_send(stream)
-      return if output.empty?
-      output.lines.to_a.each do |line|
-        log_command_data(command, stream, line)
-      end
+      log_command_data(command, stream, output)
       command.public_send("#{stream}=", "")
     end
 
