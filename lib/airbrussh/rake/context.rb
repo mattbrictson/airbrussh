@@ -23,20 +23,25 @@ module Airbrussh
         self.class.current_task_name
       end
 
-      # Decorate an SSHKit Command with Rake::Command to provide additional
-      # context-sensitive information.
-      def decorate_command(command)
+      # Update the context when a new command starts by:
+      # * Clearing the command history if the rake task has changed
+      # * Recording the command in the history
+      #
+      # Returns whether or not this command was the first execution
+      # of this command in the current rake task
+      def register_new_command(command)
         reset_history_if_task_changed
 
         first_execution = !history.include?(command.to_s)
         history << command.to_s
         history.uniq!
+        first_execution
+      end
 
-        Airbrussh::Rake::Command.new(
-          command,
-          first_execution,
-          history.index(command.to_s)
-        )
+      # Decorate an SSHKit Command with Rake::Command to provide additional
+      # context-sensitive information.
+      def decorate_command(command)
+        Airbrussh::Rake::Command.new(command, history.index(command.to_s))
       end
 
       class << self

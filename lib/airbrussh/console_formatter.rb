@@ -11,7 +11,7 @@ module Airbrussh
     extend Forwardable
 
     attr_reader :config, :context
-    def_delegator :context, :current_task_name
+    def_delegators :context, :current_task_name, :register_new_command
 
     def initialize(io, config=Airbrussh.configuration)
       super(io)
@@ -29,9 +29,10 @@ module Airbrussh
 
     def log_command_start(command)
       return if debug?(command)
+      first_execution = register_new_command(command)
       command = decorate(command)
       print_task_if_changed
-      print_indented_line(command.start_message) if command.first_execution?
+      print_indented_line(command.start_message) if first_execution
     end
 
     def log_command_data(command, stream_type, line)

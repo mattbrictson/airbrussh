@@ -35,30 +35,46 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
     end
   end
 
+  def test_register_new_command_is_true_for_first_execution_per_rake_task
+    @config.monkey_patch_rake = true
+    context = Airbrussh::Rake::Context.new(@config)
+    define_and_execute_rake_task("one") do
+      assert context.register_new_command(:command_one)
+      refute context.register_new_command(:command_one)
+      assert context.register_new_command(:command_two)
+      refute context.register_new_command(:command_two)
+    end
+
+    define_and_execute_rake_task("two") do
+      assert context.register_new_command(:command_one)
+      refute context.register_new_command(:command_one)
+      assert context.register_new_command(:command_two)
+      refute context.register_new_command(:command_two)
+    end
+  end
+
   def test_decorate_command
     @config.monkey_patch_rake = true
     context = Airbrussh::Rake::Context.new(@config)
 
     define_and_execute_rake_task("one") do
-      context.decorate_command(:command_one)
+      context.register_new_command(:command_one)
       command_one = context.decorate_command(:command_one)
-      context.decorate_command(:command_two)
+      context.register_new_command(:command_two)
       command_two = context.decorate_command(:command_two)
 
       assert_equal(0, command_one.position)
       assert_equal(1, command_two.position)
-      refute(command_one.first_execution?)
-      refute(command_two.first_execution?)
     end
 
     define_and_execute_rake_task("two") do
+      context.register_new_command(:command_three)
       command_three = context.decorate_command(:command_three)
+      context.register_new_command(:command_four)
       command_four = context.decorate_command(:command_four)
 
       assert_equal(0, command_three.position)
       assert_equal(1, command_four.position)
-      assert(command_three.first_execution?)
-      assert(command_four.first_execution?)
     end
   end
 end
