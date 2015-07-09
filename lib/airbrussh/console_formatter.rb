@@ -34,11 +34,13 @@ module Airbrussh
       print_indented_line(command.start_message) if first_execution
     end
 
-    def log_command_data(command, stream_type, line)
+    def log_command_data(command, stream_type, string)
       return if debug?(command)
       return unless config.show_command_output?(stream_type)
       command = decorate(command)
-      print_indented_line(command.format_output(line))
+      string.each_line do |line|
+        print_indented_line(command.format_output(line))
+      end
     end
 
     def log_command_exit(command)
@@ -76,10 +78,7 @@ module Airbrussh
     # (see Airbrussh::Configuration#command_output).
     def log_and_clear_command_output(command, stream)
       output = command.public_send(stream)
-      return if output.empty?
-      output.lines.to_a.each do |line|
-        log_command_data(command, stream, line)
-      end
+      log_command_data(command, stream, output)
       command.public_send("#{stream}=", "")
     end
 
