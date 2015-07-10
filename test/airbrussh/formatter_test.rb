@@ -312,6 +312,34 @@ class Airbrussh::FormatterTest < Minitest::Test
     )
   end
 
+  def test_repeated_commands
+    configure do |airbrussh_config|
+      airbrussh_config.monkey_patch_rake = true
+      airbrussh_config.command_output = true
+    end
+
+    on_local("interleaving_test") do
+      execute(:echo, "command 1")
+      execute(:echo, "command 1")
+      execute(:echo, "command 2")
+      execute(:echo, "command 1")
+    end
+
+    assert_output_lines(
+      "00:00 interleaving_test\n",
+      "      01 echo command 1\n",
+      "      01 command 1\n",
+      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
+      "      01 command 1\n",
+      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
+      "      02 echo command 2\n",
+      "      02 command 2\n",
+      /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
+      "      01 command 1\n",
+      /    ✔ 01 #{@user}@localhost 0.\d+s\n/
+    )
+  end
+
   private
 
   def on_local(task_name=nil, &block)
