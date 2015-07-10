@@ -6,11 +6,14 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 
 ## [Unreleased]
 
+* Your contribution here!
+
+## [0.6.0][] (2015-07-10)
+
 This is another release with mostly behind-the-scenes changes. If you notice any differences in Airbrussh's behavior in this version, [please report an issue](https://github.com/mattbrictson/airbrussh/issues).
 
 Other changes:
 
-* Your contribution here!
 * Bundler 1.10 is now required to build and test airbrussh (this doesn't affect users of airbrussh at all).
 * If the directory containing the log file doesn't exist, Airbrussh will now attempt to create it using `FileUtils.mkdir_p` ([#30](https://github.com/mattbrictson/airbrussh/issues/30))
 * By default Airbrussh now always prints `Using airbrussh format.` when it starts up. In previous versions, a bug caused this message to sometimes not be shown. To change or disable this message, set the `banner` configuration option as explained in the README.
@@ -59,7 +62,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/mattbrictson/airbrussh/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/mattbrictson/airbrussh/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/mattbrictson/airbrussh/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/mattbrictson/airbrussh/compare/v0.4.0...v0.4.1
