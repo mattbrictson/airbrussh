@@ -31,15 +31,17 @@ module Airbrussh
       def register_new_command(command)
         reset_history_if_task_changed
 
-        first_execution = !history.include?(command.to_s)
-        history << command.to_s
-        history.uniq!
+        first_execution = position(command).nil?
+        history << command if first_execution
         first_execution
       end
 
       # The position of the specified command in the current rake task
       def position(command)
-        history.index(command.to_s)
+        history.each.with_index do |previous_command, index|
+          return index if previous_command.uuid == command.uuid
+        end
+        nil
       end
 
       class << self

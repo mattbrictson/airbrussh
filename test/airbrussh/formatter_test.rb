@@ -330,13 +330,15 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      01 echo command 1\n",
       "      01 command 1\n",
       /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
-      "      01 command 1\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
-      "      02 echo command 2\n",
-      "      02 command 2\n",
+      "      02 echo command 1\n",
+      "      02 command 1\n",
       /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
-      "      01 command 1\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/
+      "      03 echo command 2\n",
+      "      03 command 2\n",
+      /    ✔ 03 #{@user}@localhost 0.\d+s\n/,
+      "      04 echo command 1\n",
+      "      04 command 1\n",
+      /    ✔ 04 #{@user}@localhost 0.\d+s\n/
     )
   end
 
