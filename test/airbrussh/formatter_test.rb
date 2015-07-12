@@ -1,6 +1,7 @@
 # encoding: utf-8
 require "minitest_helper"
 require "bundler"
+require "etc"
 
 # rubocop:disable Metrics/LineLength
 
@@ -11,6 +12,9 @@ class Airbrussh::FormatterTest < Minitest::Test
     @output = StringIO.new
     @log_file = StringIO.new
     @user = "test_user"
+
+    # Hack to allow SSHKit's local backend to work on Windows
+    Etc.stubs(:getpwuid => stub(:name => "user"))
   end
 
   def teardown
