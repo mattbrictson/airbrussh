@@ -1,5 +1,6 @@
 require "minitest_helper"
 require "airbrussh/log_file_formatter"
+require "fileutils"
 require "tempfile"
 
 class Airbrussh::LogFileFormatterTest < Minitest::Test
@@ -30,7 +31,7 @@ class Airbrussh::LogFileFormatterTest < Minitest::Test
   end
 
   def test_creates_log_directory_and_file
-    Dir.mktmpdir("airbrussh-test-") do |dir|
+    with_tempdir do |dir|
       log_file = File.join(dir, "log", "capistrano.log")
       Airbrussh::LogFileFormatter.new(log_file)
       assert(File.exist?(log_file))
@@ -41,5 +42,12 @@ class Airbrussh::LogFileFormatterTest < Minitest::Test
 
   def output
     @output ||= IO.read(@file.path)
+  end
+
+  def with_tempdir
+    dir = Dir.mktmpdir("airbrussh-test-")
+    yield(dir)
+  ensure
+    FileUtils.rm_rf(dir)
   end
 end
