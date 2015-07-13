@@ -55,7 +55,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 \e[0;33;49mecho foo\e[0m\n",
       "      01 foo\n",
-      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m0.\d+s\e\[0m\n/
+      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
     )
 
     assert_log_file_lines(
@@ -78,7 +78,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 echo foo\n",
       "      01 foo\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/
     )
 
     assert_log_file_lines(
@@ -97,7 +97,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     assert_output_lines(
       "      01 ls -l\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/
     )
   end
 
@@ -124,7 +124,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     expected_output = [
       "      01 \e[0;33;49mecho hi\e[0m\n",
       "      01 hi\n",
-      /    \e\[0;32;49m✔ 01 test_user@localhost\e\[0m \e\[0;90;49m0.\d+s\e\[0m\n/,
+      /    \e\[0;32;49m✔ 01 test_user@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/,
       "      02 \e[0;33;49mls _file_does_not_exist\e[0m\n"
     ]
 
@@ -166,7 +166,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 \e[0;33;49mls -1 airbrussh.gemspec\e[0m\n",
       "      01 airbrussh.gemspec\n",
-      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m0.\d+s\e\[0m\n/
+      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
     )
 
     assert_log_file_lines(
@@ -186,7 +186,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 ls -1 airbrussh.gemspec\n",
       "      01 airbrussh.gemspec\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/
     )
 
     assert_log_file_lines(
@@ -238,20 +238,20 @@ class Airbrussh::FormatterTest < Minitest::Test
       "00:00 special_rake_task\n",
       "      01 echo command 1\n",
       "      01 command 1\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/,
       "      Starting command 2\n",
       "      02 echo command 2\n",
       "      02 command 2\n",
-      /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 02 #{@user}@localhost \d.\d+s\n/,
       "00:00 special_rake_task_2\n",
       "      New task starting\n",
       "00:00 special_rake_task_3\n",
       "      01 echo command 3\n",
       "      01 command 3\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/,
       "      02 echo command 4\n",
       "      02 command 4\n",
-      /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 02 #{@user}@localhost \d.\d+s\n/,
       "      All done\n"
     )
 
@@ -317,14 +317,14 @@ class Airbrussh::FormatterTest < Minitest::Test
       "00:00 interleaving_test\n",
       "      01 echo command 1\n",
       "      01 command 1\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/,
       "      Info line should be output\n",
       "      02 echo command 2\n",
       "      02 command 2\n",
-      /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 02 #{@user}@localhost \d.\d+s\n/,
       "      03 echo command 4\n",
       "      03 command 4\n",
-      /    ✔ 03 #{@user}@localhost 0.\d+s\n/
+      /    ✔ 03 #{@user}@localhost \d.\d+s\n/
     )
   end
 
