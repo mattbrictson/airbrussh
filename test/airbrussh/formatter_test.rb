@@ -147,7 +147,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     if sshkit_after?("1.6.1")
       expected_log_output << command_std_stream(:stderr, error_message)
-      expected_log_output << "\e[0m"
+      expected_log_output << "\e[0m" unless sshkit_master?
     end
 
     assert_log_file_lines(*expected_log_output)
@@ -376,10 +376,14 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def command_std_stream(stream, output)
-    # Note ansii character end code is omitted due to newline
+    # Note ansii character end code is omitted in 1.7.1 due to newline
     # This is probably a bug in SSHKit
     color = stream == :stdout ? :green : :red
-    formatted_output = send(color, "\\t#{output}\\n").chomp('\\e\\[0m')
+    if sshkit_master?
+      formatted_output = send(color, "\\t#{output}") + "\n"
+    else
+      formatted_output = send(color, "\\t#{output}\\n").chomp('\\e\\[0m')
+    end
     /#{black('DEBUG')} \[#{green('\w+')}\] #{formatted_output}/
   end
 
@@ -412,6 +416,11 @@ class Airbrussh::FormatterTest < Minitest::Test
 
   def sshkit_after?(version)
     Gem.loaded_specs["sshkit"].version > Gem::Version.new(version)
+  end
+
+  def sshkit_master?
+    gem_source = Gem.loaded_specs["sshkit"].source
+    gem_source.is_a?(Bundler::Source::Git) && gem_source.branch == "master"
   end
 
   def formatter_class
