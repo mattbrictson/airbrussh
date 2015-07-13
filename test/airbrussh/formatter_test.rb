@@ -21,16 +21,22 @@ class Airbrussh::FormatterTest < Minitest::Test
       hash[command] = command.to_s
     end
     SSHKit.config.stubs(:command_map => fake_map)
+
+    # Force SSHKit to use ANSI color (CI $stdout may not be a TTY)
+    @sshkit_color_orig = ENV["SSHKIT_COLOR"]
+    ENV["SSHKIT_COLOR"] = "1"
   end
 
   def teardown
     Airbrussh::Rake::Context.current_task_name = nil
     SSHKit.reset_configuration!
+    ENV["SSHKIT_COLOR"] = @sshkit_color_orig
   end
 
   def configure
     config = Airbrussh::Configuration.new
     config.log_file = @log_file
+    config.color = false
     yield(config, SSHKit.config)
     SSHKit.config.output = formatter_class.new(@output, config)
   end
