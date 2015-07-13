@@ -19,10 +19,16 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def configure
-    config = Airbrussh::Configuration.new
-    config.log_file = @log_file
-    yield(config, SSHKit.config)
-    SSHKit.config.output = formatter_class.new(@output, config)
+    airbrussh_config = Airbrussh::Configuration.new
+    airbrussh_config.log_file = @log_file
+
+    # Replace command map so it doesn't prefix every cmd with /usr/bin/env
+    sshkit_config = SSHKit.config
+    sshkit_config.command_map = Hash.new { |h, cmd| h[cmd] = cmd.to_s }
+
+    yield(airbrussh_config, sshkit_config)
+
+    sshkit_config.output = formatter_class.new(@output, airbrussh_config)
   end
 
   def test_formats_execute_with_color
@@ -44,7 +50,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     assert_log_file_lines(
       command_running("echo foo"),
-      command_started_debug("/usr/bin/env echo foo"),
+      command_started_debug("echo foo"),
       command_std_stream(:stdout, "foo"),
       command_success
     )
@@ -96,7 +102,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     on_local do
       begin
         execute(:echo, "hi")
-        execute(:nogo, "mr")
+        execute(:ls, "_file_does_not_exist")
         # rubocop:disable Lint/HandleExceptions
       rescue SSHKit::Command::Failed => error
         # rubocop:enable Lint/HandleExceptions
@@ -109,11 +115,10 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      01 \e[0;33;49mecho hi\e[0m\n",
       "      01 hi\n",
       /    \e\[0;32;49m✔ 01 test_user@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/,
-      "      02 \e[0;33;49mnogo mr\e[0m\n"
+      "      02 \e[0;33;49mls _file_does_not_exist\e[0m\n"
     ]
 
-    # /usr/bin/ prefix seems to be present on linux but not on OS X
-    error_message = "(/usr/bin/env|env): nogo: No such file or directory"
+    error_message = "ls: (cannot access )?_file_does_not_exist: No such file or directory"
 
     # Don't know why this log line doesn't show up in SSHKit 1.6.1
     expected_output << /      02 #{error_message}\n/ if sshkit_after?("1.6.1")
@@ -122,12 +127,12 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     expected_log_output = [
       command_running("echo hi"),
-      command_started_debug("/usr/bin/env echo hi"),
+      command_started_debug("echo hi"),
       command_std_stream(:stdout, "hi"),
       command_success,
 
-      command_running("nogo mr"),
-      command_started_debug("/usr/bin/env nogo mr")
+      command_running("ls _file_does_not_exist"),
+      command_started_debug("ls _file_does_not_exist")
     ]
 
     if sshkit_after?("1.6.1")
@@ -352,7 +357,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
   def command_running(command, level="INFO")
     level_tag_color = (level == "INFO") ? :blue : :black
-    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Running #{bold_yellow("/usr/bin/env #{command}")} as #{blue(@user)}@#{blue('localhost')}\n/
+    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Running #{bold_yellow("#{command}")} as #{blue(@user)}@#{blue('localhost')}\n/
   end
 
   def command_started_debug(command)
