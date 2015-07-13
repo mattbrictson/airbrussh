@@ -198,15 +198,16 @@ class Airbrussh::FormatterTest < Minitest::Test
     end
 
     on_local do
-      test("[ -f ~ ]")
+      test("echo hi")
     end
 
     assert_output_lines
 
     assert_log_file_lines(
-      command_running("\\[ -f ~ \\]", "DEBUG"),
-      command_started_debug("\\[ -f ~ \\]"),
-      command_failed(256)
+      command_running("echo hi", "DEBUG"),
+      command_started_debug("echo hi"),
+      command_std_stream(:stdout, "hi"),
+      command_success("DEBUG")
     )
   end
 
@@ -298,10 +299,10 @@ class Airbrussh::FormatterTest < Minitest::Test
     end
 
     on_local("interleaving_test") do
-      test("[ -f ~ ]")
+      test("echo hi")
       # test methods are logged at debug level by default
       execute(:echo, "command 1")
-      test("[ -f . ]")
+      test("echo hello")
       debug("Debug line should not be output")
       info("Info line should be output")
       execute(:echo, "command 2")
@@ -381,8 +382,9 @@ class Airbrussh::FormatterTest < Minitest::Test
     /#{black('DEBUG')} \[#{green('\w+')}\] #{formatted_output}/
   end
 
-  def command_success
-    /#{blue('INFO')} \[#{green('\w+')}\] Finished in \d.\d+ seconds with exit status 0 \(#{bold_green("successful")}\).\n/
+  def command_success(level="INFO")
+    level_tag_color = (level == "INFO") ? :blue : :black
+    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Finished in \d.\d+ seconds with exit status 0 \(#{bold_green("successful")}\).\n/
   end
 
   def command_failed(exit_status)
