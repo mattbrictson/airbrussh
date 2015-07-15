@@ -1,6 +1,7 @@
 # encoding: utf-8
 require "minitest_helper"
 require "bundler"
+require "etc"
 
 # rubocop:disable Metrics/LineLength
 
@@ -11,6 +12,12 @@ class Airbrussh::FormatterTest < Minitest::Test
     @output = StringIO.new
     @log_file = StringIO.new
     @user = "test_user"
+
+    # Force a consistent username when SSHKit::Backend::Local is used.
+    # This is also necessary to work around a Windows-specific bug in SSHKit,
+    # where it relies on Etc.getpwuid to get the username, even though this
+    # doesn't work on Windows.
+    Etc.stubs(:getpwuid => stub(:name => @user))
   end
 
   def teardown
@@ -114,7 +121,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     expected_output = [
       "      01 \e[0;33;49mecho hi\e[0m\n",
       "      01 hi\n",
-      /    \e\[0;32;49m✔ 01 test_user@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/,
+      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/,
       "      02 \e[0;33;49mls _file_does_not_exist\e[0m\n"
     ]
 
@@ -324,7 +331,9 @@ class Airbrussh::FormatterTest < Minitest::Test
       local_backend = SSHKit::Backend::Local.new(&block)
       # Note: The Local backend default log changed to include the user name around version 1.7.1
       # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
-      local_backend.instance_variable_get(:@host).user = @user
+      unless sshkit_after?("1.6.1")
+        local_backend.instance_variable_get(:@host).user = @user
+      end
       local_backend.run
     end
   end
