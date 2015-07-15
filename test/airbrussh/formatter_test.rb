@@ -144,7 +144,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     if sshkit_after?("1.6.1")
       expected_log_output << command_std_stream(:stderr, error_message)
-      expected_log_output << "\e[0m" unless sshkit_master?
+      expected_log_output << "\e[0m" if color_output?
     end
 
     assert_log_file_lines(*expected_log_output)
@@ -402,19 +402,19 @@ class Airbrussh::FormatterTest < Minitest::Test
     :bold_yellow => "1;33;49"
   }.each do |color, code|
     define_method(color) do |string|
-      color_if_legacy(string, code)
+      if color_output?
+        "\\e\\[#{code}m#{string}\\e\\[0m"
+      else
+        string
+      end
     end
   end
 
-  def color_if_legacy(text, color)
-    # SSHKit versions up to 1.7.1 added colors to the log file even though it did not have a tty.
-    # Versions after this don't, so we must match output both with, and without colors
-    # depending on the SSHKit version.
-    if sshkit_after?("1.7.1") || sshkit_master?
-      text
-    else
-      "\\e\\[#{color}m#{text}\\e\\[0m"
-    end
+  # Whether or not SSHKit emits color depends on the test environment. SSHKit
+  # versions up to 1.7.1 added colors to the log file, but only if
+  # `$stdout.tty?` is true. Later versions never output color to the log file.
+  def color_output?
+    $stdout.tty? && !(sshkit_after?("1.7.1") || sshkit_master?)
   end
 
   def sshkit_after?(version)
