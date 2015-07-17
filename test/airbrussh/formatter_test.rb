@@ -1,6 +1,7 @@
 # encoding: utf-8
 require "minitest_helper"
 require "bundler"
+require "etc"
 
 # rubocop:disable Metrics/LineLength
 
@@ -11,6 +12,12 @@ class Airbrussh::FormatterTest < Minitest::Test
     @output = StringIO.new
     @log_file = StringIO.new
     @user = "test_user"
+
+    # Force a consistent username when SSHKit::Backend::Local is used.
+    # This is also necessary to work around a Windows-specific bug in SSHKit,
+    # where it relies on Etc.getpwuid to get the username, even though this
+    # doesn't work on Windows.
+    Etc.stubs(:getpwuid => stub(:name => @user))
   end
 
   def teardown
@@ -19,10 +26,16 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def configure
-    config = Airbrussh::Configuration.new
-    config.log_file = @log_file
-    yield(config, SSHKit.config)
-    SSHKit.config.output = formatter_class.new(@output, config)
+    airbrussh_config = Airbrussh::Configuration.new
+    airbrussh_config.log_file = @log_file
+
+    # Replace command map so it doesn't prefix every cmd with /usr/bin/env
+    sshkit_config = SSHKit.config
+    sshkit_config.command_map = Hash.new { |h, cmd| h[cmd] = cmd.to_s }
+
+    yield(airbrussh_config, sshkit_config)
+
+    sshkit_config.output = formatter_class.new(@output, airbrussh_config)
   end
 
   def test_formats_execute_with_color
@@ -39,12 +52,12 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 \e[0;33;49mecho foo\e[0m\n",
       "      01 foo\n",
-      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m0.\d+s\e\[0m\n/
+      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
     )
 
     assert_log_file_lines(
       command_running("echo foo"),
-      command_started_debug("/usr/bin/env echo foo"),
+      command_started_debug("echo foo"),
       command_std_stream(:stdout, "foo"),
       command_success
     )
@@ -62,7 +75,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 echo foo\n",
       "      01 foo\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/
     )
 
     assert_log_file_lines(
@@ -81,7 +94,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     assert_output_lines(
       "      01 ls -l\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/
     )
   end
 
@@ -96,7 +109,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     on_local do
       begin
         execute(:echo, "hi")
-        execute(:nogo, "mr")
+        execute(:ls, "_file_does_not_exist")
         # rubocop:disable Lint/HandleExceptions
       rescue SSHKit::Command::Failed => error
         # rubocop:enable Lint/HandleExceptions
@@ -108,12 +121,11 @@ class Airbrussh::FormatterTest < Minitest::Test
     expected_output = [
       "      01 \e[0;33;49mecho hi\e[0m\n",
       "      01 hi\n",
-      /    \e\[0;32;49m✔ 01 test_user@localhost\e\[0m \e\[0;90;49m0.\d+s\e\[0m\n/,
-      "      02 \e[0;33;49mnogo mr\e[0m\n"
+      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/,
+      "      02 \e[0;33;49mls _file_does_not_exist\e[0m\n"
     ]
 
-    # /usr/bin/ prefix seems to be present on linux but not on OS X
-    error_message = "(/usr/bin/env|env): nogo: No such file or directory"
+    error_message = "ls: (cannot access )?_file_does_not_exist: No such file or directory"
 
     # Don't know why this log line doesn't show up in SSHKit 1.6.1
     expected_output << /      02 #{error_message}\n/ if sshkit_after?("1.6.1")
@@ -122,17 +134,17 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     expected_log_output = [
       command_running("echo hi"),
-      command_started_debug("/usr/bin/env echo hi"),
+      command_started_debug("echo hi"),
       command_std_stream(:stdout, "hi"),
       command_success,
 
-      command_running("nogo mr"),
-      command_started_debug("/usr/bin/env nogo mr")
+      command_running("ls _file_does_not_exist"),
+      command_started_debug("ls _file_does_not_exist")
     ]
 
     if sshkit_after?("1.6.1")
       expected_log_output << command_std_stream(:stderr, error_message)
-      expected_log_output << "\e[0m" unless sshkit_master?
+      expected_log_output << "\e[0m" if color_output?
     end
 
     assert_log_file_lines(*expected_log_output)
@@ -151,7 +163,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 \e[0;33;49mls -1 airbrussh.gemspec\e[0m\n",
       "      01 airbrussh.gemspec\n",
-      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m0.\d+s\e\[0m\n/
+      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
     )
 
     assert_log_file_lines(
@@ -171,7 +183,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 ls -1 airbrussh.gemspec\n",
       "      01 airbrussh.gemspec\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/
     )
 
     assert_log_file_lines(
@@ -186,15 +198,16 @@ class Airbrussh::FormatterTest < Minitest::Test
     end
 
     on_local do
-      test("[ -f ~ ]")
+      test("echo hi")
     end
 
     assert_output_lines
 
     assert_log_file_lines(
-      command_running("\\[ -f ~ \\]", "DEBUG"),
-      command_started_debug("\\[ -f ~ \\]"),
-      command_failed(256)
+      command_running("echo hi", "DEBUG"),
+      command_started_debug("echo hi"),
+      command_std_stream(:stdout, "hi"),
+      command_success("DEBUG")
     )
   end
 
@@ -222,20 +235,20 @@ class Airbrussh::FormatterTest < Minitest::Test
       "00:00 special_rake_task\n",
       "      01 echo command 1\n",
       "      01 command 1\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/,
       "      Starting command 2\n",
       "      02 echo command 2\n",
       "      02 command 2\n",
-      /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 02 #{@user}@localhost \d.\d+s\n/,
       "00:00 special_rake_task_2\n",
       "      New task starting\n",
       "00:00 special_rake_task_3\n",
       "      01 echo command 3\n",
       "      01 command 3\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/,
       "      02 echo command 4\n",
       "      02 command 4\n",
-      /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 02 #{@user}@localhost \d.\d+s\n/,
       "      All done\n"
     )
 
@@ -286,10 +299,10 @@ class Airbrussh::FormatterTest < Minitest::Test
     end
 
     on_local("interleaving_test") do
-      test("[ -f ~ ]")
+      test("echo hi")
       # test methods are logged at debug level by default
       execute(:echo, "command 1")
-      test("[ -f . ]")
+      test("echo hello")
       debug("Debug line should not be output")
       info("Info line should be output")
       execute(:echo, "command 2")
@@ -301,14 +314,14 @@ class Airbrussh::FormatterTest < Minitest::Test
       "00:00 interleaving_test\n",
       "      01 echo command 1\n",
       "      01 command 1\n",
-      /    ✔ 01 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 01 #{@user}@localhost \d.\d+s\n/,
       "      Info line should be output\n",
       "      02 echo command 2\n",
       "      02 command 2\n",
-      /    ✔ 02 #{@user}@localhost 0.\d+s\n/,
+      /    ✔ 02 #{@user}@localhost \d.\d+s\n/,
       "      03 echo command 4\n",
       "      03 command 4\n",
-      /    ✔ 03 #{@user}@localhost 0.\d+s\n/
+      /    ✔ 03 #{@user}@localhost \d.\d+s\n/
     )
   end
 
@@ -319,7 +332,9 @@ class Airbrussh::FormatterTest < Minitest::Test
       local_backend = SSHKit::Backend::Local.new(&block)
       # Note: The Local backend default log changed to include the user name around version 1.7.1
       # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
-      local_backend.instance_variable_get(:@host).user = @user
+      unless sshkit_after?("1.6.1")
+        local_backend.instance_variable_get(:@host).user = @user
+      end
       local_backend.run
     end
   end
@@ -352,7 +367,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
   def command_running(command, level="INFO")
     level_tag_color = (level == "INFO") ? :blue : :black
-    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Running #{bold_yellow("/usr/bin/env #{command}")} as #{blue(@user)}@#{blue('localhost')}\n/
+    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Running #{bold_yellow("#{command}")} as #{blue(@user)}@#{blue('localhost')}\n/
   end
 
   def command_started_debug(command)
@@ -367,12 +382,13 @@ class Airbrussh::FormatterTest < Minitest::Test
     /#{black('DEBUG')} \[#{green('\w+')}\] #{formatted_output}/
   end
 
-  def command_success
-    /#{blue('INFO')} \[#{green('\w+')}\] Finished in 0.\d+ seconds with exit status 0 \(#{bold_green("successful")}\).\n/
+  def command_success(level="INFO")
+    level_tag_color = (level == "INFO") ? :blue : :black
+    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Finished in \d.\d+ seconds with exit status 0 \(#{bold_green("successful")}\).\n/
   end
 
   def command_failed(exit_status)
-    /#{black('DEBUG')} \[#{green('\w+')}\] Finished in 0.\d+ seconds with exit status #{exit_status} \(#{bold_red("failed")}\)/
+    /#{black('DEBUG')} \[#{green('\w+')}\] Finished in \d.\d+ seconds with exit status #{exit_status} \(#{bold_red("failed")}\)/
   end
 
   {
@@ -386,19 +402,19 @@ class Airbrussh::FormatterTest < Minitest::Test
     :bold_yellow => "1;33;49"
   }.each do |color, code|
     define_method(color) do |string|
-      color_if_legacy(string, code)
+      if color_output?
+        "\\e\\[#{code}m#{string}\\e\\[0m"
+      else
+        string
+      end
     end
   end
 
-  def color_if_legacy(text, color)
-    # SSHKit versions up to 1.7.1 added colors to the log file even though it did not have a tty.
-    # Versions after this don't, so we must match output both with, and without colors
-    # depending on the SSHKit version.
-    if sshkit_after?("1.7.1") || sshkit_master?
-      text
-    else
-      "\\e\\[#{color}m#{text}\\e\\[0m"
-    end
+  # Whether or not SSHKit emits color depends on the test environment. SSHKit
+  # versions up to 1.7.1 added colors to the log file, but only if
+  # `$stdout.tty?` is true. Later versions never output color to the log file.
+  def color_output?
+    $stdout.tty? && !(sshkit_after?("1.7.1") || sshkit_master?)
   end
 
   def sshkit_after?(version)
