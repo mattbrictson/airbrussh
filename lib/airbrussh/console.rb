@@ -39,11 +39,12 @@ module Airbrussh
 
     def truncate_to_console_width(string)
       string = (string || "").rstrip
+      ellipsis = utf8_supported?(string) ? "…" : "..."
       width = console_width
 
       if strip_ascii_color(string).length > width
         string.chop! while strip_ascii_color(string).length >= width
-        string << "…\e[0m"
+        string << "#{ellipsis}\e[0m"
       else
         string
       end
@@ -73,6 +74,12 @@ module Airbrussh
       else
         false
       end
+    end
+
+    def utf8_supported?(string)
+      string.encode("UTF-8").valid_encoding?
+    rescue Encoding::UndefinedConversionError
+      false
     end
   end
 end
