@@ -79,7 +79,24 @@ class Airbrussh::ConsoleTest < Minitest::Test
     assert_equal("The quick brown fox jumps over the lazy dog.\n", output)
   end
 
+  # SSHKit sometimes returns raw ASCII-8BIT data that cannot be converted to
+  # UTF-8, which could frustrate the truncation logic. Make sure that Console
+  # recovers gracefully in this scenario.
+  def test_truncates_improperly_encoded_ascii_string
+    console = configured_console(:tty => true) do |config|
+      config.color = false
+      config.truncate = 10
+    end
+
+    console.print_line(ascii_8bit("The ‘quick’ brown fox"))
+    assert_equal(ascii_8bit("The ‘qu...\n"), ascii_8bit(output))
+  end
+
   private
+
+  def ascii_8bit(string)
+    string.force_encoding("ASCII-8BIT")
+  end
 
   def output
     @output.string
