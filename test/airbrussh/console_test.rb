@@ -89,7 +89,10 @@ class Airbrussh::ConsoleTest < Minitest::Test
     end
 
     console.print_line(ascii_8bit("The ‘quick’ brown fox"))
-    assert_equal(ascii_8bit("The ‘qu...\n"), ascii_8bit(output))
+
+    # Note that the left-apostrophe character is actually 3 bytes as raw
+    # ASCII-8BIT, which accounts for the short truncated value.
+    assert_equal(ascii_8bit("The ‘...\n"), ascii_8bit(output))
   end
 
   private

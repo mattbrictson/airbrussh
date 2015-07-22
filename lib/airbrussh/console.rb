@@ -43,7 +43,8 @@ module Airbrussh
       width = console_width
 
       if strip_ascii_color(string).length > width
-        string.chop! while strip_ascii_color(string).length >= width
+        width -= ellipsis.length
+        string.chop! while strip_ascii_color(string).length > width
         string << "#{ellipsis}\e[0m"
       else
         string
