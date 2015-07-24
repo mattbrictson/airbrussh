@@ -43,7 +43,7 @@ module Airbrussh
         error_line(yellow("** Refer to #{log_file} for details. "\
                           "Here are the last 20 lines:"))
         error_line
-        error_line(`tail -n 20 #{log_file.shellescape} 2>&1`)
+        error_line(tail_log_file)
       end
 
       private
@@ -74,6 +74,16 @@ module Airbrussh
 
       def error_line(line="\n")
         line.each_line(&err_console.method(:print_line))
+      end
+
+      # Returns a String containing the last 20 lines of the log file. Since
+      # this method uses a fixed-size buffer, fewer than 20 lines may be
+      # returned in cases where the lines are extremely long.
+      def tail_log_file
+        open(log_file) do |file|
+          file.seek(-[8192, file.size].min, IO::SEEK_END)
+          file.readlines.last(20).join
+        end
       end
     end
   end
