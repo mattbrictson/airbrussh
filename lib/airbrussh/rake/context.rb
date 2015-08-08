@@ -68,7 +68,7 @@ module Airbrussh
         self.last_task_name = current_task_name
       end
 
-      def enabled?
+      def enabled? # rubocop:disable Style/TrivialAccessors
         @enabled
       end
     end
