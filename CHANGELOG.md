@@ -8,6 +8,18 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 
 * Your contribution here!
 
+## [0.7.0][] (2015-08-08)
+
+Fixes:
+
+* Handle truncation of raw/non-UTF8 output without crashing ([#57](https://github.com/mattbrictson/airbrussh/issues/57))
+
+Other changes:
+
+* Re-implement the "tail log on deploy failure" feature in pure Ruby ([#59](https://github.com/mattbrictson/airbrussh/issues/59))
+* Code of contact added to the project
+* Tests now run on Windows ([#55](https://github.com/mattbrictson/airbrussh/issues/55))
+
 ## [0.6.0][] (2015-07-10)
 
 This is another release with mostly behind-the-scenes changes. If you notice any differences in Airbrussh's behavior in this version, [please report an issue](https://github.com/mattbrictson/airbrussh/issues).
@@ -62,7 +74,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/mattbrictson/airbrussh/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mattbrictson/airbrussh/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/mattbrictson/airbrussh/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/mattbrictson/airbrussh/compare/v0.4.1...v0.5.0
