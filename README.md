@@ -66,7 +66,7 @@ For brevity, airbrussh mutes all output (stdout and stderr) of commands by defau
 
 ```ruby
 Airbrussh.configure do |config|
-  config.output = true
+  config.command_output = true
 end
 ```
 
