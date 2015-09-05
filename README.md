@@ -176,7 +176,7 @@ end
 
 ## History
 
-Airbrussh started life as custom logging code within the [capistrano-fiftyfive][] collection of opinionated Capistrano recipes. In February 2015, the logging code was refactored into a standalone gem with its own configuration and documentation, and renamed `airbrussh`. Now anyone can using SSHKit or Capistrano can safely plug it into their projects!
+Airbrussh started life as custom logging code within the [capistrano-mb][] collection of opinionated Capistrano recipes. In February 2015, the logging code was refactored into a standalone gem with its own configuration and documentation, and renamed `airbrussh`. Now anyone can using SSHKit or Capistrano can safely plug it into their projects!
 
 ## Roadmap
 
@@ -194,4 +194,4 @@ Airbrussh is designed to work against multiple versions of SSHKit and Ruby. In o
 
 Contributions are welcome! Read [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
 
-[capistrano-fiftyfive]: https://github.com/mattbrictson/capistrano-fiftyfive
+[capistrano-mb]: https://github.com/mattbrictson/capistrano-mb
