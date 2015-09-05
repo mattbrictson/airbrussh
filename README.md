@@ -52,7 +52,35 @@ set :format, :pretty
 
 Airbrussh automatically replaces the default Capistrano log formatter, so there is nothing more you have to do. Just run `cap` as normal and enjoy the prettier output!
 
-**Advanced:** Airbrussh can be configured by calling `Airbrussh.configure` in your `deploy.rb` file. You can do stage-specific configuration in e.g. `deploy/production.rb` as well. Here are the available options:
+For advanced usage, refer to the these sections below:
+
+* [FAQ](#faq)
+* [Advanced configuration](#advanced-configuration)
+* [Usage outside of Capistrano](#usage-outside-of-capistrano)
+
+## FAQ
+
+**Airbrussh is not displaying the output of my commands! For example, I run `tail` in one of my capistrano tasks and airbrussh doesn't show anything. How do I fix this?**
+
+For brevity, airbrussh mutes all output (stdout and stderr) of commands by default. To show all output, add this to your `deploy.rb` (see also the other [configuration options](#advanced-configuration) later in this README):
+
+```ruby
+Airbrussh.configure do |config|
+  config.output = true
+end
+```
+
+**Does airbrussh work with Capistrano 2?**
+
+No, Capistrano 3 is required. We recommend Capistrano 3.4.0 or higher.
+
+**I have a question that’s not answered here or elsewhere in the README.**
+
+Please [open a GitHub issue](https://github.com/mattbrictson/airbrussh/issues/new) and we’ll be happy to help!
+
+## Advanced configuration
+
+Airbrussh can be configured by calling `Airbrussh.configure` in your `deploy.rb` file. You can do stage-specific configuration in e.g. `deploy/production.rb` as well. Here are the available options:
 
 ```ruby
 Airbrussh.configure do |config|
