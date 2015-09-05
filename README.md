@@ -180,9 +180,7 @@ Airbrussh started life as custom logging code within the [capistrano-fiftyfive][
 
 ## Roadmap
 
-Airbrussh needs work! The first priority is to add tests. Once good test coverage is in place, some clean up and refactoring is needed to make the core formatting code easier to understand.
-
-If you have ideas for other improvements, please contribute!
+Airbrussh will most likely be integrated as the default formatter in a future release of SSHKit or Capistrano. If you have any suggestions for how to make this migration a smooth one, or if you have other ideas for improvements to Airbrussh, please add your comment to the discussion in [GitHub issue #39](https://github.com/mattbrictson/airbrussh/issues/39).
 
 ## Development
 
