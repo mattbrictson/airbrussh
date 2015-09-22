@@ -74,6 +74,17 @@ end
 
 No, Capistrano 3 is required. We recommend Capistrano 3.4.0 or higher.
 
+**Does airbrussh work with JRuby?**
+
+JRuby is not officially supported or tested, but may work. You must disable automatic truncation to work around a known bug in the JRuby 9.0.1.0 standard library. See [#62](https://github.com/mattbrictson/airbrussh/issues/62) for more details.
+
+```ruby
+Airbrussh.configure do |config|
+  # Disable automatic truncation for JRuby compatibility
+  config.truncate = false
+end
+```
+
 **I have a question that’s not answered here or elsewhere in the README.**
 
 Please [open a GitHub issue](https://github.com/mattbrictson/airbrussh/issues/new) and we’ll be happy to help!
