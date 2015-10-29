@@ -11,11 +11,13 @@ module Airbrussh
   #              all commands that have been run in the current rake task
   #  class CommandFormatter < SimpleDelegator
   class CommandFormatter < SimpleDelegator
-    include Airbrussh::Colors
+    extend Forwardable
+    def_delegators :@colors, :gray, :green, :red, :yellow
 
-    def initialize(command, position)
+    def initialize(command, position, colors=Airbrussh::Colors)
       super(command)
       @position = position
+      @colors = colors
     end
 
     # Prefixes the line with the command number and removes the newline.
