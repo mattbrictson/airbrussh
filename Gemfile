@@ -30,3 +30,6 @@ if (sshkit_version = ENV["sshkit"])
   end
   gem "sshkit", requirement
 end
+
+# net-ssh 3.0+ is not compatible with Ruby 1.9, so pin at older version.
+gem "net-ssh", "~> 2.8" if RUBY_VERSION == "1.9.3"
