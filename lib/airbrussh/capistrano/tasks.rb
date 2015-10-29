@@ -16,13 +16,13 @@ module Airbrussh
       extend Forwardable
       def_delegators :dsl, :set
       def_delegators :config, :log_file
-
-      include Airbrussh::Colors
+      def_delegators :@colors, *Airbrussh::Colors.names
 
       def initialize(dsl, stderr=$stderr, config=Airbrussh.configuration)
         @dsl = dsl
         @stderr = stderr
         @config = config
+        @colors = config.colors(stderr)
 
         configure
         warn_if_missing_dsl

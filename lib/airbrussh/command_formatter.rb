@@ -1,6 +1,6 @@
 # encoding: UTF-8
 require "airbrussh/colors"
-require "delegate"
+require "forwardable"
 # rubocop:disable Style/AsciiComments
 
 module Airbrussh
@@ -12,9 +12,9 @@ module Airbrussh
   #  class CommandFormatter < SimpleDelegator
   class CommandFormatter < SimpleDelegator
     extend Forwardable
-    def_delegators :@colors, :gray, :green, :red, :yellow
+    def_delegators :@colors, *Airbrussh::Colors.names
 
-    def initialize(command, position, colors=Airbrussh::Colors)
+    def initialize(command, position, colors=Airbrussh::Colors.new)
       super(command)
       @position = position
       @colors = colors

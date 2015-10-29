@@ -16,15 +16,22 @@ module Airbrussh
       self.command_output = false
     end
 
-    def banner_message
+    # Returns a configured Colors object appropriate for the given io.
+    # This is based on the color setting (true, false, or :auto), and whether
+    # the io is a tty.
+    def colors(io)
+      Airbrussh::Colors.new(color?(io))
+    end
+
+    def banner_message(io)
       return nil unless banner
       return banner unless banner == :auto
-      msg = "Using airbrussh format."
+      m = "Using airbrussh format."
       if log_file
-        msg << "\n"
-        msg << "Verbose output is being written to #{Colors.blue(log_file)}."
+        m << "\n"
+        m << "Verbose output is being written to #{colors(io).blue(log_file)}."
       end
-      msg
+      m
     end
 
     # This returns an array of formatters appropriate for the configuration.
@@ -38,6 +45,19 @@ module Airbrussh
 
     def show_command_output?(sym)
       command_output == true || Array(command_output).include?(sym)
+    end
+
+    private
+
+    def color?(io)
+      case color
+      when true
+        true
+      when :auto
+        ENV["SSHKIT_COLOR"] || (io.respond_to?("tty?") && io.tty?)
+      else
+        false
+      end
     end
   end
 end

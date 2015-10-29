@@ -2,12 +2,13 @@ require "airbrussh/colors"
 require "airbrussh/command_formatter"
 require "airbrussh/console"
 require "airbrussh/rake/context"
+require "forwardable"
 require "sshkit"
 
 module Airbrussh
   class ConsoleFormatter < SSHKit::Formatter::Abstract
-    include Airbrussh::Colors
     extend Forwardable
+    def_delegators :@colors, *Airbrussh::Colors.names
 
     attr_reader :config, :context
     def_delegators :context, :current_task_name, :register_new_command
@@ -16,6 +17,7 @@ module Airbrussh
       super(io)
 
       @config = config
+      @colors = config.colors(io)
       @context = Airbrussh::Rake::Context.new(config)
       @console = Airbrussh::Console.new(original_output, config)
 
@@ -23,7 +25,8 @@ module Airbrussh
     end
 
     def write_banner
-      print_line(config.banner_message) if config.banner_message
+      message = config.banner_message(original_output)
+      print_line(message) if message
     end
 
     def log_command_start(command)
@@ -105,7 +108,11 @@ module Airbrussh
     end
 
     def decorate(command)
-      Airbrussh::CommandFormatter.new(command, @context.position(command))
+      Airbrussh::CommandFormatter.new(
+        command,
+        @context.position(command),
+        @colors
+      )
     end
 
     def print_line(string)

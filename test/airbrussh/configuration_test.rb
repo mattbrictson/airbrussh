@@ -20,29 +20,30 @@ class Airbrussh::ConfigurationTest < Minitest::Test
   def test_auto_banner_message_without_log
     @config.log_file = nil
     @config.banner = :auto
-    assert_equal("Using airbrussh format.", @config.banner_message)
+    assert_equal("Using airbrussh format.", @config.banner_message(stub))
   end
 
   def test_auto_banner_message_with_log
     @config.log_file = "log/test.log"
     @config.banner = :auto
+    @config.color = true
     assert_equal(
       "Using airbrussh format.\n"\
       "Verbose output is being written to \e[0;34;49mlog/test.log\e[0m.",
-      @config.banner_message
+      @config.banner_message(stub)
     )
   end
 
   def test_nil_or_false_banner_message
     @config.banner = nil
-    assert_nil(@config.banner_message)
+    assert_nil(@config.banner_message(stub))
     @config.banner = false
-    assert_nil(@config.banner_message)
+    assert_nil(@config.banner_message(stub))
   end
 
   def test_custom_banner_message
     @config.banner = "Hello!"
-    assert_equal("Hello!", @config.banner_message)
+    assert_equal("Hello!", @config.banner_message(stub))
   end
 
   def test_formatters_without_log_file
@@ -94,5 +95,31 @@ class Airbrussh::ConfigurationTest < Minitest::Test
     @config.command_output = [:stdout, :stderr]
     assert(@config.show_command_output?(:stdout))
     assert(@config.show_command_output?(:stderr))
+  end
+
+  def test_color_is_allowed_for_tty
+    @config.color = :auto
+    assert(@config.colors(stub("tty?" => true)).enabled?)
+  end
+
+  def test_color_can_be_forced
+    @config.color = true
+    assert(@config.colors(stub("tty?" => false)).enabled?)
+  end
+
+  def test_color_can_be_forced_via_env
+    @config.color = :auto
+    ENV.stubs(:[]).with("SSHKIT_COLOR").returns("1")
+    assert(@config.colors(stub("tty?" => false)).enabled?)
+  end
+
+  def test_color_disabled_non_tty
+    @config.color = :auto
+    refute(@config.colors(stub("tty?" => false)).enabled?)
+  end
+
+  def test_color_can_be_disabled_for_tty
+    @config.color = false
+    refute(@config.colors(stub("tty?" => true)).enabled?)
   end
 end
