@@ -36,7 +36,8 @@ module Airbrussh
       if strip_ascii_color(string).length > width
         width -= ellipsis.length
         string.chop! while strip_ascii_color(string).length > width
-        string << ellipsis + ("\e[0m" if contains_ascii_color?(string)).to_s
+        string << ellipsis
+        terminate_color(string)
       else
         string
       end
@@ -44,10 +45,6 @@ module Airbrussh
 
     def strip_ascii_color(string)
       (string || "").gsub(/\033\[[0-9;]*m/, "")
-    end
-
-    def contains_ascii_color?(string)
-      string =~ /\033\[[0-9;]*m/
     end
 
     def console_width
@@ -60,6 +57,14 @@ module Airbrussh
     end
 
     private
+
+    def terminate_color(string)
+      string << ("\e[0m" if contains_ascii_color?(string)).to_s
+    end
+
+    def contains_ascii_color?(string)
+      string =~ /\033\[[0-9;]*m/
+    end
 
     def utf8_supported?(string)
       string.encode("UTF-8").valid_encoding?
