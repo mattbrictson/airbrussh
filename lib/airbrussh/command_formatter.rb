@@ -58,9 +58,9 @@ module Airbrussh
     private
 
     def user_at_host
-      user_str = user { host.user }
-      host_str = host.to_s
-      [user_str, host_str].join("@")
+      user_str = host.user || (host.ssh_options || {})[:user]
+      host_str = host.hostname
+      [user_str, host_str].compact.join("@")
     end
 
     def runtime

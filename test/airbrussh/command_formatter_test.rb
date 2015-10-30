@@ -5,16 +5,16 @@ require "airbrussh/command_formatter"
 
 class Airbrussh::CommandFormatterTest < Minitest::Test
   def setup
-    sshkit_command = OpenStruct.new(
-      :host => "12.34.56.78",
-      :user => "deployer",
+    @sshkit_command = OpenStruct.new(
+      :host => host("deployer", "12.34.56.78"),
+      :options => { :user => "override" },
       :runtime => 1.23456,
       :failure? => false
     )
-    def sshkit_command.to_s
+    def @sshkit_command.to_s
       "/usr/bin/env echo hello"
     end
-    @command = Airbrussh::CommandFormatter.new(sshkit_command, 0)
+    @command = Airbrussh::CommandFormatter.new(@sshkit_command, 0)
   end
 
   def test_format_output
@@ -38,5 +38,29 @@ class Airbrussh::CommandFormatterTest < Minitest::Test
         "\e[0;90;49m1.235s\e[0m",
         @command.exit_message("out.log"))
     end
+  end
+
+  def test_uses_ssh_options_if_host_user_is_absent
+    @sshkit_command.host = host(nil, "12.34.56.78", :user => "sshuser")
+    assert_equal(
+      "\e[0;32;49m✔ 01 sshuser@12.34.56.78\e[0m \e[0;90;49m1.235s\e[0m",
+      @command.exit_message)
+  end
+
+  def test_shows_hostname_only_if_no_user
+    @sshkit_command.host = host(nil, "12.34.56.78")
+    assert_equal(
+      "\e[0;32;49m✔ 01 12.34.56.78\e[0m \e[0;90;49m1.235s\e[0m",
+      @command.exit_message)
+  end
+
+  private
+
+  def host(user, hostname, ssh_options={})
+    SSHKit::Host.new(
+      :user => user,
+      :hostname => hostname,
+      :ssh_options => ssh_options
+    )
   end
 end
