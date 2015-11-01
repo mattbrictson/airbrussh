@@ -11,13 +11,11 @@ class Airbrussh::FormatterTest < Minitest::Test
   def setup
     @output = StringIO.new
     @log_file = StringIO.new
-    @user = "test_user"
-
-    # Force a consistent username when SSHKit::Backend::Local is used.
-    # This is also necessary to work around a Windows-specific bug in SSHKit,
-    # where it relies on Etc.getpwuid to get the username, even though this
-    # doesn't work on Windows.
-    Etc.stubs(:getpwuid => stub(:name => @user))
+    # sshkit > 1.6.1 && <= 1.7.1 uses Etc.getpwuid.name for local user lookup
+    # which causes a NoMethodError on Windows, so we need to stub it here.
+    Etc.stubs(:getpwuid => stub(:name => "stubbed_user")) unless sshkit_after?("1.7.1")
+    @user = SSHKit::Host.new(:local).username # nil on sshkit < 1.7.0
+    @user_at_localhost = [@user, "localhost"].compact.join("@")
   end
 
   def teardown
@@ -52,7 +50,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 \e[0;33;49mecho foo\e[0m\n",
       "      01 foo\n",
-      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
+      /    \e\[0;32;49m✔ 01 #{@user_at_localhost}\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
     )
 
     assert_log_file_lines(
@@ -75,7 +73,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 echo foo\n",
       "      01 foo\n",
-      /    ✔ 01 #{@user}@localhost \d.\d+s\n/
+      /    ✔ 01 #{@user_at_localhost} \d.\d+s\n/
     )
 
     assert_log_file_lines(
@@ -94,7 +92,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     assert_output_lines(
       "      01 ls -l\n",
-      /    ✔ 01 #{@user}@localhost \d.\d+s\n/
+      /    ✔ 01 #{@user_at_localhost} \d.\d+s\n/
     )
   end
 
@@ -121,7 +119,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     expected_output = [
       "      01 \e[0;33;49mecho hi\e[0m\n",
       "      01 hi\n",
-      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/,
+      /    \e\[0;32;49m✔ 01 #{@user_at_localhost}\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/,
       "      02 \e[0;33;49mls _file_does_not_exist\e[0m\n"
     ]
 
@@ -163,7 +161,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 \e[0;33;49mls -1 airbrussh.gemspec\e[0m\n",
       "      01 airbrussh.gemspec\n",
-      /    \e\[0;32;49m✔ 01 #{@user}@localhost\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
+      /    \e\[0;32;49m✔ 01 #{@user_at_localhost}\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
     )
 
     assert_log_file_lines(
@@ -183,7 +181,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 ls -1 airbrussh.gemspec\n",
       "      01 airbrussh.gemspec\n",
-      /    ✔ 01 #{@user}@localhost \d.\d+s\n/
+      /    ✔ 01 #{@user_at_localhost} \d.\d+s\n/
     )
 
     assert_log_file_lines(
@@ -235,20 +233,20 @@ class Airbrussh::FormatterTest < Minitest::Test
       "00:00 special_rake_task\n",
       "      01 echo command 1\n",
       "      01 command 1\n",
-      /    ✔ 01 #{@user}@localhost \d.\d+s\n/,
+      /    ✔ 01 #{@user_at_localhost} \d.\d+s\n/,
       "      Starting command 2\n",
       "      02 echo command 2\n",
       "      02 command 2\n",
-      /    ✔ 02 #{@user}@localhost \d.\d+s\n/,
+      /    ✔ 02 #{@user_at_localhost} \d.\d+s\n/,
       "00:00 special_rake_task_2\n",
       "      New task starting\n",
       "00:00 special_rake_task_3\n",
       "      01 echo command 3\n",
       "      01 command 3\n",
-      /    ✔ 01 #{@user}@localhost \d.\d+s\n/,
+      /    ✔ 01 #{@user_at_localhost} \d.\d+s\n/,
       "      02 echo command 4\n",
       "      02 command 4\n",
-      /    ✔ 02 #{@user}@localhost \d.\d+s\n/,
+      /    ✔ 02 #{@user_at_localhost} \d.\d+s\n/,
       "      All done\n"
     )
 
@@ -314,14 +312,14 @@ class Airbrussh::FormatterTest < Minitest::Test
       "00:00 interleaving_test\n",
       "      01 echo command 1\n",
       "      01 command 1\n",
-      /    ✔ 01 #{@user}@localhost \d.\d+s\n/,
+      /    ✔ 01 #{@user_at_localhost} \d.\d+s\n/,
       "      Info line should be output\n",
       "      02 echo command 2\n",
       "      02 command 2\n",
-      /    ✔ 02 #{@user}@localhost \d.\d+s\n/,
+      /    ✔ 02 #{@user_at_localhost} \d.\d+s\n/,
       "      03 echo command 4\n",
       "      03 command 4\n",
-      /    ✔ 03 #{@user}@localhost \d.\d+s\n/
+      /    ✔ 03 #{@user_at_localhost} \d.\d+s\n/
     )
   end
 
@@ -330,11 +328,6 @@ class Airbrussh::FormatterTest < Minitest::Test
   def on_local(task_name=nil, &block)
     define_and_execute_rake_task(task_name) do
       local_backend = SSHKit::Backend::Local.new(&block)
-      # Note: The Local backend default log changed to include the user name around version 1.7.1
-      # Therefore we inject a user in order to make the logging consistent in old versions (i.e. 1.6.1)
-      unless sshkit_after?("1.6.1")
-        local_backend.instance_variable_get(:@host).user = @user
-      end
       local_backend.run
     end
   end
@@ -367,7 +360,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
   def command_running(command, level="INFO")
     level_tag_color = (level == "INFO") ? :blue : :black
-    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Running #{bold_yellow("#{command}")} as #{blue(@user)}@#{blue('localhost')}\n/
+    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Running #{bold_yellow("#{command}")} #{@user ? "as #{blue(@user)}@" : "on "}#{blue('localhost')}\n/
   end
 
   def command_started_debug(command)
