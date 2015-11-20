@@ -7,6 +7,9 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 ## [Unreleased]
 
 * Your contribution here!
+
+## [0.8.0][] (2015-11-20)
+
 * Airbrussh now displays the correct user@host output in the following edge-cases:
     * Inside an SSHKit `as(:user => "...")` block
     * When a user is specified using `set :ssh_options, :user => "..."` ([see #65](https://github.com/mattbrictson/airbrussh/issues/65))
@@ -77,7 +80,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/mattbrictson/airbrussh/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/mattbrictson/airbrussh/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mattbrictson/airbrussh/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/mattbrictson/airbrussh/compare/v0.5.0...v0.5.1
