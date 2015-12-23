@@ -5,9 +5,9 @@ module Airbrussh
   # Helper class that wraps an IO object and provides methods for truncating
   # output, assuming the IO object represents a console window.
   #
-  # This is useful for writing log messages that will typically show up on
-  # an ANSI color-capable console. When a console is not present (e.g. when
-  # running on a CI server) the output will gracefully degrade.
+  # If color is disabled for the IO object (based on Airbrussh::Configuration),
+  # any ANSI color codes will also be stripped from the output.
+  #
   class Console
     attr_reader :output, :config
 
@@ -17,9 +17,8 @@ module Airbrussh
     end
 
     # Writes to the IO after first truncating the output to fit the console
-    # width. If the underlying IO is not a TTY, ANSI colors are removed from
-    # the output. A newline is always added. Color output can be forced by
-    # setting the SSHKIT_COLOR environment variable.
+    # width. If color is disabled for the underlying IO, ANSI colors are also
+    # removed from the output. A newline is always added.
     def print_line(obj="")
       string = obj.to_s
 
@@ -67,14 +66,7 @@ module Airbrussh
     private
 
     def color_enabled?
-      case config.color
-      when true
-        true
-      when :auto
-        ENV["SSHKIT_COLOR"] || @output.tty?
-      else
-        false
-      end
+      @color_enabled ||= config.colors(output).enabled?
     end
 
     def utf8_supported?(string)
