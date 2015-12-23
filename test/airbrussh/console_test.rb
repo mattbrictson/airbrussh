@@ -10,6 +10,47 @@ class Airbrussh::ConsoleTest < Minitest::Test
     @output = StringIO.new
   end
 
+  def test_color_is_allowed_for_tty
+    console = configured_console(:tty => true) do |config|
+      config.color = :auto
+    end
+    console.print_line("The \e[0;32;49mgreen\e[0m text")
+    assert_equal("The \e[0;32;49mgreen\e[0m text\n", output)
+  end
+
+  def test_color_is_can_be_forced
+    console = configured_console(:tty => false) do |config|
+      config.color = true
+    end
+    console.print_line("The \e[0;32;49mgreen\e[0m text")
+    assert_equal("The \e[0;32;49mgreen\e[0m text\n", output)
+  end
+
+  def test_color_is_can_be_forced_via_env
+    console = configured_console(:tty => false) do |config|
+      config.color = :auto
+    end
+    ENV.stubs(:[]).with("SSHKIT_COLOR").returns("1")
+    console.print_line("The \e[0;32;49mgreen\e[0m text")
+    assert_equal("The \e[0;32;49mgreen\e[0m text\n", output)
+  end
+
+  def test_color_is_stripped_for_non_tty
+    console = configured_console(:tty => false) do |config|
+      config.color = :auto
+    end
+    console.print_line("The \e[0;32;49mgreen\e[0m text")
+    assert_equal("The green text\n", output)
+  end
+
+  def test_color_can_be_disabled_for_tty
+    console = configured_console(:tty => true) do |config|
+      config.color = false
+    end
+    console.print_line("The \e[0;32;49mgreen\e[0m text")
+    assert_equal("The green text\n", output)
+  end
+
   def test_truncates_to_winsize
     console = configured_console(:tty => true) do |config|
       config.color = false
