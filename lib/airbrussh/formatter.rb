@@ -8,7 +8,8 @@ require "airbrussh/delegating_formatter"
 #
 module Airbrussh
   class Formatter < Airbrussh::DelegatingFormatter
-    def initialize(io, config=::Airbrussh.configuration)
+    def initialize(io, options_or_config_object={})
+      config = ::Airbrussh.configuration(options_or_config_object)
       # Delegate to ConsoleFormatter and (optionally) LogFileFormatter,
       # based on the configuration.
       super(config.formatters(io))

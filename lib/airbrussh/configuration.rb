@@ -16,6 +16,19 @@ module Airbrussh
       self.command_output = false
     end
 
+    def apply_options(options)
+      return self if options.nil?
+
+      options.each do |key, value|
+        if respond_to?(writer = "#{key}=")
+          public_send(writer, value)
+        else
+          warn_unrecognized_key(key)
+        end
+      end
+      self
+    end
+
     def banner_message
       return nil unless banner
       return banner unless banner == :auto
@@ -38,6 +51,12 @@ module Airbrussh
 
     def show_command_output?(sym)
       command_output == true || Array(command_output).include?(sym)
+    end
+
+    private
+
+    def warn_unrecognized_key(key)
+      $stderr.puts("Ignoring unrecognized Airbrussh option: #{key}")
     end
   end
 end
