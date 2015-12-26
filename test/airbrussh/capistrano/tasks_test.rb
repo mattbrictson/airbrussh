@@ -1,12 +1,23 @@
 require "minitest_helper"
 require "airbrussh/capistrano/tasks"
 require "airbrussh/configuration"
+require "ostruct"
 require "stringio"
 require "tempfile"
 
 class Airbrussh::Capistrano::TasksTest < Minitest::Test
-  class DSL
+  DSL = Struct.new(:formatter) do
     def set(*)
+    end
+
+    # The Tasks object needs to reach into the backend provided by `env` in
+    # order to obtain the current Formatter, so here we build the complex mock
+    # needed for that.
+    def env
+      OpenStruct.new(
+        :backend => OpenStruct.new(
+          :config => OpenStruct.new(
+            :output => formatter)))
     end
 
     private
@@ -19,7 +30,7 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
   end
 
   def setup
-    @dsl = DSL.new
+    @dsl = DSL.new(Airbrussh::Formatter.new(StringIO.new, @config))
     @config = Airbrussh::Configuration.new
     @stderr = StringIO.new
     @tasks = Airbrussh::Capistrano::Tasks.new(@dsl, @stderr, @config)
@@ -70,6 +81,13 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
   def test_does_not_print_anything_on_deploy_failure_if_nil_logfile
     @config.log_file = nil
     @tasks.deploy_failed
+    assert_empty(stderr)
+  end
+
+  def test_does_not_print_anything_on_deploy_failure_if_airbrussh_is_not_used
+    pretty_dsl = DSL.new(SSHKit::Formatter::Pretty.new(StringIO.new))
+    tasks = Airbrussh::Capistrano::Tasks.new(pretty_dsl, @stderr, @config)
+    tasks.deploy_failed
     assert_empty(stderr)
   end
 
