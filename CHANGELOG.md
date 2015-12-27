@@ -7,6 +7,9 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 ## [Unreleased]
 
 * Your contribution here!
+
+## [1.0.0.beta1][] (2015-12-27)
+
 * Airbrussh can now be configured with an options Hash passed to the
   `Airbrussh::Formatter` constructor. This is in order to standardize how all
   SSHKit formatters are configured
@@ -84,7 +87,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.0.0.beta1...HEAD
+[1.0.0.beta1]: https://github.com/mattbrictson/airbrussh/compare/v0.8.0...v1.0.0.beta1
 [0.8.0]: https://github.com/mattbrictson/airbrussh/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/mattbrictson/airbrussh/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/mattbrictson/airbrussh/compare/v0.5.1...v0.6.0
