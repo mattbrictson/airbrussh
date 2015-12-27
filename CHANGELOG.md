@@ -7,6 +7,10 @@ Airbrussh is in a pre-1.0 state. This means that its APIs and behavior are subje
 ## [Unreleased]
 
 * Your contribution here!
+* Airbrussh can now be configured with an options Hash passed to the
+  `Airbrussh::Formatter` constructor. This is in order to standardize how all
+  SSHKit formatters are configured
+  (see [SSHKit #308](https://github.com/capistrano/sshkit/pull/308)).
 
 ## [0.8.0][] (2015-11-20)
 

@@ -36,6 +36,12 @@ class Airbrussh::FormatterTest < Minitest::Test
     sshkit_config.output = formatter_class.new(@output, airbrussh_config)
   end
 
+  def test_can_be_configured_with_options_hash
+    formatter = Airbrussh::Formatter.new(@output, :banner => "success!")
+    config = formatter.formatters.last.config
+    assert_equal("success!", config.banner)
+  end
+
   def test_formats_execute_with_color
     configure do |airbrussh_config, sshkit_config|
       sshkit_config.output_verbosity = ::Logger::DEBUG

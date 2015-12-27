@@ -14,7 +14,7 @@ module Airbrussh
     #
     class Tasks
       extend Forwardable
-      def_delegators :dsl, :set
+      def_delegators :dsl, :set, :env
       def_delegators :config, :log_file
 
       include Airbrussh::Colors
@@ -36,6 +36,7 @@ module Airbrussh
 
       # Behavior for the rake deploy:failed task.
       def deploy_failed
+        return unless airbrussh_is_being_used?
         return if log_file.nil?
 
         error_line
@@ -84,6 +85,12 @@ module Airbrussh
           file.seek(-[8192, file.size].min, IO::SEEK_END)
           file.readlines.last(20).join
         end
+      end
+
+      def airbrussh_is_being_used?
+        # Obtain the current formatter from the SSHKit backend
+        output = env.backend.config.output
+        output.is_a?(Airbrussh::Formatter)
       end
     end
   end

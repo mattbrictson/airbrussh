@@ -17,6 +17,30 @@ class Airbrussh::ConfigurationTest < Minitest::Test
     refute(@config.command_output)
   end
 
+  def test_apply_options
+    @config.apply_options(
+      :log_file => "test",
+      :color => true,
+      :truncate => false,
+      :banner => "hi",
+      :monkey_patch_rake => true,
+      :command_output => true
+    )
+
+    assert_equal("test", @config.log_file)
+    assert_equal(true, @config.color)
+    assert_equal(false, @config.truncate)
+    assert_equal("hi", @config.banner)
+    assert(@config.monkey_patch_rake)
+    assert(@config.command_output)
+  end
+
+  def test_apply_options_warns_on_stderr_of_bad_key
+    _out, err = capture_io { @config.apply_options(:bad => "test") }
+    assert_match(/unrecognized/i, err)
+    assert_match(/bad/, err)
+  end
+
   def test_auto_banner_message_without_log
     @config.log_file = nil
     @config.banner = :auto
