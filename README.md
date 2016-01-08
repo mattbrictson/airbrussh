@@ -195,14 +195,6 @@ Airbrussh now has a stable feature set, excellent test coverage, and is being us
 
 In the meantime, if you have other ideas for improvements to Airbrussh, please open a [GitHub issue](https://github.com/mattbrictson/airbrussh/issues/new).
 
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-Airbrussh is designed to work against multiple versions of SSHKit and Ruby. In order to test this, we use the environment variable `sshkit` in order to run the tests against a specific version. The combinations of sshkit and ruby we support are specified in [.travis.yml](.travis.yml). To test all the versions locally, there is a `test_all.rb` bin file. This installs the gems and runs the tests for each sshkit version in [.travis.yml](.travis.yml). *Note: this will update your `Gemfile.lock` as each SSHKit gem version is installed. The gem version is restored to the default when the script exits.*
-
 ## Contributing
 
 Contributions are welcome! Read [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
