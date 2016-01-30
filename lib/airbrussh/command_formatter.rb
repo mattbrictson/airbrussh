@@ -47,11 +47,11 @@ module Airbrussh
     # # => "✘ 01 user@host (see out.log for details) 0.084s"
     #
     def exit_message(log_file=nil)
-      if failure?
-        message = red(failure_message(log_file))
-      else
-        message = green(success_message)
-      end
+      message = if failure?
+                  red(failure_message(log_file))
+                else
+                  green(success_message)
+                end
       message << " #{gray(runtime)}"
     end
 

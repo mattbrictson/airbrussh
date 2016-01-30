@@ -1,6 +1,7 @@
 AllCops:
   DisplayCopNames: true
   DisplayStyleGuide: true
+  TargetRubyVersion: 1.9
   Exclude:
     - "*.gemspec"
 

@@ -11,7 +11,7 @@ class Airbrussh::CommandFormatterTest < Minitest::Test
       :runtime => 1.23456,
       :failure? => false
     )
-    def @sshkit_command.to_s
+    @sshkit_command.define_singleton_method(:to_s) do
       "/usr/bin/env echo hello"
     end
     @command = Airbrussh::CommandFormatter.new(@sshkit_command, 0)

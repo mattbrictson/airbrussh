@@ -60,7 +60,7 @@ module Airbrussh
         write_log_message(obj)
       end
     end
-    alias_method :<<, :write
+    alias << write
 
     private
 

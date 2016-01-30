@@ -366,7 +366,7 @@ class Airbrussh::FormatterTest < Minitest::Test
 
   def command_running(command, level="INFO")
     level_tag_color = (level == "INFO") ? :blue : :black
-    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Running #{bold_yellow("#{command}")} #{@user ? "as #{blue(@user)}@" : "on "}#{blue('localhost')}\n/
+    /#{send(level_tag_color, level)} \[#{green('\w+')}\] Running #{bold_yellow(command.to_s)} #{@user ? "as #{blue(@user)}@" : "on "}#{blue('localhost')}\n/
   end
 
   def command_started_debug(command)

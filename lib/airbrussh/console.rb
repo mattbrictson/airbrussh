@@ -35,7 +35,7 @@ module Airbrussh
     def write(string)
       output.write(string || "")
     end
-    alias_method :<<, :write
+    alias << write
 
     def truncate_to_console_width(string)
       string = (string || "").rstrip
