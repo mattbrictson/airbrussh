@@ -11,8 +11,8 @@ module Airbrussh
     FORWARD_METHODS = %w(
       fatal error warn info debug log
       log_command_start log_command_data log_command_exit
-    )
-    DUP_AND_FORWARD_METHODS = %w(<< write)
+    ).freeze
+    DUP_AND_FORWARD_METHODS = %w(<< write).freeze
 
     attr_reader :formatters
 
