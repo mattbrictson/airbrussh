@@ -191,9 +191,7 @@ Airbrussh started life as custom logging code within the [capistrano-mb][] colle
 
 ## Roadmap
 
-Airbrussh now has a stable feature set, excellent test coverage, and is being used for production deployments. It is about time we released 1.0.0! Our goal is for Airbrussh 1.0.0 to be included as the default formatter in Capistrano, and that work is [already underway](https://github.com/capistrano/capistrano/pull/1541).
-
-In the meantime, if you have other ideas for improvements to Airbrussh, please open a [GitHub issue](https://github.com/mattbrictson/airbrussh/issues/new).
+Airbrussh now has a stable feature set, excellent test coverage, is being used for production deployments, and has reached 1.0.0! Work is [underway](https://github.com/capistrano/capistrano/pull/1541) to integrate Airbrussh with the next Capistrano release. If you have ideas for improvements to Airbrussh, please open a [GitHub issue](https://github.com/mattbrictson/airbrussh/issues/new).
 
 ## Contributing
 
