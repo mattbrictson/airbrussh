@@ -12,6 +12,12 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [1.0.0.beta1][] (2015-12-27)
 
+Breaking Changes: 
+
+* None
+
+Added:
+
 * Airbrussh can now be configured with an options Hash passed to the
   `Airbrussh::Formatter` constructor. This is in order to standardize how all
   SSHKit formatters are configured
