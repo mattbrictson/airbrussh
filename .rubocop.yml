@@ -17,6 +17,9 @@ Metrics/ClassLength:
   Exclude:
     - "test/**/*"
 
+Style/BarePercentLiterals:
+  EnforcedStyle: percent_q
+
 Style/ClassAndModuleChildren:
   Enabled: false
 
