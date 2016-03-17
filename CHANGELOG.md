@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+* Fix support for fake TTYs reporting a 0 width console like Ruby's PTY library (#76)[https://github.com/mattbrictson/airbrussh/pull/76]
+
 * Your contribution here!
 
 ## [1.0.0][] (2016-02-27)
