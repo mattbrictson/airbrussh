@@ -95,6 +95,15 @@ class Airbrussh::ConsoleTest < Minitest::Test
     assert_equal(ascii_8bit("The ‘...\n"), ascii_8bit(output))
   end
 
+  def test_doesnt_truncates_to_zero_width
+    console = configured_console(:tty => true) do |config|
+      config.color = false
+      config.truncate = 0
+    end
+    console.print_line("The quick brown fox jumps over the lazy dog.")
+    assert_equal("The quick brown fox jumps over the lazy dog.\n", output)
+  end
+
   private
 
   def ascii_8bit(string)
