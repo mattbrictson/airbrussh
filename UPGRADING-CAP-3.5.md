@@ -40,7 +40,7 @@ Capistrano 3.5.0 changes Airbrussh defaults as follows:
 Therefore, after upgrading to Capistrano 3.5.0, you may notice Airbrussh's output has changed and become more verbose. To restore the defaults to what you were used to in older versions, do this:
 
 ```ruby
-set :format_options, banner: auto, command_output: false
+set :format_options, banner: :auto, command_output: false
 ```
 
 ## Trouble?
