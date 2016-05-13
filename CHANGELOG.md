@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+
+## [1.0.2][] (2016-05-13)
+
 * Fix a crash that can happen in certain multi-server deployments when
   Capistrano's `invoke` is used to switch Rake tasks in the middle of SSHKit
   execution ([#78](https://github.com/mattbrictson/airbrussh/issues/78),
@@ -103,7 +106,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/mattbrictson/airbrussh/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/mattbrictson/airbrussh/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/mattbrictson/airbrussh/compare/v1.0.0.beta1...v1.0.0
 [1.0.0.beta1]: https://github.com/mattbrictson/airbrussh/compare/v0.8.0...v1.0.0.beta1
