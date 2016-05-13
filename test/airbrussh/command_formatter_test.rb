@@ -58,6 +58,11 @@ class Airbrussh::CommandFormatterTest < Minitest::Test
     )
   end
 
+  def test_handles_nil_position_gracefully
+    command = Airbrussh::CommandFormatter.new(@sshkit_command, nil)
+    assert_equal("01 hello", command.format_output("hello\n"))
+  end
+
   private
 
   def host(user, hostname, ssh_options={})
