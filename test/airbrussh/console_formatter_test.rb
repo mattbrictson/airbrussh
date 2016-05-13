@@ -26,7 +26,8 @@ class Airbrussh::ConsoleFormatterTest < Minitest::Test
       "      01 greet\n"\
       "      01 hello\n"\
       "      01 world\n",
-      output)
+      output
+    )
   end
 
   private
