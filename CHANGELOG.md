@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+* Fix a crash that can happen in certain multi-server deployments when
+  Capistrano's `invoke` is used to switch Rake tasks in the middle of SSHKit
+  execution ([#78](https://github.com/mattbrictson/airbrussh/issues/78),
+  [#80](https://github.com/mattbrictson/airbrussh/pull/80))
 
 ## [1.0.1][] (2016-03-21)
 

@@ -8,8 +8,8 @@ module Airbrussh
   # command's position within currently executing rake task:
   #
   # * position - zero-based position of this command in the list of
-  #              all commands that have been run in the current rake task
-  #  class CommandFormatter < SimpleDelegator
+  #              all commands that have been run in the current rake task; in
+  #              some cases this could be nil
   class CommandFormatter < SimpleDelegator
     include Airbrussh::Colors
 
@@ -72,7 +72,7 @@ module Airbrussh
     end
 
     def number
-      format("%02d", @position + 1)
+      format("%02d", @position.to_i + 1)
     end
 
     def success_message
