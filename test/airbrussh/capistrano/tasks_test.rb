@@ -17,7 +17,10 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
       OpenStruct.new(
         :backend => OpenStruct.new(
           :config => OpenStruct.new(
-            :output => formatter)))
+            :output => formatter
+          )
+        )
+      )
     end
 
     private
@@ -91,6 +94,8 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
     assert_empty(stderr)
   end
 
+  # Work around a Rubocop linting bug
+  # rubocop:disable Lint/UselessAccessModifier
   private
 
   def stderr

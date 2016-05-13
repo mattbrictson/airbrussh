@@ -66,7 +66,8 @@ module Airbrussh
           red("WARNING: airbrussh/capistrano must be loaded by Capistrano in "\
               "order to work.\nRequire this gem within your application's "\
               "Capfile, as described here:\n"\
-              "https://github.com/mattbrictson/airbrussh#installation"))
+              "https://github.com/mattbrictson/airbrussh#installation")
+        )
       end
 
       def err_console
