@@ -129,7 +129,7 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      02 \e[0;33;49mls _file_does_not_exist\e[0m\n"
     ]
 
-    error_message = "ls: (cannot access )?_file_does_not_exist: No such file or directory"
+    error_message = /.*_file_does_not_exist.*No such file or directory/
 
     # Don't know why this log line doesn't show up in SSHKit 1.6.1
     expected_output << /      02 #{error_message}\n/ if sshkit_after?("1.6.1")
