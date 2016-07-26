@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+* Use default color for info messages
+  When using the `gray` color on some implementation of the `solarized`
+  theme the text is not visible. The `solarized` theme is popular and
+  bugs have been reported about missed error messages, so this patch
+  switches these messages to the default color.
+  (see [#84](https://github.com/mattbrictson/airbrussh/issues/84)
+
 * Your contribution here!
 
 ## [1.0.2][] (2016-05-13)
