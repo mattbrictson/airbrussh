@@ -365,7 +365,7 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def command_running(command, level="INFO")
-    level_tag_color = (level == "INFO") ? :blue : :black
+    level_tag_color = level == "INFO" ? :blue : :black
     /#{send(level_tag_color, level)} \[#{green('\w+')}\] Running #{bold_yellow(command.to_s)} #{@user ? "as #{blue(@user)}@" : "on "}#{blue('localhost')}\n/
   end
 
@@ -382,7 +382,7 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def command_success(level="INFO")
-    level_tag_color = (level == "INFO") ? :blue : :black
+    level_tag_color = level == "INFO" ? :blue : :black
     /#{send(level_tag_color, level)} \[#{green('\w+')}\] Finished in \d.\d+ seconds with exit status 0 \(#{bold_green("successful")}\).\n/
   end
 
