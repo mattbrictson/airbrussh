@@ -27,7 +27,7 @@ class Airbrussh::CommandFormatterTest < Minitest::Test
 
   def test_exit_message_success
     assert_equal(
-      "\e[0;32;49m✔ 01 deployer@12.34.56.78\e[0m \e[0;90;49m1.235s\e[0m",
+      "\e[0;32;49m✔ 01 deployer@12.34.56.78\e[0m 1.235s",
       @command.exit_message
     )
   end
@@ -36,7 +36,7 @@ class Airbrussh::CommandFormatterTest < Minitest::Test
     @command.stub(:failure?, true) do
       assert_equal(
         "\e[0;31;49m✘ 01 deployer@12.34.56.78 (see out.log for details)\e[0m "\
-        "\e[0;90;49m1.235s\e[0m",
+        "1.235s",
         @command.exit_message("out.log")
       )
     end
@@ -45,7 +45,7 @@ class Airbrussh::CommandFormatterTest < Minitest::Test
   def test_uses_ssh_options_if_host_user_is_absent
     @sshkit_command.host = host(nil, "12.34.56.78", :user => "sshuser")
     assert_equal(
-      "\e[0;32;49m✔ 01 sshuser@12.34.56.78\e[0m \e[0;90;49m1.235s\e[0m",
+      "\e[0;32;49m✔ 01 sshuser@12.34.56.78\e[0m 1.235s",
       @command.exit_message
     )
   end
@@ -53,7 +53,7 @@ class Airbrussh::CommandFormatterTest < Minitest::Test
   def test_shows_hostname_only_if_no_user
     @sshkit_command.host = host(nil, "12.34.56.78")
     assert_equal(
-      "\e[0;32;49m✔ 01 12.34.56.78\e[0m \e[0;90;49m1.235s\e[0m",
+      "\e[0;32;49m✔ 01 12.34.56.78\e[0m 1.235s",
       @command.exit_message
     )
   end

@@ -56,7 +56,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 \e[0;33;49mecho foo\e[0m\n",
       "      01 foo\n",
-      /    \e\[0;32;49m✔ 01 #{@user_at_localhost}\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
+      /    \e\[0;32;49m✔ 01 #{@user_at_localhost}\e\[0m \d.\d+s\n/
     )
 
     assert_log_file_lines(
@@ -125,7 +125,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     expected_output = [
       "      01 \e[0;33;49mecho hi\e[0m\n",
       "      01 hi\n",
-      /    \e\[0;32;49m✔ 01 #{@user_at_localhost}\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/,
+      /    \e\[0;32;49m✔ 01 #{@user_at_localhost}\e\[0m \d.\d+s\n/,
       "      02 \e[0;33;49mls _file_does_not_exist\e[0m\n"
     ]
 
@@ -167,7 +167,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     assert_output_lines(
       "      01 \e[0;33;49mls -1 airbrussh.gemspec\e[0m\n",
       "      01 airbrussh.gemspec\n",
-      /    \e\[0;32;49m✔ 01 #{@user_at_localhost}\e\[0m \e\[0;90;49m\d.\d+s\e\[0m\n/
+      /    \e\[0;32;49m✔ 01 #{@user_at_localhost}\e\[0m \d.\d+s\n/
     )
 
     assert_log_file_lines(

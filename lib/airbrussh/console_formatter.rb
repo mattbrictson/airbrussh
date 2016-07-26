@@ -69,7 +69,7 @@ module Airbrussh
     def write_log_message(log_message)
       return if debug?(log_message)
       print_task_if_changed
-      print_indented_line(gray(log_message.to_s))
+      print_indented_line(log_message.to_s)
     end
 
     # For SSHKit versions up to and including 1.7.1, the stdout and stderr
