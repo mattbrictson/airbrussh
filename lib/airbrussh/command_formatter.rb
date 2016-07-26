@@ -52,7 +52,7 @@ module Airbrussh
                 else
                   green(success_message)
                 end
-      message << " #{gray(runtime)}"
+      message << " #{runtime}"
     end
 
     private
