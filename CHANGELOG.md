@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+* When a Capistrano deploy fails and the error log is dumped to the console,
+  Airbrussh no longer truncates the error output. This ensures that important
+  troubleshooting information is not lost.
+  [#91](https://github.com/mattbrictson/airbrussh/issues/91)
 
 ## [1.1.0][] (2016-07-26)
 

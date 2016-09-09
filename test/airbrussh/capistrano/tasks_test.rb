@@ -65,19 +65,29 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
   end
 
   def test_prints_last_20_logfile_lines_on_deploy_failure
-    log_file = Tempfile.new("airbrussh-test-")
-    begin
+    with_log_file do |log_file|
       log_file.write((11..31).map { |i| "line #{i}\n" }.join)
       log_file.close
 
-      @config.log_file = log_file.path
       @tasks.deploy_failed
 
       assert_match("DEPLOY FAILED", stderr)
       refute_match("line 11", stderr)
       (12..31).each { |i| assert_match("line #{i}", stderr) }
-    ensure
-      log_file.unlink
+    end
+  end
+
+  def test_does_not_truncate_log_file_lines
+    @config.truncate = 80
+
+    with_log_file do |log_file|
+      long_line = "a" * 100
+      log_file.puts(long_line)
+      log_file.close
+
+      @tasks.deploy_failed
+
+      assert_match(long_line, stderr)
     end
   end
 
@@ -98,5 +108,15 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
 
   def stderr
     @stderr.string
+  end
+
+  def with_log_file
+    log_file = Tempfile.new("airbrussh-test-")
+    begin
+      @config.log_file = log_file.path
+      yield(log_file)
+    ensure
+      log_file.unlink
+    end
   end
 end

@@ -71,7 +71,12 @@ module Airbrussh
       end
 
       def err_console
-        @err_console ||= Airbrussh::Console.new(stderr)
+        @err_console ||= begin
+          # Ensure we do not truncate the error output
+          err_config = config.dup
+          err_config.truncate = false
+          Airbrussh::Console.new(stderr, err_config)
+        end
       end
 
       def error_line(line="\n")
