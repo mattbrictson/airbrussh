@@ -16,6 +16,9 @@ group :extras, :optional => true do
   gem "terminal-notifier-guard"
 end
 
+# Danger is used by Travis, but only for Ruby 2.0+
+gem "danger" unless RUBY_VERSION == "1.9.3"
+
 if (sshkit_version = ENV["sshkit"])
   requirement = begin
     Gem::Dependency.new("sshkit", sshkit_version).requirement
