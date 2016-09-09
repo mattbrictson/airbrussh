@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+
+## [1.1.1][] (2016-09-09)
+
 * When a Capistrano deploy fails and the error log is dumped to the console,
   Airbrussh no longer truncates the error output. This ensures that important
   troubleshooting information is not lost.
@@ -119,7 +122,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/mattbrictson/airbrussh/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/mattbrictson/airbrussh/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/mattbrictson/airbrussh/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/mattbrictson/airbrussh/compare/v1.0.0...v1.0.1
