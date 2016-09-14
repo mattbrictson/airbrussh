@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+* colorize LogMessage label on WARN level and above ([@klyonrad](https://github.com/klyonrad))
 * Your contribution here!
 
 ## [1.1.2][] (2017-01-02)

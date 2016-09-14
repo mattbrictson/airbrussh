@@ -245,7 +245,7 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      02 command 2\n",
       /    ✔ 02 #{@user_at_localhost} \d.\d+s\n/,
       "00:00 special_rake_task_2\n",
-      "      New task starting\n",
+      "      #{red('ERROR')} New task starting\n",
       "00:00 special_rake_task_3\n",
       "      01 echo command 3\n",
       "      01 command 3\n",
@@ -253,7 +253,7 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      02 echo command 4\n",
       "      02 command 4\n",
       /    ✔ 02 #{@user_at_localhost} \d.\d+s\n/,
-      "      All done\n"
+      "      #{red('WARN')}  All done\n"
     )
 
     assert_log_file_lines(
@@ -280,9 +280,9 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     assert_output_lines(
       "      Test\n",
-      "      Test\n",
-      "      Test\n",
-      "      Test\n",
+      "      #{red('FATAL')} Test\n",
+      "      #{red('ERROR')} Test\n",
+      "      #{yellow('WARN')}  Test\n",
       "      Test\n"
     )
 
