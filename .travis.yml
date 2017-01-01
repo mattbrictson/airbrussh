@@ -5,6 +5,7 @@ rvm:
   - 2.1
   - 2.2
   - 2.3.1
+  - 2.4.0
 env:
   - sshkit="master"
   - sshkit="= 1.7.1"
