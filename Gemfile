@@ -40,5 +40,8 @@ gem "json", "~> 1.8" if RUBY_VERSION == "1.9.3"
 # net-ssh 3.0+ is not compatible with Ruby 1.9, so pin at older version.
 gem "net-ssh", "~> 2.8" if RUBY_VERSION == "1.9.3"
 
+# term-ansicolor 1.4.0+ is not compatible with Ruby 1.9, so pin older version.
+gem "term-ansicolor", "~> 1.3.2" if RUBY_VERSION == "1.9.3"
+
 # tins 1.7.0+ is not compatible with Ruby 1.9, so pin at older version.
 gem "tins", "~> 1.6.0" if RUBY_VERSION == "1.9.3"
