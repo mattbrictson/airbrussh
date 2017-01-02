@@ -59,7 +59,7 @@ module Airbrussh
       width = case (truncate = config.truncate)
               when :auto
                 IO.console.winsize.last if @output.tty?
-              when Fixnum
+              when Integer
                 truncate
               end
 

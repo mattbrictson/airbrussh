@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+* Add Ruby 2.4.0 to testing matrix and fix Ruby 2.4 deprecation warnings
 
 ## [1.1.1][] (2016-09-09)
 
