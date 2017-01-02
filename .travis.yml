@@ -5,14 +5,21 @@ rvm:
   - 2.1
   - 2.2
   - 2.3.1
+  - 2.4.0
 env:
   - sshkit="master"
   - sshkit="= 1.7.1"
   - sshkit="= 1.6.1"
 matrix:
+  exclude:
+    # Older versions of SSHKit don't work with Ruby 2.4, so skip those
+    - rvm: 2.4.0
+      env: sshkit="= 1.7.1"
+    - rvm: 2.4.0
+      env: sshkit="= 1.6.1"
   include:
-    # Run Danger only once, on 2.3.1
-    - rvm: 2.3.1
-      before_script: bundle exec danger
+    # Run Danger only once, on 2.4.0
+    - rvm: 2.4.0
+      script: bundle exec danger
 
 before_install: gem install bundler --conservative --version '~> 1.10'
