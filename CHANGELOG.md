@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+
+## [1.1.2][] (2017-01-02)
+
 * Add Ruby 2.4.0 to testing matrix and fix Ruby 2.4 deprecation warnings
 
 ## [1.1.1][] (2016-09-09)
@@ -123,7 +126,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/mattbrictson/airbrussh/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/mattbrictson/airbrussh/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/mattbrictson/airbrussh/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/mattbrictson/airbrussh/compare/v1.0.1...v1.0.2
