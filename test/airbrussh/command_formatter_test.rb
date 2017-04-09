@@ -35,9 +35,9 @@ class Airbrussh::CommandFormatterTest < Minitest::Test
   def test_exit_message_failure
     @command.stub(:failure?, true) do
       assert_equal(
-        "\e[0;31;49m✘ 01 deployer@12.34.56.78 (see out.log for details)\e[0m "\
+        "\e[0;31;49m✘ 01 deployer@12.34.56.78\e[0m "\
         "1.235s",
-        @command.exit_message("out.log")
+        @command.exit_message
       )
     end
   end

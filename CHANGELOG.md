@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * colorize LogMessage label on WARN level and above ([@klyonrad](https://github.com/klyonrad))
+* [#106](https://github.com/mattbrictson/airbrussh/pull/106): Remove the `log_file` parameter from the `CommandFormatter#exit_message` method; it was unused - [@mattbrictson](https://github.com/mattbrictson)
 * Your contribution here!
 
 ## [1.1.2][] (2017-01-02)

@@ -46,7 +46,7 @@ module Airbrussh
     def log_command_exit(command)
       return if debug?(command)
       command = decorate(command)
-      print_indented_line(command.exit_message(@log_file), -2)
+      print_indented_line(command.exit_message, -2)
     end
 
     def write(obj)
