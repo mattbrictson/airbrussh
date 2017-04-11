@@ -69,7 +69,20 @@ module Airbrussh
     def write_log_message(log_message)
       return if debug?(log_message)
       print_task_if_changed
-      print_indented_line(log_message.to_s)
+      print_indented_line(format_log_message(log_message))
+    end
+
+    def format_log_message(log_message)
+      case log_message.verbosity
+      when SSHKit::Logger::WARN
+        "#{yellow('WARN')}  #{log_message}"
+      when SSHKit::Logger::ERROR
+        "#{red('ERROR')} #{log_message}"
+      when SSHKit::Logger::FATAL
+        "#{red('FATAL')} #{log_message}"
+      else
+        log_message.to_s
+      end
     end
 
     # For SSHKit versions up to and including 1.7.1, the stdout and stderr
