@@ -245,7 +245,7 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      02 command 2\n",
       /    ✔ 02 #{@user_at_localhost} \d.\d+s\n/,
       "00:00 special_rake_task_2\n",
-      "      #{red('ERROR')} New task starting\n",
+      "      ERROR New task starting\n",
       "00:00 special_rake_task_3\n",
       "      01 echo command 3\n",
       "      01 command 3\n",
@@ -253,7 +253,7 @@ class Airbrussh::FormatterTest < Minitest::Test
       "      02 echo command 4\n",
       "      02 command 4\n",
       /    ✔ 02 #{@user_at_localhost} \d.\d+s\n/,
-      "      #{red('WARN')}  All done\n"
+      "      WARN  All done\n"
     )
 
     assert_log_file_lines(
@@ -268,7 +268,8 @@ class Airbrussh::FormatterTest < Minitest::Test
   end
 
   def test_log_message_levels
-    configure do |_airbrussh_config, sshkit_config|
+    configure do |airbrussh_config, sshkit_config|
+      airbrussh_config.color = true
       sshkit_config.output_verbosity = Logger::DEBUG
     end
 
@@ -280,9 +281,9 @@ class Airbrussh::FormatterTest < Minitest::Test
 
     assert_output_lines(
       "      Test\n",
-      "      #{red('FATAL')} Test\n",
-      "      #{red('ERROR')} Test\n",
-      "      #{yellow('WARN')}  Test\n",
+      "      \e[0;31;49mFATAL\e[0m Test\n",
+      "      \e[0;31;49mERROR\e[0m Test\n",
+      "      \e[0;33;49mWARN\e[0m  Test\n",
       "      Test\n"
     )
 
