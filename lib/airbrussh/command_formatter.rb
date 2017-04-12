@@ -40,15 +40,9 @@ module Airbrussh
     # exit_message # => "✔ 01 user@host 0.084s"
     # exit_message # => "✘ 01 user@host 0.084s"
     #
-    # If `log_file` is specified, it is appended to the message
-    # in the failure case.
-    #
-    # exit_message("out.log")
-    # # => "✘ 01 user@host (see out.log for details) 0.084s"
-    #
-    def exit_message(log_file=nil)
+    def exit_message
       message = if failure?
-                  red(failure_message(log_file))
+                  red(failure_message)
                 else
                   green(success_message)
                 end
@@ -79,10 +73,8 @@ module Airbrussh
       "✔ #{number} #{user_at_host}"
     end
 
-    def failure_message(log_file)
-      message = "✘ #{number} #{user_at_host}"
-      message << " (see #{log_file} for details)" if log_file
-      message
+    def failure_message
+      "✘ #{number} #{user_at_host}"
     end
   end
 end

@@ -24,11 +24,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency "sshkit", [">= 1.6.1", "!= 1.7.0"]
 
   spec.add_development_dependency "bundler", "~> 1.10"
-  spec.add_development_dependency "coveralls"
-  spec.add_development_dependency "rainbow", "~> 2.1.0"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "minitest"
-  spec.add_development_dependency "minitest-reporters"
-  spec.add_development_dependency "mocha"
+  spec.add_development_dependency "coveralls", "~> 0.8.15"
+  spec.add_development_dependency "rake", "~> 12.0"
+  spec.add_development_dependency "minitest", "~> 5.10"
+  spec.add_development_dependency "minitest-reporters", "~> 1.1"
+  spec.add_development_dependency "mocha", "~> 1.2"
   spec.add_development_dependency "rubocop", "~> 0.41.2"
 end

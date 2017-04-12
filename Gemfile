@@ -17,7 +17,7 @@ group :extras, :optional => true do
 end
 
 # Danger is used by Travis, but only for Ruby 2.0+
-gem "danger" unless RUBY_VERSION == "1.9.3"
+gem "danger", "~> 4.3" unless RUBY_VERSION == "1.9.3"
 
 if (sshkit_version = ENV["sshkit"])
   requirement = begin

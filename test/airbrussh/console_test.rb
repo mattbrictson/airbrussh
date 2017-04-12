@@ -61,6 +61,17 @@ class Airbrussh::ConsoleTest < Minitest::Test
     assert_equal("The quick brown fox…\n", output)
   end
 
+  def test_ignores_ascii_color_codes_when_determing_truncation_amount
+    console = configured_console(:tty => true) do |config|
+      config.color = true
+      config.truncate = :auto
+    end
+    IO.stubs(:console => stub(:winsize => [100, 20]))
+    twenty_chars_plus_color = "\e[0;31;49m#{'a' * 20}\e[0m"
+    console.print_line(twenty_chars_plus_color)
+    assert_equal("#{twenty_chars_plus_color}\n", output)
+  end
+
   def test_truncates_to_explicit_width
     console = configured_console(:tty => true) do |config|
       config.color = false

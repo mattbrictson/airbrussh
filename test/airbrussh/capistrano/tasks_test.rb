@@ -33,8 +33,8 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
   end
 
   def setup
-    @dsl = DSL.new(Airbrussh::Formatter.new(StringIO.new, @config))
     @config = Airbrussh::Configuration.new
+    @dsl = DSL.new(Airbrussh::Formatter.new(StringIO.new, @config))
     @stderr = StringIO.new
     @tasks = Airbrussh::Capistrano::Tasks.new(@dsl, @stderr, @config)
   end
