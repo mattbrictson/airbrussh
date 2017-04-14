@@ -4,9 +4,12 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-* colorize LogMessage label on WARN level and above ([@klyonrad](https://github.com/klyonrad))
-* [#106](https://github.com/mattbrictson/airbrussh/pull/106): Remove the `log_file` parameter from the `CommandFormatter#exit_message` method; it was unused - [@mattbrictson](https://github.com/mattbrictson)
 * Your contribution here!
+
+## [1.2.0][] (2017-04-14)
+
+* [#95](https://github.com/mattbrictson/airbrussh/pull/95): colorize LogMessage label on WARN level and above - [@klyonrad](https://github.com/klyonrad)
+* [#106](https://github.com/mattbrictson/airbrussh/pull/106): Remove the `log_file` parameter from the `CommandFormatter#exit_message` method; it was unused - [@mattbrictson](https://github.com/mattbrictson)
 
 ## [1.1.2][] (2017-01-02)
 
@@ -128,7 +131,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/mattbrictson/airbrussh/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/mattbrictson/airbrussh/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/mattbrictson/airbrussh/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/mattbrictson/airbrussh/compare/v1.0.2...v1.1.0
