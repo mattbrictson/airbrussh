@@ -18,7 +18,11 @@ class Airbrussh::ConsoleFormatterTest < Minitest::Test
   # Make sure that command data containing two lines is formatted as two
   # indented lines.
   def test_log_command_data_with_multiline_string
-    command = stub(:verbosity => SSHKit::Logger::INFO, :to_s => "greet")
+    command = stub(
+      :verbosity => SSHKit::Logger::INFO,
+      :to_s => "greet",
+      :uuid => "a1"
+    )
     data = "hello\nworld\n"
     @formatter.log_command_start(command)
     @formatter.log_command_data(command, :stdout, data)

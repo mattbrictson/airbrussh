@@ -38,18 +38,22 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
   def test_register_new_command_is_true_for_first_execution_per_rake_task
     @config.monkey_patch_rake = true
     context = Airbrussh::Rake::Context.new(@config)
+
+    command_one = stub(:uuid => "command_one")
+    command_two = stub(:uuid => "command_two")
+
     define_and_execute_rake_task("one") do
-      assert context.register_new_command(:command_one)
-      refute context.register_new_command(:command_one)
-      assert context.register_new_command(:command_two)
-      refute context.register_new_command(:command_two)
+      assert context.register_new_command(command_one)
+      refute context.register_new_command(command_one)
+      assert context.register_new_command(command_two)
+      refute context.register_new_command(command_two)
     end
 
     define_and_execute_rake_task("two") do
-      assert context.register_new_command(:command_one)
-      refute context.register_new_command(:command_one)
-      assert context.register_new_command(:command_two)
-      refute context.register_new_command(:command_two)
+      assert context.register_new_command(command_one)
+      refute context.register_new_command(command_one)
+      assert context.register_new_command(command_two)
+      refute context.register_new_command(command_two)
     end
   end
 
@@ -57,20 +61,25 @@ class Airbrussh::Rake::ContextTest < Minitest::Test
     @config.monkey_patch_rake = true
     context = Airbrussh::Rake::Context.new(@config)
 
-    define_and_execute_rake_task("one") do
-      context.register_new_command(:command_one)
-      context.register_new_command(:command_two)
+    command_one = stub(:uuid => "command_one")
+    command_two = stub(:uuid => "command_two")
+    command_three = stub(:uuid => "command_three")
+    command_four = stub(:uuid => "command_four")
 
-      assert_equal(0, context.position(:command_one))
-      assert_equal(1, context.position(:command_two))
+    define_and_execute_rake_task("one") do
+      context.register_new_command(command_one)
+      context.register_new_command(command_two)
+
+      assert_equal(0, context.position(command_one))
+      assert_equal(1, context.position(command_two))
     end
 
     define_and_execute_rake_task("two") do
-      context.register_new_command(:command_three)
-      context.register_new_command(:command_four)
+      context.register_new_command(command_three)
+      context.register_new_command(command_four)
 
-      assert_equal(0, context.position(:command_three))
-      assert_equal(1, context.position(:command_four))
+      assert_equal(0, context.position(command_three))
+      assert_equal(1, context.position(command_four))
     end
   end
 end
