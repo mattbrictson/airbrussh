@@ -58,7 +58,7 @@ class Airbrussh::ConsoleTest < Minitest::Test
     end
     IO.stubs(:console => stub(:winsize => [100, 20]))
     console.print_line("The quick brown fox jumps over the lazy dog.")
-    assert_equal("The quick brown fox…\n", output)
+    assert_equal("The quick brown fo…\n", output)
   end
 
   def test_ignores_ascii_color_codes_when_determing_truncation_amount
@@ -78,7 +78,7 @@ class Airbrussh::ConsoleTest < Minitest::Test
       config.truncate = 25
     end
     console.print_line("The quick brown fox jumps over the lazy dog.")
-    assert_equal("The quick brown fox jump…\n", output)
+    assert_equal("The quick brown fox jum…\n", output)
   end
 
   def test_truncation_can_be_disabled
@@ -113,6 +113,22 @@ class Airbrussh::ConsoleTest < Minitest::Test
     end
     console.print_line("The quick brown fox jumps over the lazy dog.")
     assert_equal("The quick brown fox jumps over the lazy dog.\n", output)
+  end
+
+  def test_ellipsis_length_for_utf_8
+    console = configured_console(:tty => true) do |config|
+      config.color = :auto
+    end
+    results = console.ellipsis_length("…")
+    assert_equal(2, results)
+  end
+
+  def test_ellipsis_length_string
+    console = configured_console(:tty => true) do |config|
+      config.color = :auto
+    end
+    results = console.ellipsis_length("...")
+    assert_equal(3, results)
   end
 
   private
