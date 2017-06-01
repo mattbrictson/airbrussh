@@ -67,6 +67,7 @@ Here are the options you can use, and their effects (note that the defaults may 
 |`command_output`|`true`|Set to `:stdout`, `:stderr`, or `true` to display the SSH output received via stdout, stderr, or both, respectively. Set to `false` to not show any SSH output, for a minimal look.|
 |`log_file`|`log/capistrano.log`|Capistrano's verbose output is saved to this file to facilitate debugging. Set to `nil` to disable completely.|
 |`truncate`|`:auto`|Set to a number (e.g. 80) to truncate the width of the output to that many characters, or `false` to disable truncation. If `:auto`, output is automatically truncated to the width of the terminal window, if it can be determined.|
+|`task_prefix`|`nil`|A string to prefix to task output. Handy for output collapsing like [buildkite](https://buildkite.com/docs/builds/managing-log-output)'s `---` prefix|
 
 ## FAQ
 

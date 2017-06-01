@@ -13,6 +13,7 @@ class Airbrussh::ConfigurationTest < Minitest::Test
     assert_equal(:auto, @config.color)
     assert_equal(:auto, @config.truncate)
     assert_equal(:auto, @config.banner)
+    assert_nil(@config.task_prefix)
     refute(@config.monkey_patch_rake)
     refute(@config.command_output)
   end

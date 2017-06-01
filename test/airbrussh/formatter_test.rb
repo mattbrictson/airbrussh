@@ -330,6 +330,26 @@ class Airbrussh::FormatterTest < Minitest::Test
     )
   end
 
+  def test_task_prefix
+    configure do |airbrussh_config|
+      airbrussh_config.monkey_patch_rake = true
+      airbrussh_config.task_prefix = "--- "
+    end
+
+    on_local("task_prefix_test") do
+      execute(:echo, "command 1")
+      execute(:echo, "command 2")
+    end
+
+    assert_output_lines(
+      "--- 00:00 task_prefix_test\n",
+      "      01 echo command 1\n",
+      /    ✔ 01 #{@user_at_localhost} \d.\d+s\n/,
+      "      02 echo command 2\n",
+      /    ✔ 02 #{@user_at_localhost} \d.\d+s\n/
+    )
+  end
+
   private
 
   def on_local(task_name=nil, &block)

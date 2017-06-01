@@ -100,7 +100,7 @@ module Airbrussh
       return if current_task_name == last_printed_task
 
       self.last_printed_task = current_task_name
-      print_line("#{clock} #{blue(current_task_name)}")
+      print_line("#{config.task_prefix}#{clock} #{blue(current_task_name)}")
     end
 
     def clock
