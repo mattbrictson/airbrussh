@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+* [#109](https://github.com/mattbrictson/airbrussh/pull/109): Add configurable task prefix - [@gondalez](https://github.com/gondalez)
 
 ## [1.2.0][] (2017-04-14)
 

@@ -5,7 +5,7 @@ require "airbrussh/log_file_formatter"
 module Airbrussh
   class Configuration
     attr_accessor :log_file, :monkey_patch_rake, :color, :truncate, :banner,
-                  :command_output
+                  :command_output, :task_prefix
 
     def initialize
       self.log_file = nil
@@ -14,6 +14,7 @@ module Airbrussh
       self.truncate = :auto
       self.banner = :auto
       self.command_output = false
+      self.task_prefix = nil
     end
 
     def apply_options(options)
