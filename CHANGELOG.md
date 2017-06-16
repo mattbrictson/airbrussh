@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+
+## [1.3.0][] (2017-06-16)
+
 * [#109](https://github.com/mattbrictson/airbrussh/pull/109): Add configurable task prefix - [@gondalez](https://github.com/gondalez)
 
 ## [1.2.0][] (2017-04-14)
@@ -132,7 +135,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/mattbrictson/airbrussh/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/mattbrictson/airbrussh/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/mattbrictson/airbrussh/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/mattbrictson/airbrussh/compare/v1.1.0...v1.1.1
