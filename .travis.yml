@@ -25,4 +25,4 @@ matrix:
     - rvm: 2.4.0
       script: bundle exec danger
 
-before_install: gem install bundler --conservative --version '~> 1.13.7'
+before_install: gem install bundler --force --conservative
