@@ -7,8 +7,7 @@ require "tempfile"
 
 class Airbrussh::Capistrano::TasksTest < Minitest::Test
   DSL = Struct.new(:formatter) do
-    def set(*)
-    end
+    def set(*); end
 
     # The Tasks object needs to reach into the backend provided by `env` in
     # order to obtain the current Formatter, so here we build the complex mock
@@ -25,11 +24,9 @@ class Airbrussh::Capistrano::TasksTest < Minitest::Test
 
     private
 
-    def namespace(*)
-    end
+    def namespace(*); end
 
-    def task(*)
-    end
+    def task(*); end
   end
 
   def setup

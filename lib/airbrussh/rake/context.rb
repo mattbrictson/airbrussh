@@ -57,7 +57,7 @@ module Airbrussh
 
           ::Rake::Task.class_exec do
             alias_method :_airbrussh_execute, :execute
-            def execute(args=nil) # rubocop:disable Lint/NestedMethodDefinition
+            def execute(args=nil)
               ::Airbrussh::Rake::Context.current_task_name = name.to_s
               _airbrussh_execute(args)
             end
