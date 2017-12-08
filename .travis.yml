@@ -17,6 +17,9 @@ matrix:
       env: sshkit="= 1.7.1"
     - rvm: 2.4.0
       env: sshkit="= 1.6.1"
+    # Newer versions of SSHKit don't work with Ruby 1.9
+    - rvm: 1.9
+      env: sshkit="master"
   include:
     # Run Danger only once, on 2.4.0
     - rvm: 2.4.0
