@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 require "minitest_helper"
 require "bundler"
 require "etc"
@@ -274,7 +275,7 @@ class Airbrussh::FormatterTest < Minitest::Test
     end
 
     on_local do
-      %w(log fatal error warn info debug).each do |level|
+      %w[log fatal error warn info debug].each do |level|
         send(level, "Test")
       end
     end

@@ -3,21 +3,33 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in airbrussh.gemspec
 gemspec
 
-# Optional development dependencies; requires bundler >= 1.10.
-# Note that these gems assume a Ruby 2.2 environment. Install them using:
-#
-# bundle install --with extras
-#
-group :extras, :optional => true do
-  gem "chandler"
-  gem "guard", ">= 2.2.2"
-  gem "guard-minitest"
-  gem "rb-fsevent"
-  gem "terminal-notifier-guard"
+if RUBY_VERSION == "1.9.3"
+  # These gems need specific version for Ruby 1.9
+  gem "json", "~> 1.8"
+  gem "net-ssh", "~> 2.8"
+  gem "term-ansicolor", "~> 1.3.2"
+  gem "tins", "~> 1.6.0"
 end
 
-# Danger is used by Travis, but only for Ruby 2.0+
-gem "danger", "~> 4.3" unless RUBY_VERSION == "1.9.3"
+if RUBY_VERSION >= "2.1"
+  # These gems need at least Ruby 2.1
+  gem "coveralls", "~> 0.8.15"
+  gem "danger", "~> 4.3"
+  gem "rubocop", "0.50.0"
+
+  # Optional development dependencies; requires bundler >= 1.10.
+  # Note that these gems assume a Ruby 2.2 environment. Install them using:
+  #
+  # bundle install --with extras
+  #
+  group :extras, :optional => true do
+    gem "chandler"
+    gem "guard", ">= 2.2.2"
+    gem "guard-minitest"
+    gem "rb-fsevent"
+    gem "terminal-notifier-guard"
+  end
+end
 
 if (sshkit_version = ENV["sshkit"])
   requirement = begin
@@ -33,15 +45,3 @@ if (sshkit_version = ENV["sshkit"])
   end
   gem "sshkit", requirement
 end
-
-# json 2.0+ is not compatible with Ruby 1.9, so pin at older version.
-gem "json", "~> 1.8" if RUBY_VERSION == "1.9.3"
-
-# net-ssh 3.0+ is not compatible with Ruby 1.9, so pin at older version.
-gem "net-ssh", "~> 2.8" if RUBY_VERSION == "1.9.3"
-
-# term-ansicolor 1.4.0+ is not compatible with Ruby 1.9, so pin older version.
-gem "term-ansicolor", "~> 1.3.2" if RUBY_VERSION == "1.9.3"
-
-# tins 1.7.0+ is not compatible with Ruby 1.9, so pin at older version.
-gem "tins", "~> 1.6.0" if RUBY_VERSION == "1.9.3"

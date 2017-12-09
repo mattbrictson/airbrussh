@@ -8,11 +8,11 @@ module Airbrussh
   # DelegatingFormatter forwarding the logging messages to both at once.
   #
   class DelegatingFormatter
-    FORWARD_METHODS = %w(
+    FORWARD_METHODS = %w[
       fatal error warn info debug log
       log_command_start log_command_data log_command_exit
-    ).freeze
-    DUP_AND_FORWARD_METHODS = %w(<< write).freeze
+    ].freeze
+    DUP_AND_FORWARD_METHODS = %w[<< write].freeze
 
     attr_reader :formatters
 

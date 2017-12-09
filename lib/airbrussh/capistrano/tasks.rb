@@ -60,7 +60,7 @@ module Airbrussh
 
       # Verify that capistrano and rake DSLs are present
       def warn_if_missing_dsl
-        return if %w(set namespace task).all? { |m| dsl.respond_to?(m, true) }
+        return if %w[set namespace task].all? { |m| dsl.respond_to?(m, true) }
 
         error_line(
           red("WARNING: airbrussh/capistrano must be loaded by Capistrano in "\
