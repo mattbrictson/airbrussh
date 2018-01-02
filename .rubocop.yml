@@ -4,6 +4,7 @@ AllCops:
   TargetRubyVersion: 1.9
   Exclude:
     - "*.gemspec"
+    - "vendor/**/*"
 
 Layout/EndOfLine:
   Enabled: false

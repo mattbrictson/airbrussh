@@ -7,6 +7,7 @@ if RUBY_VERSION == "1.9.3"
   # These gems need specific version for Ruby 1.9
   gem "json", "~> 1.8"
   gem "net-ssh", "~> 2.8"
+  gem "rake", "< 12.3"
   gem "term-ansicolor", "~> 1.3.2"
   gem "tins", "~> 1.6.0"
 end
