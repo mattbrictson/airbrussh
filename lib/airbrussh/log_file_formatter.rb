@@ -14,7 +14,7 @@ module Airbrussh
 
     def initialize(path, formatter_class=SSHKit::Formatter::Pretty)
       @path = path
-      ensure_directory_exists if path.is_a?(String)
+      ensure_log_directory_created if path.is_a?(String)
       super(formatter_class.new(log_file_io))
       write_delimiter
     end
@@ -29,6 +29,26 @@ module Airbrussh
       delimiter.each do |line|
         write(SSHKit::LogMessage.new(SSHKit::Logger::INFO, line))
       end
+    end
+
+    def ensure_log_directory_created
+      ensure_log_directory_name_free
+      ensure_directory_exists
+    end
+
+    def ensure_log_directory_name_free
+      return unless blocking_file?
+
+      raise IOError,
+            %W[#{File.dirname(path)} is already a file.\n
+               We expect to create a directory with this name to log within.\n
+               Use set :format_options log_file: a/different/path.log to change
+               the log directory name or move this file
+               before re-running again.].join(" ")
+    end
+
+    def blocking_file?
+      File.file?(File.dirname(path))
     end
 
     def ensure_directory_exists
