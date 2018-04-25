@@ -30,11 +30,20 @@ class Airbrussh::LogFileFormatterTest < Minitest::Test
     assert_match(/INFO.*hello/, output)
   end
 
+  def test_errors_if_log_directory_cannot_be_created
+    with_tempdir do |dir|
+      FileUtils.touch(File.dirname(log_file_path(dir)))
+      err = assert_raises(IOError) do
+        Airbrussh::LogFileFormatter.new(log_file_path(dir))
+      end
+      assert_match(/log is already a file/, err.message)
+    end
+  end
+
   def test_creates_log_directory_and_file
     with_tempdir do |dir|
-      log_file = File.join(dir, "log", "capistrano.log")
-      Airbrussh::LogFileFormatter.new(log_file)
-      assert(File.exist?(log_file))
+      Airbrussh::LogFileFormatter.new(log_file_path(dir))
+      assert(File.exist?(log_file_path(dir)))
     end
   end
 
@@ -42,6 +51,10 @@ class Airbrussh::LogFileFormatterTest < Minitest::Test
 
   def output
     @output ||= IO.read(@file.path)
+  end
+
+  def log_file_path(dir)
+    File.join(dir, "log", "capistrano.log")
   end
 
   def with_tempdir

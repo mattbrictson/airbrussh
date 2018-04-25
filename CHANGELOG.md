@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file. This projec
 
 * Your contribution here!
 
+* Add error message if log cannot be created because the required
+  directory name has been taken by a file of the same name.
+  [#115](https://github.com/mattbrictson/airbrussh/pull/115)
+
 ## [1.3.0][] (2017-06-16)
 
 * [#109](https://github.com/mattbrictson/airbrussh/pull/109): Add configurable task prefix - [@gondalez](https://github.com/gondalez)
