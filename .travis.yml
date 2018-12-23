@@ -5,10 +5,10 @@ rvm:
   - 1.9
   - 2.0
   - 2.1
-  - 2.2.9
-  - 2.3.6
-  - 2.4.3
-  - 2.5.0
+  - 2.2.10
+  - 2.3.8
+  - 2.4.5
+  - 2.5.3
   - ruby-head
 env:
   - sshkit="master"
@@ -38,5 +38,5 @@ matrix:
       script: bundle exec danger
 
 before_install:
-  - gem update --system
+  - gem update --system || echo "skipping rubygems upgrade"
   - gem install bundler --no-document
