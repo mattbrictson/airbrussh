@@ -17,13 +17,13 @@ env:
 matrix:
   exclude:
     # Older versions of SSHKit don't work with Ruby 2.4+, so skip those
-    - rvm: 2.4.3
+    - rvm: 2.4.5
       env: sshkit="= 1.7.1"
-    - rvm: 2.4.3
+    - rvm: 2.4.5
       env: sshkit="= 1.6.1"
-    - rvm: 2.5.0
+    - rvm: 2.5.3
       env: sshkit="= 1.7.1"
-    - rvm: 2.5.0
+    - rvm: 2.5.3
       env: sshkit="= 1.6.1"
     - rvm: ruby-head
       env: sshkit="= 1.7.1"
@@ -33,8 +33,8 @@ matrix:
     - rvm: 1.9
       env: sshkit="master"
   include:
-    # Run Danger only once, on 2.4.3
-    - rvm: 2.4.3
+    # Run Danger only once, on 2.4.5
+    - rvm: 2.4.5
       script: bundle exec danger
 
 before_install:
