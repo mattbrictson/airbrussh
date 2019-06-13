@@ -106,6 +106,17 @@ class Airbrussh::ConsoleTest < Minitest::Test
     assert_equal(ascii_8bit("The ‘...\n"), ascii_8bit(output))
   end
 
+  def test_print_line_handles_invalid_utf8
+    console = configured_console(:tty => false)
+
+    invalid_utf8 = "The ‘quick’ brown fox"
+                   .encode("Windows-1255")
+                   .force_encoding("UTF-8")
+
+    console.print_line(invalid_utf8)
+    assert_equal("The �quick� brown fox\n", output)
+  end
+
   def test_doesnt_truncates_to_zero_width
     console = configured_console(:tty => true) do |config|
       config.color = false
