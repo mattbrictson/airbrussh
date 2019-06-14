@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+* [#121](https://github.com/mattbrictson/airbrussh/pull/121): Gracefully handle SSH output that has invalid UTF-8 encoding instead of raising an exception - [@mattbrictson](https://github.com/mattbrictson)
 
 ## [1.3.1][] (2018-11-04)
 
