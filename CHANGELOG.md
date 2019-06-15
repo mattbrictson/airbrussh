@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file. This projec
 ## [Unreleased]
 
 * Your contribution here!
+
+## [1.3.2][] (2019-06-15)
+
 * [#121](https://github.com/mattbrictson/airbrussh/pull/121): Gracefully handle SSH output that has invalid UTF-8 encoding instead of raising an exception - [@mattbrictson](https://github.com/mattbrictson)
 
 ## [1.3.1][] (2018-11-04)
@@ -142,7 +145,8 @@ There are, however, many behind-the-scenes changes and improvements to overall c
 * Initial release
 
 [Semver]: http://semver.org
-[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/mattbrictson/airbrussh/compare/v1.3.2...HEAD
+[1.3.2]: https://github.com/mattbrictson/airbrussh/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/mattbrictson/airbrussh/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/mattbrictson/airbrussh/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/mattbrictson/airbrussh/compare/v1.1.2...v1.2.0
