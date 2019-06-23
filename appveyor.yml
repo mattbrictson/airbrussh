@@ -2,6 +2,8 @@ version: '{build}'
 
 skip_tags: true
 
+skip_branch_with_pr: true
+
 environment:
   matrix:
     - ruby_version: "23"
