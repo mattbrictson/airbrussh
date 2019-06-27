@@ -35,10 +35,6 @@ matrix:
     # Newer versions of SSHKit don't work with Ruby 1.9
     - rvm: 1.9
       env: sshkit="master"
-  include:
-    # Run Danger only once, on 2.4.5
-    - rvm: 2.4.5
-      script: bundle exec danger
 
 before_install:
   - gem update --system || echo "skipping rubygems upgrade"
