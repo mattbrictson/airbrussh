@@ -23,7 +23,6 @@ if RUBY_VERSION >= "2.1"
   # bundle install --with extras
   #
   group :extras, :optional => true do
-    gem "chandler"
     gem "guard", ">= 2.2.2"
     gem "guard-minitest"
     gem "rb-fsevent"
