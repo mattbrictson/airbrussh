@@ -15,9 +15,7 @@ rescue LoadError
   task :default => :test
 end
 
-# rubocop:disable Lint/HandleExceptions
-begin
-  require "chandler/tasks"
-rescue LoadError
+Rake::Task["release"].enhance do
+  puts "Don't forget to publish the release on GitHub!"
+  system "open https://github.com/mattbrictson/airbrussh/releases"
 end
-task "release:rubygem_push" => "chandler:push" if defined?(Chandler)
