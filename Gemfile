@@ -15,7 +15,6 @@ end
 if RUBY_VERSION >= "2.1"
   # These gems need at least Ruby 2.1
   gem "coveralls", "~> 0.8.15"
-  gem "danger", "~> 4.3"
   gem "rubocop", "0.50.0"
 
   # Optional development dependencies; requires bundler >= 1.10.

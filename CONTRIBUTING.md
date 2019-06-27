@@ -7,7 +7,6 @@ Have a feature idea, bug fix, or refactoring suggestion? Contributions are welco
 1. Check [Issues][] to see if your contribution has already been discussed and/or implemented.
 2. If not, open an issue to discuss your contribution. I won't accept all changes and do not want to waste your time.
 3. Once you have the :thumbsup:, fork the repo, make your changes, and open a PR.
-4. Don't forget to add your contribution and credit yourself in `CHANGELOG.md`!
 
 ## Coding guidelines
 
