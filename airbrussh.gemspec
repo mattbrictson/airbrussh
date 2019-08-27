@@ -6,6 +6,7 @@ require "airbrussh/version"
 Gem::Specification.new do |spec|
   spec.name          = "airbrussh"
   spec.version       = Airbrussh::VERSION
+  spec.license       = "MIT"
   spec.authors       = ["Matt Brictson"]
   spec.email         = ["airbrussh@mattbrictson.com"]
   spec.summary       = "Airbrussh pretties up your SSHKit and Capistrano output"
@@ -14,8 +15,10 @@ Gem::Specification.new do |spec|
                        "Airbrussh to your Capfile and enjoy concise, useful "\
                        "log output that is easy to read."
   spec.homepage      = "https://github.com/mattbrictson/airbrussh"
-  spec.license       = "MIT"
-
+  spec.metadata      = {
+    "changelog_uri" => "https://github.com/mattbrictson/airbrussh/releases"  
+  }
+  
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/|\.(gif|png)$}) }
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
