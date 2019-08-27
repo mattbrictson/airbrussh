@@ -16,9 +16,9 @@ Gem::Specification.new do |spec|
                        "log output that is easy to read."
   spec.homepage      = "https://github.com/mattbrictson/airbrussh"
   spec.metadata      = {
-    "changelog_uri" => "https://github.com/mattbrictson/airbrussh/releases"  
+    "changelog_uri" => "https://github.com/mattbrictson/airbrussh/releases"
   }
-  
+
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/|\.(gif|png)$}) }
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
