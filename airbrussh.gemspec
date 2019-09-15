@@ -16,7 +16,10 @@ Gem::Specification.new do |spec|
                        "log output that is easy to read."
   spec.homepage      = "https://github.com/mattbrictson/airbrussh"
   spec.metadata      = {
-    "changelog_uri" => "https://github.com/mattbrictson/airbrussh/releases"
+    "bug_tracker_uri" => "https://github.com/mattbrictson/airbrussh/issues",
+    "changelog_uri" => "https://github.com/mattbrictson/airbrussh/releases",
+    "source_code_uri" => "https://github.com/mattbrictson/airbrussh",
+    "homepage_uri" => "https://github.com/mattbrictson/airbrussh"
   }
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/|\.(gif|png)$}) }
