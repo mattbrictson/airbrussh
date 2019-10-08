@@ -16,6 +16,7 @@ class Airbrussh::ConfigurationTest < Minitest::Test
     assert_nil(@config.task_prefix)
     refute(@config.monkey_patch_rake)
     refute(@config.command_output)
+    assert_equal(Airbrussh::Rake::Context, @config.context)
   end
 
   def test_apply_options
@@ -25,7 +26,8 @@ class Airbrussh::ConfigurationTest < Minitest::Test
       :truncate => false,
       :banner => "hi",
       :monkey_patch_rake => true,
-      :command_output => true
+      :command_output => true,
+      :context => Class
     )
 
     assert_equal("test", @config.log_file)
@@ -34,6 +36,7 @@ class Airbrussh::ConfigurationTest < Minitest::Test
     assert_equal("hi", @config.banner)
     assert(@config.monkey_patch_rake)
     assert(@config.command_output)
+    assert_equal(Class, @config.context)
   end
 
   def test_apply_options_warns_on_stderr_of_bad_key
