@@ -16,7 +16,7 @@ module Airbrussh
       super(io)
 
       @config = config
-      @context = Airbrussh::Rake::Context.new(config)
+      @context = config.context.new(config)
       @console = Airbrussh::Console.new(original_output, config)
 
       write_banner
