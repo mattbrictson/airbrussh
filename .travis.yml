@@ -37,7 +37,6 @@ matrix:
       env: sshkit="master"
 
 before_install:
-  - gem update --system || echo "skipping rubygems upgrade"
   - gem install bundler -v 1.17.3 --conservative --no-document
   - gem install executable-hooks --conservative --no-document
 install:
