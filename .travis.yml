@@ -12,6 +12,8 @@ rvm:
   - 2.3.8
   - 2.4.5
   - 2.5.3
+  - 3.0
+  - 3.1
   - ruby-head
 env:
   - sshkit="master"
