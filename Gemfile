@@ -6,6 +6,7 @@ gemspec
 if RUBY_VERSION == "1.9.3"
   # These gems need specific version for Ruby 1.9
   gem "json", "~> 1.8"
+  gem "minitest", "~> 5.11.3"
   gem "net-ssh", "~> 2.8"
   gem "rake", "< 12.3"
   gem "term-ansicolor", "~> 1.3.2"
@@ -40,7 +41,7 @@ if (sshkit_version = ENV["sshkit"])
       else
         ["capistrano", sshkit_version]
       end
-    { :github => "#{user}/sshkit", :branch => branch }
+    { :git => "https://github.com/#{user}/sshkit.git", :branch => branch }
   end
   gem "sshkit", requirement
 end

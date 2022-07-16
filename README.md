@@ -1,7 +1,7 @@
 # Airbrussh
 
 [![Gem Version](https://badge.fury.io/rb/airbrussh.svg)](http://badge.fury.io/rb/airbrussh)
-[![Build Status](https://travis-ci.org/mattbrictson/airbrussh.svg?branch=master)](https://travis-ci.org/mattbrictson/airbrussh)
+[![Build Status](https://circleci.com/gh/mattbrictson/airbrussh/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/mattbrictson/airbrussh?branch=master)
 [![Build status](https://ci.appveyor.com/api/projects/status/h052rlq54sne3md6/branch/master?svg=true)](https://ci.appveyor.com/project/mattbrictson/airbrussh/branch/master)
 [![Code Climate](https://codeclimate.com/github/mattbrictson/airbrussh/badges/gpa.svg)](https://codeclimate.com/github/mattbrictson/airbrussh)
 [![Coverage Status](https://coveralls.io/repos/mattbrictson/airbrussh/badge.svg?branch=master)](https://coveralls.io/r/mattbrictson/airbrussh?branch=master)

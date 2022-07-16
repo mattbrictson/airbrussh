@@ -1,0 +1,132 @@
+version: 2.1
+
+executors:
+  ruby:
+    parameters:
+      version:
+        description: "Ruby version number"
+        default: "3.1"
+        type: string
+    docker:
+      - image: ruby:<< parameters.version >>
+
+commands:
+  bundle_install:
+    description: Install Ruby dependencies with Bundler
+    parameters:
+      key:
+        description: "Cache key"
+        default: "3.1"
+        type: string
+    steps:
+      - restore_cache:
+          keys:
+            - bundle-v1-{{ arch }}-<< parameters.key >>
+      - run:
+          name: Install Ruby Dependencies
+          command: |
+            gem install bundler --conservative --no-document || \
+              gem install rubygems-update -v '<3' && update_rubygems && gem install bundler -v '<2' --no-document
+            bundle config --local path vendor/bundle
+            bundle check || (bundle install --jobs=4 --retry=3 && bundle clean)
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: bundle-v1-{{ arch }}-<< parameters.key >>-{{ checksum "Gemfile.lock" }}
+
+jobs:
+  rubocop:
+    executor:
+      name: ruby
+      version: "2.7"
+    steps:
+      - checkout
+      - bundle_install:
+          key: "2.7"
+      - run: bundle exec rubocop
+  spec:
+    parameters:
+      ruby:
+        description: "Ruby version number"
+        default: "3.1"
+        type: string
+    executor:
+      name: ruby
+      version: << parameters.ruby >>
+    steps:
+      - checkout
+      - run: echo sshkit=master >> $BASH_ENV
+      - bundle_install:
+          key: << parameters.ruby >>
+      - run: bundle exec rake test
+  spec_legacy_ruby:
+    parameters:
+      ruby:
+        description: "Ruby version number"
+        default: "1.9"
+        type: string
+      sshkit:
+        description: "sshkit version number"
+        default: "1.6.1"
+        type: string
+    executor:
+      name: ruby
+      version: << parameters.ruby >>
+    steps:
+      - checkout
+      - run: |
+          echo "export sshkit=<< parameters.sshkit >>" >> $BASH_ENV
+          if [ "<< parameters.ruby >>" == "1.9" ]; then
+           echo "export RUBYOPT=-Ku" >> $BASH_ENV
+          fi
+      - bundle_install:
+          key: << parameters.ruby >>-<< parameters.sshkit >>
+      - run: bundle exec rake test
+
+workflows:
+  version: 2
+  commit-workflow:
+    jobs:
+      - rubocop
+      - spec:
+          matrix: &matrix
+            parameters:
+              ruby:
+                - "2.4"
+                - "2.5"
+                - "2.6"
+                - "2.7"
+                - "3.0"
+                - "3.1"
+      - spec_legacy_ruby:
+          matrix: &legacy_ruby_matrix
+            parameters:
+              ruby:
+                - "1.9"
+                - "2.0"
+                - "2.1"
+                - "2.2"
+                - "2.3"
+              sshkit:
+                - "1.6.1"
+                - "1.7.1"
+                - master
+            exclude:
+              - ruby: "1.9"
+                sshkit: master
+  cron-workflow:
+    jobs:
+      - rubocop
+      - spec:
+          matrix:
+            <<: *matrix
+      - spec_legacy_ruby:
+          matrix:
+            <<: *legacy_ruby_matrix
+    triggers:
+      - schedule:
+          cron: "0 13 * * 6"
+          filters:
+            branches:
+              only:
+                - master

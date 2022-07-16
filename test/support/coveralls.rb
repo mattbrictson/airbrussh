@@ -1,4 +1,4 @@
-if ENV["TRAVIS"] && RUBY_VERSION >= "2.1"
+if ENV["CI"] && RUBY_VERSION >= "2.1"
   require "simplecov"
   require "coveralls"
 
