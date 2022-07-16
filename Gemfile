@@ -41,7 +41,7 @@ if (sshkit_version = ENV["sshkit"])
       else
         ["capistrano", sshkit_version]
       end
-    { :github => "#{user}/sshkit", :branch => branch }
+    { :git => "https://github.com/#{user}/sshkit.git", :branch => branch }
   end
   gem "sshkit", requirement
 end
