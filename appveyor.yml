@@ -1,21 +1,9 @@
-version: '{build}'
-
+version: "{build}"
 skip_tags: true
-
 skip_branch_with_pr: true
-
-environment:
-  matrix:
-    - ruby_version: "23"
-    - ruby_version: "23-x64"
-
 install:
-  - SET PATH=C:\Ruby%ruby_version%\bin;%PATH%
-  - gem uninstall bundler --all --executables
-  - gem install bundler --no-document -v "~>1.17"
+  - set PATH=C:\Ruby26-x64\bin;%PATH%
   - bundle install --retry=3
-
 test_script:
   - bundle exec rake
-
 build: off
