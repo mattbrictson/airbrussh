@@ -1,10 +1,10 @@
 # Airbrussh
 
 [![Gem Version](https://badge.fury.io/rb/airbrussh.svg)](http://badge.fury.io/rb/airbrussh)
-[![Build Status](https://circleci.com/gh/mattbrictson/airbrussh/tree/master.svg?style=shield)](https://app.circleci.com/pipelines/github/mattbrictson/airbrussh?branch=master)
-[![Build status](https://ci.appveyor.com/api/projects/status/h052rlq54sne3md6/branch/master?svg=true)](https://ci.appveyor.com/project/mattbrictson/airbrussh/branch/master)
+[![Build Status](https://circleci.com/gh/mattbrictson/airbrussh/tree/main.svg?style=shield)](https://app.circleci.com/pipelines/github/mattbrictson/airbrussh?branch=main)
+[![Build status](https://ci.appveyor.com/api/projects/status/h052rlq54sne3md6/branch/main?svg=true)](https://ci.appveyor.com/project/mattbrictson/airbrussh/branch/main)
 [![Code Climate](https://codeclimate.com/github/mattbrictson/airbrussh/badges/gpa.svg)](https://codeclimate.com/github/mattbrictson/airbrussh)
-[![Coverage Status](https://coveralls.io/repos/mattbrictson/airbrussh/badge.svg?branch=master)](https://coveralls.io/r/mattbrictson/airbrussh?branch=master)
+[![Coverage Status](https://coveralls.io/repos/mattbrictson/airbrussh/badge.svg?branch=main)](https://coveralls.io/r/mattbrictson/airbrussh?branch=main)
 
 
 Airbrussh is a concise log formatter for Capistrano and SSHKit. It displays well-formatted, useful log output that is easy to read. Airbrussh also saves Capistrano's verbose output to a separate log file just in case you need additional details for troubleshooting.
@@ -13,7 +13,7 @@ Airbrussh is a concise log formatter for Capistrano and SSHKit. It displays well
 
 If you aren't yet using Capistrano 3.5 (or wish to use Airbrussh with SSHKit directly), refer to the [advanced/legacy usage](#advancedlegacy-usage) section for installation instructions.
 
-![Sample output](https://raw.github.com/mattbrictson/airbrussh/master/demo.gif)
+![Sample output](https://raw.github.com/mattbrictson/airbrussh/HEAD/demo.gif)
 
 For more details on how exactly Airbrussh affects Capistrano's output and the reasoning behind it, check out the blog post: [Introducing Airbrussh](https://mattbrictson.com/airbrussh).
 
@@ -37,7 +37,7 @@ set :format, :airbrussh
 
 When you run a Capistrano command, Airbrussh provides the following information in its output:
 
-![Sample output](https://raw.github.com/mattbrictson/airbrussh/master/formatting.png)
+![Sample output](https://raw.github.com/mattbrictson/airbrussh/HEAD/formatting.png)
 
 * Name of Capistrano task being executed
 * When each task started (minutes:seconds elapsed since the deploy began)
