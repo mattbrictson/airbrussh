@@ -11,6 +11,10 @@ if RUBY_VERSION == "1.9.3"
   gem "rake", "< 12.3"
   gem "term-ansicolor", "~> 1.3.2"
   gem "tins", "~> 1.6.0"
+elsif RUBY_VERSION < "2.6"
+  # These gems need specific versions for Ruby < 2.6
+  gem "minitest", "< 5.16" # rubocop:disable Bundler/DuplicatedGem
+  gem "net-ssh", "< 7" # rubocop:disable Bundler/DuplicatedGem
 end
 
 if RUBY_VERSION >= "2.5"
@@ -18,8 +22,8 @@ if RUBY_VERSION >= "2.5"
   gem "coveralls_reborn", "~> 0.24.0"
 end
 
-if RUBY_VERSION >= "2.1"
-  # These gems need at least Ruby 2.1
+if RUBY_VERSION >= "2.5"
+  # These gems need at least Ruby 2.5
   gem "rubocop", "0.50.0"
 
   # Optional development dependencies; requires bundler >= 1.10.
