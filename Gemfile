@@ -13,8 +13,8 @@ if RUBY_VERSION == "1.9.3"
   gem "tins", "~> 1.6.0"
 elsif RUBY_VERSION < "2.6"
   # These gems need specific versions for Ruby < 2.6
-  gem "minitest", "< 5.16"
-  gem "net-ssh", "< 7"
+  gem "minitest", "< 5.16" # rubocop:disable Bundler/DuplicatedGem
+  gem "net-ssh", "< 7" # rubocop:disable Bundler/DuplicatedGem
 end
 
 if RUBY_VERSION >= "2.5"
