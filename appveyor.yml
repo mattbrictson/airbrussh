@@ -1,6 +1,8 @@
 version: "{build}"
 skip_tags: true
 skip_branch_with_pr: true
+environment:
+  MT_COMPAT: "1" # Allows old versions of mocha gem to work with minitest
 install:
   - set PATH=C:\Ruby26-x64\bin;%PATH%
   - bundle install --retry=3
