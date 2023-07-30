@@ -9,6 +9,8 @@ executors:
         type: string
     docker:
       - image: ruby:<< parameters.version >>
+        environment:
+          MT_COMPAT: "1" # Allows old versions of mocha gem to work with minitest
 
 commands:
   bundle_install:
