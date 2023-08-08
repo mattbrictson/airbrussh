@@ -40,6 +40,9 @@ if RUBY_VERSION >= "2.5"
   end
 end
 
+# Needed to make rubocop 0.50.0 work on modern rubies
+gem "safe_yaml" if RUBY_VERSION >= "3.1"
+
 if (sshkit_version = ENV["sshkit"])
   requirement = begin
     Gem::Dependency.new("sshkit", sshkit_version).requirement
