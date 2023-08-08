@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "sshkit", [">= 1.6.1", "!= 1.7.0"]
 
   spec.add_development_dependency "bundler"
-  spec.add_development_dependency "rake", "~> 12.0"
+  spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "minitest", "~> 5.10"
   spec.add_development_dependency "minitest-reporters", "~> 1.1"
   spec.add_development_dependency "mocha", "~> 2.1"

@@ -5,6 +5,7 @@ class Airbrussh::CapistranoTest < Minitest::Test
     # Mute the warning that is normally printed to $stderr when
     # airbrussh/capistrano is required outside a capistrano runtime.
     $stderr.stubs(:write)
+    require "rake"
     require "airbrussh/capistrano"
   end
 
