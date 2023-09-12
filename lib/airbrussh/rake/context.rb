@@ -13,6 +13,10 @@ module Airbrussh
     # for the `position` of a command.
     #
     class Context
+      class << self
+        attr_accessor :current_task_name
+      end
+
       def initialize(config=Airbrussh.configuration)
         @history = []
         @enabled = config.monkey_patch_rake
@@ -47,10 +51,22 @@ module Airbrussh
         history.index(command.to_s)
       end
 
-      class << self
-        attr_accessor :current_task_name
+      if Object.respond_to?(:prepend)
+        module Patch
+          def execute(args=nil)
+            ::Airbrussh::Rake::Context.current_task_name = name.to_s
+            super
+          end
+        end
 
-        def install_monkey_patch
+        def self.install_monkey_patch
+          require "rake"
+          return if ::Rake::Task.include?(::Airbrussh::Rake::Context::Patch)
+
+          ::Rake::Task.prepend(::Airbrussh::Rake::Context::Patch)
+        end
+      else
+        def self.install_monkey_patch
           require "rake"
           return if ::Rake::Task.instance_methods.include?(:_airbrussh_execute)
 
