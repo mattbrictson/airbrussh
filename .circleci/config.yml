@@ -61,29 +61,6 @@ jobs:
       - bundle_install:
           key: << parameters.ruby >>
       - run: bundle exec rake test
-  spec_legacy_ruby:
-    parameters:
-      ruby:
-        description: "Ruby version number"
-        default: "1.9"
-        type: string
-      sshkit:
-        description: "sshkit version number"
-        default: "1.6.1"
-        type: string
-    executor:
-      name: ruby
-      version: << parameters.ruby >>
-    steps:
-      - checkout
-      - run: |
-          echo "export sshkit=<< parameters.sshkit >>" >> $BASH_ENV
-          if [ "<< parameters.ruby >>" == "1.9" ]; then
-           echo "export RUBYOPT=-Ku" >> $BASH_ENV
-          fi
-      - bundle_install:
-          key: << parameters.ruby >>-<< parameters.sshkit >>
-      - run: bundle exec rake test
 
 workflows:
   version: 2
@@ -102,31 +79,12 @@ workflows:
                 - "3.1"
                 - "3.2"
                 - "3.3"
-      - spec_legacy_ruby:
-          matrix: &legacy_ruby_matrix
-            parameters:
-              ruby:
-                - "1.9"
-                - "2.0"
-                - "2.1"
-                - "2.2"
-                - "2.3"
-              sshkit:
-                - "1.6.1"
-                - "1.7.1"
-                - master
-            exclude:
-              - ruby: "1.9"
-                sshkit: master
   cron-workflow:
     jobs:
       - rubocop
       - spec:
           matrix:
             <<: *matrix
-      - spec_legacy_ruby:
-          matrix:
-            <<: *legacy_ruby_matrix
     triggers:
       - schedule:
           cron: "0 13 * * 6"

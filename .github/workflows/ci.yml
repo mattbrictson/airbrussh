@@ -1,0 +1,54 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+jobs:
+  spec_legacy_ruby_19:
+    name: "Test / Ruby 1.9 / SSHKit ${{ matrix.sshkit }}"
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        sshkit: ["1.6.1", "1.7.1"]
+    env:
+      sshkit: ${{ matrix.sshkit }}
+      RUBYOPT: "-Ku"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "1.9"
+          rubygems: "2.6.9"
+          bundler: "1.17.3"
+          bundler-cache: true
+      - run: bundle exec rake test
+  spec_legacy_ruby:
+    name: "Test / Ruby ${{ matrix.ruby }} / SSHKit ${{ matrix.sshkit }}"
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        ruby: ["2.0", "2.0", "2.1", "2.2", "2.3"]
+        sshkit: ["1.6.1", "1.7.1", "master"]
+    env:
+      sshkit: ${{ matrix.sshkit }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler: "1.17.3"
+          bundler-cache: true
+      - run: bundle exec rake test
+  spec_all:
+    name: "Test / Ruby (All)"
+    runs-on: ubuntu-latest
+    needs: [spec_legacy_ruby, spec_legacy_ruby_19]
+    if: always()
+    steps:
+      - name: All tests ok
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Some tests failed
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
