@@ -20,6 +20,7 @@ jobs:
         with:
           ruby-version: "1.9"
           rubygems: "2.6.9"
+          bundler: "1.17.3"
           bundler-cache: true
       - run: bundle exec rake test
   spec_legacy_ruby:
@@ -36,5 +37,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
+          bundler: "1.17.3"
           bundler-cache: true
       - run: bundle exec rake test
