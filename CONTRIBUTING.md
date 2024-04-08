@@ -19,7 +19,7 @@ Note that Bundler 1.10 is required for development. Run `gem update bundler` to 
 
 After checking out the airbrussh repo, run `bin/setup` to install dependencies. Run `rake` to execute airbrussh's tests and RuboCop checks.
 
-Airbrussh is designed to work against multiple versions of SSHKit and Ruby. In order to test this, we use the environment variable `sshkit` in order to run the tests against a specific version. The combinations of sshkit and ruby we support are specified in [.circleci/config.yml](.circleci/config.yml).
+Airbrussh is designed to work against multiple versions of SSHKit and Ruby. In order to test this, we use the environment variable `sshkit` in order to run the tests against a specific version. The combinations of sshkit and ruby we support are specified in [.github/workflows/ci.yml](.github/workflows/ci.yml).
 
 A Guardfile is also present, so if you'd like to use Guard to do a TDD workflow, then:
 
