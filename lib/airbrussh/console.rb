@@ -62,7 +62,7 @@ module Airbrussh
     def console_width
       width = case (truncate = config.truncate)
               when :auto
-                IO.console.winsize.last if @output.tty?
+                IO.console.winsize.last if @output.tty? && IO.console
               when Integer
                 truncate
               end
