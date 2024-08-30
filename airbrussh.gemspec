@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
     "homepage_uri" => "https://github.com/mattbrictson/airbrussh"
   }
 
-  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/|\.(gif|png)$}) }
+  spec.files         = Dir.glob(%w[LICENSE.txt README.md {exe,lib}/**/*]).reject { |f| File.directory?(f) }
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
