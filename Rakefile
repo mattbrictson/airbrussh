@@ -34,7 +34,7 @@ task :verify_gemspec_files do
   ignored_by_git = gemspec_files - git_files
   next if ignored_by_git.empty?
 
-  raise <<~ERROR
+  raise <<-ERROR.gsub(/^\s+/, "")
 
     The `spec.files` specified in airbrussh.gemspec include the following files
     that are being ignored by git. Did you forget to add them to the repo? If
