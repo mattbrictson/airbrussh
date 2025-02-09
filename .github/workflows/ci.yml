@@ -55,6 +55,11 @@ jobs:
       matrix:
         ruby: ["2.0", "2.0", "2.1", "2.2", "2.3", "2.4"]
         sshkit: ["1.6.1", "1.7.1", "1.22.0"]
+        exclude:
+          - ruby: "2.4"
+            sshkit: "1.6.1"
+          - ruby: "2.4"
+            sshkit: "1.7.1"
     env:
       sshkit: ${{ matrix.sshkit }}
     steps:
