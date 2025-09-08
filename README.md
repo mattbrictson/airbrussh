@@ -3,7 +3,6 @@
 [![Gem Version](https://badge.fury.io/rb/airbrussh.svg)](http://badge.fury.io/rb/airbrussh)
 [![Build Status](https://github.com/mattbrictson/airbrussh/actions/workflows/ci.yml/badge.svg)](https://github.com/mattbrictson/airbrussh/actions/workflows/ci.yml)
 [![Build status](https://ci.appveyor.com/api/projects/status/h052rlq54sne3md6/branch/main?svg=true)](https://ci.appveyor.com/project/mattbrictson/airbrussh/branch/main)
-[![Code Climate](https://codeclimate.com/github/mattbrictson/airbrussh/badges/gpa.svg)](https://codeclimate.com/github/mattbrictson/airbrussh)
 [![Coverage Status](https://coveralls.io/repos/mattbrictson/airbrussh/badge.svg?branch=main)](https://coveralls.io/r/mattbrictson/airbrussh?branch=main)
 
 
