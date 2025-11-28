@@ -2,6 +2,7 @@ version: "{build}"
 skip_tags: true
 skip_branch_with_pr: true
 environment:
+  BUNDLE_GEMFILE: "gemfiles/legacy.gemfile"
   MT_COMPAT: "1" # Allows old versions of mocha gem to work with minitest
 install:
   - set PATH=C:\Ruby26-x64\bin;%PATH%
