@@ -17,6 +17,7 @@ elsif RUBY_VERSION < "2.6"
   gem "minitest", "< 5.16" # rubocop:disable Bundler/DuplicatedGem
   gem "net-ssh", "< 7" # rubocop:disable Bundler/DuplicatedGem
 end
+gem "irb"
 
 if RUBY_VERSION >= "2.5"
   # These gems need at least Ruby 2.5
