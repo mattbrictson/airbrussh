@@ -1,4 +1,4 @@
-require "airbrussh"
+require "airbrussh" unless defined?(Airbrussh)
 require "airbrussh/delegating_formatter"
 
 # This is the formatter class that conforms to the SSHKit Formatter API and
