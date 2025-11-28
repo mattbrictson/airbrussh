@@ -129,7 +129,7 @@ class Airbrussh::ConsoleTest < Minitest::Test
   private
 
   def ascii_8bit(string)
-    string.force_encoding("ASCII-8BIT")
+    string.dup.force_encoding("ASCII-8BIT")
   end
 
   def output
