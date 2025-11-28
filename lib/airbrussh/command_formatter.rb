@@ -2,7 +2,6 @@
 
 require "airbrussh/colors"
 require "delegate"
-# rubocop:disable Style/AsciiComments
 
 module Airbrussh
   # Decorates an SSHKit Command to add string output helpers and the

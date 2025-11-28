@@ -21,60 +21,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ["2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4"]
+        ruby: ["2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4"]
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - run: bundle exec rake test
-  test_legacy_ruby_19:
-    name: "Test / Ruby 1.9 / SSHKit ${{ matrix.sshkit }}"
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        sshkit: ["1.6.1", "1.7.1"]
-    env:
-      sshkit: ${{ matrix.sshkit }}
-      BUNDLE_GEMFILE: "gemfiles/legacy_19.gemfile"
-      RUBYOPT: "-Ku"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "1.9"
-          rubygems: "2.6.9"
-          bundler: "1.17.3"
-          bundler-cache: true
-      - run: bundle exec rake test
-  test_legacy_ruby:
-    name: "Test / Ruby ${{ matrix.ruby }} / SSHKit ${{ matrix.sshkit }}"
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        ruby: ["2.0", "2.0", "2.1", "2.2", "2.3", "2.4", "2.5"]
-        sshkit: ["1.6.1", "1.7.1", "1.22.0"]
-        exclude:
-          - ruby: "2.4"
-            sshkit: "1.6.1"
-          - ruby: "2.4"
-            sshkit: "1.7.1"
-    env:
-      sshkit: ${{ matrix.sshkit }}
-      BUNDLE_GEMFILE: "gemfiles/legacy_2.gemfile"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler: "1.17.3"
           bundler-cache: true
       - run: bundle exec rake test
   spec_all:
     name: "Test / Ruby (All)"
     runs-on: ubuntu-latest
-    needs: [test, test_legacy_ruby, test_legacy_ruby_19]
+    needs: test
     if: always()
     steps:
       - name: All tests ok

@@ -1,13 +1,21 @@
+inherit_from: .rubocop_todo.yml
+
 AllCops:
   DisplayCopNames: true
   DisplayStyleGuide: true
-  TargetRubyVersion: 1.9
+  NewCops: disable
+  SuggestExtensions: false
+  TargetRubyVersion: 2.5
   Exclude:
     - "*.gemspec"
     - "vendor/**/*"
 
 Layout/EndOfLine:
   Enabled: false
+
+Layout/LineLength:
+  Exclude:
+    - "test/airbrussh/formatter_test.rb"
 
 Layout/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
@@ -39,9 +47,13 @@ Style/DoubleNegation:
 Style/Encoding:
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Style/HashSyntax:
   Exclude:
     - "Gemfile"
+    - "gemfiles/*.gemfile"
   EnforcedStyle: hash_rockets
 
 Style/StringLiterals:
