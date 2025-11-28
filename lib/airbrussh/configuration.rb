@@ -34,7 +34,7 @@ module Airbrussh
     def banner_message
       return nil unless banner
       return banner unless banner == :auto
-      msg = "Using airbrussh format."
+      msg = "Using airbrussh format.".dup
       if log_file
         msg << "\n"
         msg << "Verbose output is being written to #{Colors.blue(log_file)}."
