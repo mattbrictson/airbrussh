@@ -1,3 +1,5 @@
+require "rake"
+
 module RakeTaskDefinition
   def define_and_execute_rake_task(task_name, &block)
     task_name ||= RakeTaskDefinition.unique_task_name(name)
