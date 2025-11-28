@@ -40,6 +40,8 @@ Style/Encoding:
   Enabled: false
 
 Style/HashSyntax:
+  Exclude:
+    - "Gemfile"
   EnforcedStyle: hash_rockets
 
 Style/StringLiterals:

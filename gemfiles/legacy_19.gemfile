@@ -8,20 +8,6 @@ gem "minitest-reporters", "~> 1.1"
 gem "mocha", "~> 1.2"
 gem "net-ssh", "~> 2.8"
 gem "rake", "< 12.3"
+gem "sshkit", ENV["sshkit"] if ENV["sshkit"]
 gem "term-ansicolor", "~> 1.3.2"
 gem "tins", "~> 1.6.0"
-
-if (sshkit_version = ENV["sshkit"])
-  requirement = begin
-    Gem::Dependency.new("sshkit", sshkit_version).requirement
-  rescue ArgumentError
-    user, branch =
-      if sshkit_version.include?("#")
-        sshkit_version.split("#")
-      else
-        ["capistrano", sshkit_version]
-      end
-    { :git => "https://github.com/#{user}/sshkit.git", :branch => branch }
-  end
-  gem "sshkit", requirement
-end
