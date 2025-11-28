@@ -21,9 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ["2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4"]
+        ruby: ["2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4"]
     env:
       sshkit: "master"
+      BUNDLE_GEMFILE: "gemfiles/current.gemfile"
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -39,6 +40,7 @@ jobs:
         sshkit: ["1.6.1", "1.7.1"]
     env:
       sshkit: ${{ matrix.sshkit }}
+      BUNDLE_GEMFILE: "gemfiles/legacy_19.gemfile"
       RUBYOPT: "-Ku"
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +56,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        ruby: ["2.0", "2.0", "2.1", "2.2", "2.3", "2.4"]
+        ruby: ["2.0", "2.0", "2.1", "2.2", "2.3", "2.4", "2.5"]
         sshkit: ["1.6.1", "1.7.1", "1.22.0"]
         exclude:
           - ruby: "2.4"
@@ -63,6 +65,7 @@ jobs:
             sshkit: "1.7.1"
     env:
       sshkit: ${{ matrix.sshkit }}
+      BUNDLE_GEMFILE: "gemfiles/legacy_2.gemfile"
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
