@@ -8,7 +8,7 @@ if ENV["CI"]
       # No need to report coverage metrics for the test code
       add_filter "test"
     end
-  rescue LoadError # rubocop:disable Lint/HandleExceptions
+  rescue LoadError
     # ignore
   end
 end

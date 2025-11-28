@@ -4,8 +4,6 @@ require "minitest_helper"
 require "bundler"
 require "etc"
 
-# rubocop:disable Metrics/LineLength
-
 class Airbrussh::FormatterTest < Minitest::Test
   include RakeTaskDefinition
 
@@ -115,9 +113,7 @@ class Airbrussh::FormatterTest < Minitest::Test
       begin
         execute(:echo, "hi")
         execute(:ls, "_file_does_not_exist")
-        # rubocop:disable Lint/HandleExceptions
-      rescue SSHKit::Command::Failed => error
-        # rubocop:enable Lint/HandleExceptions
+      rescue SSHKit::Command::Failed => error # rubocop:disable Lint/SuppressedException
       end
     end
 
