@@ -19,7 +19,8 @@ Gem::Specification.new do |spec|
     "bug_tracker_uri" => "https://github.com/mattbrictson/airbrussh/issues",
     "changelog_uri" => "https://github.com/mattbrictson/airbrussh/releases",
     "source_code_uri" => "https://github.com/mattbrictson/airbrussh",
-    "homepage_uri" => "https://github.com/mattbrictson/airbrussh"
+    "homepage_uri" => "https://github.com/mattbrictson/airbrussh",
+    "rubygems_mfa_required" => "true"
   }
 
   spec.files         = Dir.glob(%w[LICENSE.txt README.md {exe,lib}/**/*]).reject { |f| File.directory?(f) }
