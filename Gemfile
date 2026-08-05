@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "coveralls_reborn", "~> 0.29.0"
+gem "coveralls_reborn", "~> 1.0.0"
 gem "irb"
 gem "minitest", "~> 6.0"
 gem "minitest-reporters", "~> 1.1"
